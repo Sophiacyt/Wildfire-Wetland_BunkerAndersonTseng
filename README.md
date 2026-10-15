@@ -1,2 +1,2 @@
-# Wildfire-Wetland_BunkerAndersonTseng
+# Wildfire Wetland_BunkerAndersonTseng
 Group Project - Wildfire &amp; Wetland
