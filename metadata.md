@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-The CA Wetlands is a direct download from the USFWS National Wetland Inventory. It was subset to only include polygons with areas larger than 1 hectare (100000m^2) by Mason Bunker on 10/19/2026.
+The CA Wetlands is a direct download from the USFWS National Wetland Inventory by Mason Bunker on 10/19/2026.
 =======
 California Historic Fire Perimeters: https://www.fire.ca.gov/what-we-do/fire-resource-assessment-program/fire-perimeters
 - Fires greater or equal to 10 acres inside the state of CA between 1910 and 2025
