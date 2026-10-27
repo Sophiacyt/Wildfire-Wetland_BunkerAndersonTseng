@@ -1,0 +1,244 @@
+Year,State,Agency,Fire Name,Alarm Date,Containment Date,Cause,Collection Method,Management Objective,Decade,Shape__Area,Shape__Length,Alarm Month,Alarm Month Abb
+2025,California,California Department of Forestry and Fire Protection,GRANGE,2025-05-18,2025-05-18,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,128878.9921875,1586.43128055114,5,May
+2025,California,California Department of Forestry and Fire Protection,IVERSON,2025-06-19,2025-06-19,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,67444.86328125,1314.29166866115,6,Jun
+2025,California,California Department of Forestry and Fire Protection,RICA,2025-06-13,2025-06-13,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,164480.5625,2022.37129187887,6,Jun
+2025,California,California Department of Forestry and Fire Protection,STONEWALL,2025-08-31,2025-08-31,Arson,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,194774.94140625,2252.73893382068,8,Aug
+2025,California,California Department of Forestry and Fire Protection,COYOTE,2025-08-20,2025-08-24,Arson,3 - Infrared,Suppression (Wildfire),2020-2025,4132353.94921875,13651.2558663445,8,Aug
+2025,California,Bureau of Land Management,R-13 PETES,2025-08-26,2025-08-27,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,44113.69140625,1443.70701830363,8,Aug
+2025,California,California Department of Forestry and Fire Protection,SOMERSVILLE,2025-06-18,2025-06-19,Campfire,1 - GPS Ground,Suppression (Wildfire),2020-2025,2335746.73046875,9010.28329731269,6,Jun
+2025,California,California Department of Forestry and Fire Protection,1-2,2025-09-02,2025-09-02,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,264709.55078125,2493.83058906965,9,Sep
+2025,California,California Department of Forestry and Fire Protection,DEERWOOD,2025-10-23,2025-10-23,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,2066.6171875,218.461476295362,10,Oct
+2025,California,California Department of Forestry and Fire Protection,LASSEN,2025-08-01,2025-08-01,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,350206.9765625,3777.602540032,8,Aug
+2025,California,Bureau of Land Management,SOLAR,2025-05-19,2025-05-20,Unknown / Unidentified,4 - Other Imagery,Suppression (Wildfire),2020-2025,39871.46875,746.05371942942,5,May
+2025,California,California Department of Forestry and Fire Protection,QUARRY,2025-07-01,2025-07-01,Arson,3 - Infrared,Suppression (Wildfire),2020-2025,169550.47265625,2035.86430663184,7,Jul
+2025,California,California Department of Forestry and Fire Protection,2-8,2025-09-02,2025-09-09,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,8719001.6953125,17013.1187876086,9,Sep
+2025,California,California Department of Forestry and Fire Protection,ANTONIO,2025-06-09,2025-06-09,Vehicle,1 - GPS Ground,Suppression (Wildfire),2020-2025,116909.5,1410.06888963223,6,Jun
+2025,California,National Park Service,TOMBSTONE,2025-08-30,2025-11-17,Lightning,6 - Hand Drawn,Suppression (Wildfire),2020-2025,306097.76953125,3459.73538425212,8,Aug
+2025,California,USDI Fish and Wildlife Service,WASHINGTON,2025-06-23,2025-06-24,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,299133.13671875,2499.02978143018,6,Jun
+2025,California,California Department of Forestry and Fire Protection,BUELL,2025-09-10,2025-09-10,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,91419.90234375,1787.53192921624,9,Sep
+2025,California,Bureau of Land Management,R-8 RAILROAD,2025-08-25,2025-08-27,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,11512.40234375,578.864974097705,8,Aug
+2025,California,California Department of Forestry and Fire Protection,2-3,2025-09-02,2025-09-09,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,1859470.68359375,8374.83370553296,9,Sep
+2025,California,California Department of Forestry and Fire Protection,UTAH,2025-08-11,2025-08-12,Miscellaneous,2 - GPS Air,Suppression (Wildfire),2020-2025,73510.3203125,1603.51483429665,8,Aug
+2025,California,USDA Forest Service,LICK,2025-08-29,2025-11-04,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,261248.71875,5014.58350458788,8,Aug
+2025,California,Bureau of Land Management,WATTERSON,2025-09-06,2025-09-06,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,11741.859375,751.816846320371,9,Sep
+2025,California,USDA Forest Service,JICARILLA,2025-04-23,2025-04-24,Arson,6 - Hand Drawn,Suppression (Wildfire),2020-2025,7785.05859375,412.024778397787,4,Apr
+2025,California,California Department of Forestry and Fire Protection,1-4,2025-09-02,2025-09-04,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,28482286.59375,40189.5383982276,9,Sep
+2025,California,California Department of Forestry and Fire Protection,ELWOOD,2025-07-03,2025-07-04,Electrical Power,4 - Other Imagery,Suppression (Wildfire),2020-2025,334789.0546875,3442.88825682103,7,Jul
+2025,California,California Department of Forestry and Fire Protection,RIVER,2025-09-06,2025-09-06,Arson,1 - GPS Ground,Suppression (Wildfire),2020-2025,15102.2890625,542.246127187754,9,Sep
+2025,California,USDA Forest Service,POVERTY ,2025-06-09,2025-06-10,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,9347.953125,583.473404275104,6,Jun
+2025,California,California Department of Forestry and Fire Protection,HORNITOS 1-2,2025-09-02,2025-09-03,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,1076275.08203125,5765.25129260472,9,Sep
+2025,California,Local Response Area,TANABE,2025-08-23,2025-08-23,Unknown / Unidentified,2 - GPS Air,Suppression (Wildfire),2020-2025,267484.46484375,2718.54722722965,8,Aug
+2025,California,USDA Forest Service,GARNET,2025-08-24,2025-10-23,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,381019801.066406,293948.428195997,8,Aug
+2025,California,California Department of Forestry and Fire Protection,COYOTE,2025-05-31,2025-06-01,Structure,1 - GPS Ground,Suppression (Wildfire),2020-2025,148473.015625,1894.21400865328,5,May
+2025,California,USDA Forest Service,PEAK,2025-08-25,2025-09-28,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,3583515.65234375,17771.4869143493,8,Aug
+2025,California,California Department of Forestry and Fire Protection,ALTA,2025-07-20,2025-07-20,Equipment Use,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,109404.40234375,1719.1588980641,7,Jul
+2025,California,USDI Fish and Wildlife Service,SKAGGS,2025-08-09,2025-08-14,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,6048.31640625,595.612921501705,8,Aug
+2025,California,California Department of Forestry and Fire Protection,5-2,2025-09-02,2025-09-03,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,18522.23046875,666.479036275642,9,Sep
+2025,California,California Department of Forestry and Fire Protection,1-3,2025-09-02,2025-09-04,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,965567.94140625,4449.38268925836,9,Sep
+2025,California,California Department of Forestry and Fire Protection,COW,2025-04-09,2025-04-09,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,26808.0546875,889.409065601726,4,Apr
+2025,California,California Department of Forestry and Fire Protection,NORTHSTAR III,2025-07-07,2025-07-07,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,6.08203125,9.39052849785304,7,Jul
+2025,California,California Department of Forestry and Fire Protection,DISTRICT,2025-07-04,2025-07-06,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,284300.67578125,3827.58201568996,7,Jul
+2025,California,USDA Forest Service,ISLAND,2025-08-26,2025-08-27,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,17760.0703125,680.388844088009,8,Aug
+2025,California,USDA Forest Service,ABERDEEN,2025-08-25,2025-09-01,Unknown / Unidentified,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,576737.90234375,7642.49899096429,8,Aug
+2025,California,California Department of Forestry and Fire Protection,STARDUST,2025-07-12,2025-07-12,Equipment Use,3 - Infrared,Suppression (Wildfire),2020-2025,81579.34765625,1362.45451229422,7,Jul
+2025,California,California Department of Forestry and Fire Protection,GYLE,2025-10-27,2025-10-27,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,124641.99609375,2147.60895223574,10,Oct
+2025,California,California Department of Forestry and Fire Protection,VLECK,2025-09-29,2025-09-29,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,212152.796875,2439.7780746775,9,Sep
+2025,California,USDA Forest Service,LETTER,2025-06-09,2025-06-10,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,73147.08203125,1386.16018353667,6,Jun
+2025,California,California Department of Forestry and Fire Protection,POND,2025-08-06,2025-08-12,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,172444.14453125,3273.56785342878,8,Aug
+2025,California,California Department of Forestry and Fire Protection,MEDICINE,2025-07-27,2025-08-03,Campfire,1 - GPS Ground,Suppression (Wildfire),2020-2025,1805953.7734375,6682.47320809522,7,Jul
+2025,California,California Department of Forestry and Fire Protection,CAMINO,2025-06-20,2025-06-21,Vehicle,1 - GPS Ground,Suppression (Wildfire),2020-2025,2503097.98828125,6873.55806334129,6,Jun
+2025,California,California Department of Forestry and Fire Protection,PANOCHE,2025-04-20,2025-04-20,Electrical Power,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,188571.60546875,2500.77199131259,4,Apr
+2025,California,California Department of Forestry and Fire Protection,PANOCHE,2025-05-18,2025-05-18,Electrical Power,4 - Other Imagery,Suppression (Wildfire),2020-2025,126813.7421875,1898.53103412285,5,May
+2025,California,California Department of Forestry and Fire Protection,FUEL,2025-09-01,2025-09-02,Vehicle,4 - Other Imagery,Suppression (Wildfire),2020-2025,65672.69921875,1314.64172990372,9,Sep
+2025,California,USDA Forest Service,H-10,2025-08-26,2025-08-26,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,89051.44921875,1569.58257292277,8,Aug
+2025,California,California Department of Forestry and Fire Protection,SKY,2025-08-30,2025-08-30,Vehicle,1 - GPS Ground,Suppression (Wildfire),2020-2025,456.078125,86.3217508991671,8,Aug
+2025,California,Local Response Area,VAN CLIEF RD STEVENSON,2025-07-06,2025-07-06,Unknown / Unidentified,4 - Other Imagery,Suppression (Wildfire),2020-2025,117003.89453125,2318.41378707558,7,Jul
+2025,California,California Department of Forestry and Fire Protection,PICKETT,2025-08-21,2025-09-07,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,45303667.375,73289.3204184054,8,Aug
+2025,California,California Department of Forestry and Fire Protection,MATTHEW,2025-05-06,2025-05-06,Electrical Power,1 - GPS Ground,Suppression (Wildfire),2020-2025,69042.60546875,1235.05933544402,5,May
+2025,California,California Department of Forestry and Fire Protection,HOPPER,2025-09-15,2025-09-15,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,13772.05859375,886.071286548645,9,Sep
+2025,California,California Department of Forestry and Fire Protection,TIGER,2025-08-08,2025-08-09,Arson,3 - Infrared,Suppression (Wildfire),2020-2025,776344.5,5164.20260528425,8,Aug
+2025,California,California Department of Forestry and Fire Protection,RED,2025-06-26,2025-06-26,Vehicle,2 - GPS Air,Suppression (Wildfire),2020-2025,344438.67578125,3518.27521459817,6,Jun
+2025,California,California Department of Forestry and Fire Protection,BONANZA,2025-06-17,2025-06-18,Equipment Use,3 - Infrared,Suppression (Wildfire),2020-2025,1204439.97265625,8080.10840459031,6,Jun
+2025,California,California Department of Forestry and Fire Protection,DUSTIN,2025-06-28,2025-06-28,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,8079.98046875,371.115244795701,6,Jun
+2025,California,California Department of Forestry and Fire Protection,BYERS,2025-06-04,2025-06-04,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,728890.49609375,5964.91508596961,6,Jun
+2025,California,USDA Forest Service,BUTLER,2025-07-04,2025-09-11,Unknown / Unidentified,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,151016558.640625,134217.7349024,7,Jul
+2025,California,California Department of Forestry and Fire Protection,BAKER,2025-07-16,2025-07-16,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,115640.94921875,2066.28523133664,7,Jul
+2025,California,California Department of Forestry and Fire Protection,FIRESTONE,2025-06-12,2025-06-19,Vehicle,3 - Infrared,Suppression (Wildfire),2020-2025,2931607.75390625,10504.3392583102,6,Jun
+2025,California,California Department of Forestry and Fire Protection,CORNING,2025-07-07,2025-07-07,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,104764.2109375,2220.36009827125,7,Jul
+2025,California,National Park Service,KETTLE,2025-08-31,2025-09-08,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,151262.43359375,2568.71881887266,8,Aug
+2025,California,Bureau of Land Management,R-3 WILLOW,2025-08-24,2025-08-29,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,1010695.0078125,5620.3260078084,8,Aug
+2025,California,USDA Forest Service,WINDY,2025-06-09,2025-06-11,Miscellaneous,6 - Hand Drawn,Suppression (Wildfire),2020-2025,71454.94140625,1143.25987055606,6,Jun
+2025,California,California Department of Forestry and Fire Protection,HALL,2025-12-24,2025-12-24,Electrical Power,1 - GPS Ground,Suppression (Wildfire),2020-2025,6872.59375,397.259361475515,12,Dec
+2025,California,Bureau of Land Management,DEEP,2025-08-21,2025-08-21,Vehicle,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,18345.81640625,600.094550243065,8,Aug
+2025,California,California Department of Forestry and Fire Protection,LITTLE,2025-06-11,2025-06-11,Electrical Power,2 - GPS Air,Suppression (Wildfire),2020-2025,3729108.4375,13868.7113781127,6,Jun
+2025,California,USDA Forest Service,FLUME,2025-07-06,2025-07-15,Vehicle,8 - Unknown,Suppression (Wildfire),2020-2025,362604.39453125,4655.69337104614,7,Jul
+2025,California,California Department of Forestry and Fire Protection,TRAP,2025-07-20,2025-07-24,Miscellaneous,2 - GPS Air,Suppression (Wildfire),2020-2025,246918.296875,3433.76768400287,7,Jul
+2025,California,California Department of Forestry and Fire Protection,BAXTER,2025-06-03,2025-06-04,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,201837.53125,3468.63690687896,6,Jun
+2025,California,USDI Fish and Wildlife Service,MAYHEWS,2025-07-22,2025-07-22,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,9102.31640625,508.727366133537,7,Jul
+2025,California,California Department of Forestry and Fire Protection,COOKS,2025-09-18,2025-09-18,Vehicle,1 - GPS Ground,Suppression (Wildfire),2020-2025,3911.29296875,242.296643025481,9,Sep
+2025,California,California Department of Forestry and Fire Protection,ISLAND,2025-07-12,2025-07-12,Campfire,3 - Infrared,Suppression (Wildfire),2020-2025,67141.1015625,1396.49233371464,7,Jul
+2025,California,California Department of Forestry and Fire Protection,LOOK,2025-08-24,2025-08-26,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,67826.69921875,1839.18154456828,8,Aug
+2025,California,California Department of Forestry and Fire Protection,GUN,2025-08-10,2025-08-10,Miscellaneous,3 - Infrared,Suppression (Wildfire),2020-2025,76719.4140625,1686.75068916031,8,Aug
+2025,California,California Department of Forestry and Fire Protection,BERNICE,2025-04-28,2025-04-28,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,14184.8515625,710.469645054728,4,Apr
+2025,California,USDA Forest Service,LA PORTE,2025-04-24,2025-04-25,Debris,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,101870.375,1964.8542778579,4,Apr
+2025,California,Local Response Area,DAN,2025-05-22,2025-05-22,Equipment Use,4 - Other Imagery,Suppression (Wildfire),2020-2025,156349.109375,6098.38772309554,5,May
+2025,California,California Department of Forestry and Fire Protection,FRENCHTOWN,2025-06-17,2025-06-17,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,150.9375,52.2497707537804,6,Jun
+2025,California,California Department of Forestry and Fire Protection,POINT,2025-08-23,2025-08-24,Arson,1 - GPS Ground,Suppression (Wildfire),2020-2025,299543.8828125,2594.73799388173,8,Aug
+2025,California,California Department of Forestry and Fire Protection,CREEK,2025-05-16,2025-05-16,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,98724.484375,1874.32167038564,5,May
+2025,California,California Department of Forestry and Fire Protection,ARDEN,2025-08-09,2025-08-10,Arson,3 - Infrared,Suppression (Wildfire),2020-2025,175248.01171875,2928.67847982979,8,Aug
+2025,California,California Department of Forestry and Fire Protection,RUSH,2025-06-20,2025-06-23,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,128694.79296875,2291.60874182683,6,Jun
+2025,California,Local Response Area,LOBINGER,2025-06-11,2025-06-11,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,91182.97265625,1803.43894083145,6,Jun
+2025,California,California Department of Forestry and Fire Protection,FARM,2025-08-06,2025-08-07,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,95878.30078125,1342.45607659981,8,Aug
+2025,California,USDA Forest Service,GROVE,2025-08-25,2025-08-26,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,11704.31640625,738.030778217469,8,Aug
+2025,California,National Park Service,KIBBIE,2025-08-26,2025-09-12,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,122072.31640625,2551.61289681145,8,Aug
+2025,California,California Department of Forestry and Fire Protection,PANOCHE,2025-07-21,2025-07-21,Arson,2 - GPS Air,Suppression (Wildfire),2020-2025,7460.6953125,419.520952858017,7,Jul
+2025,California,USDA Forest Service,HORSE,2025-07-02,2025-07-09,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,3047393.6875,8383.15676558255,7,Jul
+2025,California,California Department of Forestry and Fire Protection,JURY,2025-07-19,2025-07-19,Electrical Power,1 - GPS Ground,Suppression (Wildfire),2020-2025,349840.8046875,4344.07022846629,7,Jul
+2025,California,California Department of Forestry and Fire Protection,CLEARWATER,2025-10-06,2025-10-06,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,13924.640625,590.28421620708,10,Oct
+2025,California,California Department of Forestry and Fire Protection,LAKE,2025-08-03,2025-08-04,Unknown / Unidentified,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,2667059.609375,8552.11697219348,8,Aug
+2025,California,Local Response Area,CATLETT,2025-05-10,2025-05-10,Unknown / Unidentified,2 - GPS Air,Suppression (Wildfire),2020-2025,1179044.45703125,6425.518094688,5,May
+2025,California,California Department of Forestry and Fire Protection,SPRINGS,2025-09-01,2025-09-01,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,233912.12890625,2938.29141628554,9,Sep
+2025,California,California Department of Forestry and Fire Protection,ACAMPO,2025-05-15,2025-05-15,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,136525.01171875,1737.0825899952,5,May
+2025,California,California Department of Forestry and Fire Protection,GRADE,2025-06-05,2025-06-05,Vehicle,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,39778.69140625,1470.11800513856,6,Jun
+2025,California,USDA Forest Service,GREEN,2025-07-02,2025-08-14,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,134608787.71875,85187.8555398957,7,Jul
+2025,California,California Department of Forestry and Fire Protection,3-22 MUCK,2025-08-25,2025-08-27,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,283037.7734375,3908.03042063967,8,Aug
+2025,California,California Department of Forestry and Fire Protection,HANSEN,2025-05-13,2025-05-13,Electrical Power,4 - Other Imagery,Suppression (Wildfire),2020-2025,120954.53125,1670.89699608228,5,May
+2025,California,California Department of Forestry and Fire Protection,BAND,2025-06-18,2025-06-18,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,100250.8203125,1884.59945088061,6,Jun
+2025,California,Local Response Area,SUNSET,2025-05-18,2025-05-18,Vehicle,1 - GPS Ground,Suppression (Wildfire),2020-2025,384384.01171875,3052.55542295778,5,May
+2025,California,USDA Forest Service,PACK,2025-11-13,2025-12-03,Miscellaneous,4 - Other Imagery,Suppression (Wildfire),2020-2025,12744696.1015625,34255.2340012006,11,Nov
+2025,California,California Department of Forestry and Fire Protection,2-7,2025-09-02,2025-09-09,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,4030989.734375,20270.2744936173,9,Sep
+2025,California,Bureau of Land Management,LONG VALLEY,2025-08-26,2025-08-27,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,40416.0,1534.90139006038,8,Aug
+2025,California,California Department of Forestry and Fire Protection,RANCHO,2025-06-19,2025-06-20,Debris,3 - Infrared,Suppression (Wildfire),2020-2025,1096012.73828125,6185.50935273313,6,Jun
+2025,California,California Department of Forestry and Fire Protection,OAK,2025-06-15,2025-06-17,Unknown / Unidentified,4 - Other Imagery,Suppression (Wildfire),2020-2025,108330.60546875,1695.04652434367,6,Jun
+2025,California,California Department of Forestry and Fire Protection,MARINA,2025-06-03,2025-06-03,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,1903.34375,229.281112516444,6,Jun
+2025,California,USDA Forest Service,BEAVER,2025-12-04,2025-12-05,Campfire,6 - Hand Drawn,Suppression (Wildfire),2020-2025,97617.44140625,2190.02036834248,12,Dec
+2025,California,California Department of Forestry and Fire Protection,COULTER,2025-07-19,2025-07-19,Equipment Use,3 - Infrared,Suppression (Wildfire),2020-2025,170638.046875,1772.75433020508,7,Jul
+2025,California,California Department of Forestry and Fire Protection,FOOTHILL,2025-09-16,2025-09-16,Arson,1 - GPS Ground,Suppression (Wildfire),2020-2025,14982.99609375,668.095080825516,9,Sep
+2025,California,California Department of Forestry and Fire Protection,NICHOLS,2025-10-07,2025-10-07,Unknown / Unidentified,2 - GPS Air,Suppression (Wildfire),2020-2025,82411.84375,1836.67697603872,10,Oct
+2025,California,California Department of Forestry and Fire Protection,GRUBS,2025-05-30,2025-05-30,Debris,4 - Other Imagery,Suppression (Wildfire),2020-2025,70865.91796875,1332.50082339052,5,May
+2025,California,California Department of Forestry and Fire Protection,NORTHSTAR,2025-07-07,2025-07-07,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,26.921875,22.5951060942603,7,Jul
+2025,California,California Department of Forestry and Fire Protection,3-5 LITTLE,2025-07-25,2025-07-25,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,342293.46875,3573.26931654789,7,Jul
+2025,California,California Department of Forestry and Fire Protection,CORN,2025-05-18,2025-05-19,Miscellaneous,3 - Infrared,Suppression (Wildfire),2020-2025,176052.40625,2233.07364647781,5,May
+2025,California,California Department of Forestry and Fire Protection,GROVE,2025-07-04,2025-07-06,Arson,3 - Infrared,Suppression (Wildfire),2020-2025,530164.6953125,6669.00762300043,7,Jul
+2025,California,Bureau of Land Management,R-12 RAMHORN,2025-08-25,2025-08-26,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,23173.0234375,784.139151739995,8,Aug
+2025,California,California Department of Forestry and Fire Protection,RIFLE,2025-08-29,2025-08-29,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,7918.2734375,491.170729188812,8,Aug
+2025,California,California Department of Forestry and Fire Protection,RAVINE,2025-07-03,2025-07-03,Miscellaneous,3 - Infrared,Suppression (Wildfire),2020-2025,231059.66015625,2906.13265261655,7,Jul
+2025,California,California Department of Forestry and Fire Protection,CANYON,2025-12-23,2025-12-23,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,1083.96484375,158.590384863817,12,Dec
+2025,California,California Department of Forestry and Fire Protection,PIONEER,2025-05-04,2025-05-04,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,472901.46875,4258.05942617014,5,May
+2025,California,California Department of Forestry and Fire Protection,SHIRLEY,2025-07-12,2025-07-12,Electrical Power,1 - GPS Ground,Suppression (Wildfire),2020-2025,8531.89453125,385.189414188213,7,Jul
+2025,California,California Department of Forestry and Fire Protection,BRIDGE,2025-07-07,2025-07-09,Vehicle,2 - GPS Air,Suppression (Wildfire),2020-2025,2907015.40234375,12993.4019790808,7,Jul
+2025,California,Bureau of Land Management,READING,2025-06-08,2025-06-09,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,277068.7578125,4128.6840009461,6,Jun
+2025,California,USDA Forest Service,ROOT,2025-09-01,2025-11-01,Campfire,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,5209331.53125,17629.4804689227,9,Sep
+2025,California,California Department of Forestry and Fire Protection,BROWN,2025-09-02,2025-09-07,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,1101991.13671875,5521.46280330078,9,Sep
+2025,California,California Department of Forestry and Fire Protection,ELM,2025-06-16,2025-06-16,Electrical Power,1 - GPS Ground,Suppression (Wildfire),2020-2025,105119.8203125,1374.19712531878,6,Jun
+2025,California,California Department of Forestry and Fire Protection,CLAYPIT,2025-08-04,2025-08-04,Arson,3 - Infrared,Suppression (Wildfire),2020-2025,865460.78125,3819.45116520355,8,Aug
+2025,California,California Department of Forestry and Fire Protection,SALT,2025-09-02,2025-09-17,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,158299234.421875,111440.092840502,9,Sep
+2025,California,California Department of Forestry and Fire Protection,QUAIL,2025-06-04,2025-06-04,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,112907.68359375,1604.29132637804,6,Jun
+2025,California,California Department of Forestry and Fire Protection,UPHILL,2025-09-22,2025-09-22,Equipment Use,3 - Infrared,Suppression (Wildfire),2020-2025,148410.9296875,2310.07520341469,9,Sep
+2025,California,California Department of Forestry and Fire Protection,ROCK,2025-09-02,2025-09-05,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,974124.08984375,8902.69494680938,9,Sep
+2025,California,California Department of Forestry and Fire Protection,BURKE 2,2025-05-21,2025-05-21,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,4376.3203125,270.601766111011,5,May
+2025,California,California Department of Forestry and Fire Protection,RECTOR,2025-06-02,2025-06-05,Vehicle,3 - Infrared,Suppression (Wildfire),2020-2025,383108.9296875,4070.14622884559,6,Jun
+2025,California,California Department of Forestry and Fire Protection,NINETY NINE,2025-05-09,2025-05-09,Electrical Power,1 - GPS Ground,Suppression (Wildfire),2020-2025,219373.7421875,3674.91232208588,5,May
+2025,California,Local Response Area,MOORE,2025-07-10,2025-07-10,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,119586.390625,2070.81848981221,7,Jul
+2025,California,California Department of Forestry and Fire Protection,CABLE,2025-07-05,2025-07-05,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,1791.9140625,159.334532528873,7,Jul
+2025,California,USDA Forest Service,WENTWORTH,2025-08-24,2025-08-24,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,9285.7421875,467.633879122444,8,Aug
+2025,California,USDA Forest Service,HIDDEN,2025-06-10,2025-06-15,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,159451.65234375,1799.99379944776,6,Jun
+2025,California,California Department of Forestry and Fire Protection,MIDWAY,2025-05-22,2025-05-22,Electrical Power,4 - Other Imagery,Suppression (Wildfire),2020-2025,2065589.98046875,12568.8857117041,5,May
+2025,California,California Department of Forestry and Fire Protection,SOUTHSIDE,2025-05-24,2025-05-24,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,65099.08984375,1376.39544132513,5,May
+2025,California,California Department of Forestry and Fire Protection,CASINO,2025-06-25,2025-06-25,Vehicle,6 - Hand Drawn,Suppression (Wildfire),2020-2025,287.5625,75.5801353185362,6,Jun
+2025,California,California Department of Forestry and Fire Protection,NORTHSTAR II,2025-07-07,2025-07-07,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,9.41015625,11.4871861740858,7,Jul
+2025,California,California Department of Forestry and Fire Protection,IDRIA,2025-05-17,2025-05-18,Miscellaneous,3 - Infrared,Suppression (Wildfire),2020-2025,1949441.546875,7846.16123534707,5,May
+2025,California,USDA Forest Service,PASS,2025-09-17,2025-09-20,Vehicle,6 - Hand Drawn,Suppression (Wildfire),2020-2025,169368.45703125,3554.0204560134,9,Sep
+2025,California,Bureau of Land Management,S-14,2025-09-01,2025-09-02,Unknown / Unidentified,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,317329.40234375,3947.41445906608,9,Sep
+2025,California,Local Response Area,RANCH,2025-08-04,2025-08-04,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,835440.98046875,5096.51677790647,8,Aug
+2025,California,California Department of Forestry and Fire Protection,MICHIGAN,2025-09-02,2025-09-02,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,224054.16796875,2914.30896493522,9,Sep
+2025,California,California Department of Forestry and Fire Protection,MOBILE,2025-05-21,2025-05-22,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,8229.88671875,400.532484704565,5,May
+2025,California,California Department of Forestry and Fire Protection,BONEYARD 2,2025-07-26,2025-07-27,Vehicle,3 - Infrared,Suppression (Wildfire),2020-2025,1312950.70703125,8723.44444731966,7,Jul
+2025,California,USDA Forest Service,MAX,2025-07-13,2025-07-22,Miscellaneous,3 - Infrared,Suppression (Wildfire),2020-2025,2604345.1015625,11780.256263214,7,Jul
+2025,California,Bureau of Land Management,INN,2025-05-22,2025-06-04,Unknown / Unidentified,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,4744433.90625,27421.6971421808,5,May
+2025,California,California Department of Forestry and Fire Protection,GRANITE,2025-09-02,2025-09-02,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,143859.68359375,2370.95679696192,9,Sep
+2025,California,California Department of Forestry and Fire Protection,SCHOOL,2025-10-07,2025-10-07,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,149596.46875,2796.45272951306,10,Oct
+2025,California,California Department of Forestry and Fire Protection,18-1,2025-09-02,2025-09-02,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,3077458.80859375,10146.7185040585,9,Sep
+2025,California,USDA Forest Service,DRY,2025-06-25,2025-07-01,Vehicle,8 - Unknown,Suppression (Wildfire),2020-2025,242053.38671875,2196.06770919015,6,Jun
+2025,California,California Department of Forestry and Fire Protection,MARIPOSA,2025-05-02,2025-05-02,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,7030.71484375,380.931615078111,5,May
+2025,California,California Department of Forestry and Fire Protection,MARYSVILLE,2025-06-29,2025-06-29,Unknown / Unidentified,3 - Infrared,Suppression (Wildfire),2020-2025,134766.73828125,4339.32232263974,6,Jun
+2025,California,California Department of Forestry and Fire Protection,WILSON,2025-05-04,2025-05-04,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,3799.72265625,304.800448323281,5,May
+2025,California,Local Response Area,SANDY,2025-04-24,2025-04-24,Unknown / Unidentified,4 - Other Imagery,Suppression (Wildfire),2020-2025,309725.12109375,3774.67375236973,4,Apr
+2025,California,Bureau of Land Management,R-10 SPANISH,2025-08-25,2025-08-26,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,684730.91796875,4026.7335182769,8,Aug
+2025,California,USDA Forest Service,CREST,2025-07-21,2025-07-30,Lightning,4 - Other Imagery,Suppression (Wildfire),2020-2025,54612.4609375,985.156451628619,7,Jul
+2025,California,California Department of Forestry and Fire Protection,GUN,2025-05-25,2025-05-25,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,67907.1328125,1516.4799244197,5,May
+2025,California,California Department of Forestry and Fire Protection,PASKENTA,2025-08-25,2025-08-25,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,450356.87109375,4713.42608499066,8,Aug
+2025,California,California Department of Forestry and Fire Protection,CLARK,2025-08-10,2025-08-13,Debris,3 - Infrared,Suppression (Wildfire),2020-2025,359752.36328125,3258.94005361979,8,Aug
+2025,California,California Department of Forestry and Fire Protection,FINK,2025-06-05,2025-06-05,Electrical Power,1 - GPS Ground,Suppression (Wildfire),2020-2025,79251.5078125,1094.11621048459,6,Jun
+2025,California,USDA Forest Service,BEAN,2025-09-03,2025-09-04,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,25322.36328125,791.406839995333,9,Sep
+2025,California,California Department of Forestry and Fire Protection,RIFLE,2025-05-24,2025-05-24,Electrical Power,4 - Other Imagery,Suppression (Wildfire),2020-2025,120648.11328125,1638.21717782364,5,May
+2025,California,California Department of Forestry and Fire Protection,CLARK,2025-06-20,2025-06-21,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,176178.1953125,2539.95550081811,6,Jun
+2025,California,USDA Forest Service,RUSH,2025-08-02,2025-08-03,Unknown / Unidentified,8 - Unknown,Suppression (Wildfire),2020-2025,83908.90234375,1415.25169551878,8,Aug
+2025,California,California Department of Forestry and Fire Protection,LAKE,2025-08-30,2025-08-30,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,10905.515625,761.771005192211,8,Aug
+2025,California,California Department of Forestry and Fire Protection,ALTA,2025-07-11,2025-07-11,Vehicle,6 - Hand Drawn,Suppression (Wildfire),2020-2025,147.8515625,52.075906018626,7,Jul
+2025,California,California Department of Forestry and Fire Protection,HIGH,2025-08-25,2025-08-27,Vehicle,4 - Other Imagery,Suppression (Wildfire),2020-2025,226583.73828125,2485.24160875708,8,Aug
+2025,California,California Department of Forestry and Fire Protection,PANOCHE,2025-08-07,2025-08-11,Miscellaneous,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,2660489.30859375,12819.5412576845,8,Aug
+2025,California,USDA Forest Service,HELENA,2025-07-03,2025-07-09,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,806585.5078125,4994.32707605979,7,Jul
+2025,California,USDA Forest Service,SAGE,2025-10-27,2025-11-13,Lightning,6 - Hand Drawn,Suppression (Wildfire),2020-2025,1650226.75390625,5239.38483463931,10,Oct
+2025,California,California Department of Forestry and Fire Protection,DIAS,2025-06-25,2025-06-26,Arson,3 - Infrared,Suppression (Wildfire),2020-2025,5286583.77734375,19569.5172794422,6,Jun
+2025,California,California Department of Forestry and Fire Protection,ANCHOR,2025-05-09,2025-05-09,Miscellaneous,3 - Infrared,Suppression (Wildfire),2020-2025,273847.22265625,2337.66666560414,5,May
+2025,California,California Department of Forestry and Fire Protection,SADDLE,2025-06-26,2025-06-30,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,825255.78125,7036.37142573565,6,Jun
+2025,California,USDA Forest Service,MURPHY,2025-08-26,2025-08-31,Lightning,8 - Unknown,Suppression (Wildfire),2020-2025,85184.484375,1074.39070410558,8,Aug
+2025,California,California Department of Forestry and Fire Protection,BALDY 2,2025-09-25,2025-09-25,Arson,1 - GPS Ground,Suppression (Wildfire),2020-2025,48514.578125,1426.97072669086,9,Sep
+2025,California,California Department of Forestry and Fire Protection,6-3,2025-08-26,2025-08-26,Lightning,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,74262.0859375,1423.48288533428,8,Aug
+2025,California,California Department of Forestry and Fire Protection,ACRES,2025-05-14,2025-05-15,Debris,2 - GPS Air,Suppression (Wildfire),2020-2025,4025647.05859375,14774.6782719643,5,May
+2025,California,USDI Fish and Wildlife Service,WARM,2025-06-18,2025-06-18,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,5171.4453125,368.261514057718,6,Jun
+2025,California,California Department of Forestry and Fire Protection,SLIGER,2025-07-25,2025-07-25,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,99683.48828125,1511.0220649656,7,Jul
+2025,California,California Department of Forestry and Fire Protection,VALLEY,2025-09-01,2025-09-01,Equipment Use,3 - Infrared,Suppression (Wildfire),2020-2025,114554.08984375,2350.25814810843,9,Sep
+2025,California,Bureau of Land Management,R-5 BRANHAM,2025-08-24,2025-08-25,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,18217.50390625,854.852700627357,8,Aug
+2025,California,USDA Forest Service,CEDAR,2025-09-02,2025-09-16,Unknown / Unidentified,3 - Infrared,Suppression (Wildfire),2020-2025,639004.21875,6016.65911819584,9,Sep
+2025,California,California Department of Forestry and Fire Protection,PARKVILLE,2025-08-27,2025-08-27,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,167101.5234375,2085.55339993124,8,Aug
+2025,California,California Department of Forestry and Fire Protection,WALNUT,2025-05-18,2025-05-18,Vehicle,1 - GPS Ground,Suppression (Wildfire),2020-2025,329773.484375,2762.50970513056,5,May
+2025,California,California Department of Forestry and Fire Protection,AIRLINE,2025-06-12,2025-06-13,Miscellaneous,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,266984.23828125,2951.33959849592,6,Jun
+2025,California,California Department of Forestry and Fire Protection,RIDGE,2025-05-06,2025-05-06,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,24416.98828125,985.3482589336,5,May
+2025,California,California Department of Forestry and Fire Protection,VASQUEZ,2025-07-07,2025-07-07,Vehicle,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,13957.4921875,618.193071663057,7,Jul
+2025,California,California Department of Forestry and Fire Protection,WILLOW,2025-05-10,2025-05-10,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,40362.203125,1070.72702547664,5,May
+2025,California,California Department of Forestry and Fire Protection,CLEMENT,2025-06-13,2025-06-13,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,126443.99609375,2136.6313354444,6,Jun
+2025,California,California Department of Forestry and Fire Protection,DINO,2025-06-11,2025-06-11,Equipment Use,2 - GPS Air,Suppression (Wildfire),2020-2025,1694351.01953125,7023.73233134626,6,Jun
+2025,California,California Department of Forestry and Fire Protection,STONE,2025-08-22,2025-08-22,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,9938.3671875,631.995785924732,8,Aug
+2025,California,California Department of Forestry and Fire Protection,RUTH,2025-07-05,2025-07-05,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,12378.4296875,671.62789584932,7,Jul
+2025,California,California Department of Forestry and Fire Protection,FORD,2025-06-03,2025-06-03,Unknown / Unidentified,4 - Other Imagery,Suppression (Wildfire),2020-2025,507168.78515625,3983.08978929944,6,Jun
+2025,California,California Department of Forestry and Fire Protection,RUN,2025-05-26,2025-05-26,Arson,2 - GPS Air,Suppression (Wildfire),2020-2025,2682039.51171875,11907.0557774413,5,May
+2025,California,California Department of Forestry and Fire Protection,LITTLE,2025-07-17,2025-07-17,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,113433.5078125,1592.70514932205,7,Jul
+2025,California,California Department of Forestry and Fire Protection,COMPANY,2025-10-08,2025-10-08,Campfire,1 - GPS Ground,Suppression (Wildfire),2020-2025,1138.0703125,138.845552735147,10,Oct
+2025,California,National Park Service,BREEZE,2025-08-25,,Lightning,2 - GPS Air,Suppression (Wildfire),2020-2025,224505.421875,2574.13502440775,8,Aug
+2025,California,California Department of Forestry and Fire Protection,BERRY,2025-08-08,2025-08-14,Equipment Use,3 - Infrared,Suppression (Wildfire),2020-2025,447095.1328125,3147.80900489549,8,Aug
+2025,California,California Department of Forestry and Fire Protection,6-2,2025-09-02,2025-09-13,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,6649887.60546875,18314.4553323262,9,Sep
+2025,California,California Department of Forestry and Fire Protection,6-5,2025-09-02,2025-09-13,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,45223302.84375,63515.0681801974,9,Sep
+2025,California,California Department of Forestry and Fire Protection,HUDSON,2025-06-21,2025-06-21,Arson,1 - GPS Ground,Suppression (Wildfire),2020-2025,16500.47265625,528.508304709908,6,Jun
+2025,California,California Department of Forestry and Fire Protection,GREILICH,2025-06-10,2025-06-10,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,77211.49609375,1495.9578515188,6,Jun
+2025,California,California Department of Forestry and Fire Protection,SABE,2025-06-05,2025-06-06,Equipment Use,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,106919.5703125,1421.91130062764,6,Jun
+2025,California,California Department of Forestry and Fire Protection,FELIZE,2025-07-01,2025-07-01,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,5243.953125,394.804447152184,7,Jul
+2025,California,California Department of Forestry and Fire Protection,5-4,2025-08-27,2025-08-27,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,259027.1640625,5170.09444053903,8,Aug
+2025,California,California Department of Forestry and Fire Protection,PONDEROSA,2025-08-10,2025-08-15,Equipment Use,3 - Infrared,Suppression (Wildfire),2020-2025,591862.3984375,5311.15784819936,8,Aug
+2025,California,California Department of Forestry and Fire Protection,CHICKEN,2025-10-20,2025-10-20,Debris,1 - GPS Ground,Suppression (Wildfire),2020-2025,4141.73828125,268.561676333158,10,Oct
+2025,California,California Department of Forestry and Fire Protection,SAWYER,2025-08-18,2025-08-20,Vehicle,1 - GPS Ground,Suppression (Wildfire),2020-2025,51877.09375,1309.42514392434,8,Aug
+2025,California,California Department of Forestry and Fire Protection,GRANDE,2025-05-09,2025-05-09,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,80193.26953125,1721.02812635864,5,May
+2025,California,California Department of Forestry and Fire Protection,GUNSMOKE,2025-05-18,2025-05-18,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,73303.421875,1821.03686426731,5,May
+2025,California,California Department of Forestry and Fire Protection,RUTH,2025-06-20,2025-06-20,Equipment Use,4 - Other Imagery,Suppression (Wildfire),2020-2025,126741.5625,1761.69425334832,6,Jun
+2025,California,California Department of Forestry and Fire Protection,BALDY,2025-09-24,2025-09-25,Arson,1 - GPS Ground,Suppression (Wildfire),2020-2025,26580.01953125,959.224465330605,9,Sep
+2025,California,California Department of Forestry and Fire Protection,2-2,2025-09-02,2025-09-06,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,22557714.1445313,33702.6641010761,9,Sep
+2025,California,Bureau of Land Management,R-1 DANNER,2025-06-09,2025-06-09,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,39137.3125,799.361868058642,6,Jun
+2025,California,California Department of Forestry and Fire Protection,1-4 PEAK,2025-07-31,2025-08-03,Arson,2 - GPS Air,Suppression (Wildfire),2020-2025,1816151.30078125,6995.24239965595,7,Jul
+2025,California,USDA Forest Service,GIANELLI,2025-11-02,2025-11-14,Lightning,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,2450775.16796875,22105.8458256758,11,Nov
+2025,California,Local Response Area,ORANGE,2025-09-02,2025-09-02,Equipment Use,1 - GPS Ground,Suppression (Wildfire),2020-2025,70852.23046875,1329.61621507865,9,Sep
+2025,California,California Department of Forestry and Fire Protection,SILVER,2025-03-30,2025-04-08,Arson,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,9716010.8984375,34122.4974692686,3,Mar
+2025,California,California Department of Forestry and Fire Protection,GRADE,2025-07-28,2025-07-28,Electrical Power,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,166.7578125,108.591293105513,7,Jul
+2025,California,California Department of Forestry and Fire Protection,GRIZZLY,2025-06-23,2025-06-25,Unknown / Unidentified,2 - GPS Air,Suppression (Wildfire),2020-2025,303708.01953125,2722.36148974935,6,Jun
+2025,California,California Department of Forestry and Fire Protection,COACH,2025-08-30,2025-08-31,Equipment Use,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,85874.59375,1604.49558690015,8,Aug
+2025,California,USDA Forest Service,BUMMER,2025-10-29,2025-11-06,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,1936707.4609375,8460.38450220012,10,Oct
+2025,California,California Department of Forestry and Fire Protection,DUCK,2025-05-14,2025-05-14,Equipment Use,2 - GPS Air,Suppression (Wildfire),2020-2025,444107.03125,3479.73531685889,5,May
+2025,California,California Department of Forestry and Fire Protection,NELLA,2025-05-17,2025-05-17,Vehicle,4 - Other Imagery,Suppression (Wildfire),2020-2025,3340077.515625,9569.04823028698,5,May
+2025,California,Bureau of Land Management,DEBBIE,2025-07-16,2025-07-17,Unknown / Unidentified,7 - Mixed Collection Methods,Suppression (Wildfire),2020-2025,369527.6796875,3886.92480119965,7,Jul
+2025,California,California Department of Forestry and Fire Protection,FOREBAY,2025-09-02,2025-09-02,Lightning,5 - Photo Interpretation,Suppression (Wildfire),2020-2025,230595.98828125,3204.18182867428,9,Sep
+2025,California,California Department of Forestry and Fire Protection,WILLIAMS,2025-05-28,2025-05-28,Miscellaneous,1 - GPS Ground,Suppression (Wildfire),2020-2025,1199.4296875,184.975631344818,5,May
+2025,California,California Department of Forestry and Fire Protection,CREEK,2025-05-15,2025-05-15,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,427048.4609375,3283.67692082493,5,May
+2025,California,California Department of Forestry and Fire Protection,FISH,2025-07-07,2025-07-07,Unknown / Unidentified,4 - Other Imagery,Suppression (Wildfire),2020-2025,147094.9375,1618.06845950297,7,Jul
+2025,California,California Department of Forestry and Fire Protection,JOAQUIN,2025-09-25,2025-09-27,Lightning,3 - Infrared,Suppression (Wildfire),2020-2025,231121.47265625,3338.54605593955,9,Sep
+2025,California,California Department of Forestry and Fire Protection,BEALE AFB GRASS VALLEY GATE,2025-05-23,2025-05-23,Unknown / Unidentified,1 - GPS Ground,Suppression (Wildfire),2020-2025,382288.33984375,3341.0552864055,5,May
+2025,California,California Department of Forestry and Fire Protection,BOGGS,2025-09-10,2025-09-10,Lightning,1 - GPS Ground,Suppression (Wildfire),2020-2025,931223.64453125,4529.23953519419,9,Sep
