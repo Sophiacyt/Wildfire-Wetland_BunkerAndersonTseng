@@ -218,3 +218,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+path/to/your/file.geojson
+/scripts/A2/wetlands_subset.geojson
