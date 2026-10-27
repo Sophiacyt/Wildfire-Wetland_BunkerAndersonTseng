@@ -7533,6 +7533,8 @@ a.anchor-link {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="Data-Quality-Audit-&amp;-Preliminary-Exploratory-Analysis">Data Quality Audit &amp; Preliminary Exploratory Analysis<a class="anchor-link" href="#Data-Quality-Audit-&amp;-Preliminary-Exploratory-Analysis">¶</a></h3><p>Due to the large number of wetland polygons in California provided by the NWI (~900,000), the data was subset to only include wetland parcels larger than 1 HA (10000m^2). 21% of all California wetlands will be included in our analysis. This means that there will be inherent “missingness" within our dataset because smaller wetlands and small offshoots of wetland complexes are excluded from our analysis. There are no duplicates or implausible values within our dataset (Palustrine subsystems are N/A because there are none). The other data quality element performed on these dataframes was the parsing of the Cowardin Codes into columns labelled for system, subsystem, and class.</p>
+<p>We began with 891,086 rows,and 9 columns, but after subsetting to only include wetlands greater than a hectare, we are left with 179,139 rows.
+Some columns with information deemed unimportant that also contained missing values or were duplicates were dropped: 'QAQC_CODE', 'Shape_Leng', 'Shape_Area', and 'ACRES'.</p>
 </div>
 </div>
 </div>
@@ -7605,7 +7607,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Box folder found at /Users/masonbunker/Library/CloudStorage/Box-Box
+<pre>Box folder found at /Users/sophiatseng/Library/CloudStorage/Box-Box
 True
 </pre>
 </div>
