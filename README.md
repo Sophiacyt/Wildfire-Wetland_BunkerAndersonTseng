@@ -12,7 +12,29 @@ Group project about wildfire & wetland
 2. Are wildfires less frequent near wetlands? 
 3. Has wetland loss occured due to wildfires? 
 
-## Data Sources
+## Data 
+### Data Dictionary
+#### Wetland Dataset
+**Unit of observation:** Each row represents 
+
+| Variable Name | Definition | Unit of Measurement | Source Definition |
+|---|---|---|---|
+| country | Country being observed | Country name | |
+| year | Year of observation | Year | |
+| forest_cover | Forest cover in the country | % | |
+| gdp | Gross domestic product | USD | |
+
+#### Fire Dataset
+**Unit of observation:** Each row represents 
+
+| Variable Name | Definition | Unit of Measurement | Source Definition |
+|---|---|---|---|
+| country | Country being observed | Country name | |
+| year | Year of observation | Year | |
+| forest_cover | Forest cover in the country | % | |
+| gdp | Gross domestic product | USD | |
+
+### Sources
 1. fire
 2. California wetlands from the National Wetlands Inventory
 
@@ -69,7 +91,7 @@ df = pd.read_csv(data_path)
 df.head()
 ```
 
-Replace `YOUR_PROJECT_FOLDER` and `your_dataset.csv` with the appropriate folder and file names for your project.
+Replace `YOUR_PROJECT_FOLDER` and `your_dataset.csv` with the appropriate folder and file names
 
 ### Data cleaning 
 ### Statistical analysis 
