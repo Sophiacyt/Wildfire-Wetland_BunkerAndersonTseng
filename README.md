@@ -15,27 +15,91 @@ Group project about wildfire & wetland
 ## Data 
 ### Data Dictionary
 #### Wetland Dataset
-**Unit of observation:** Each row represents 
+Unit of observation: Each row represents one wetland observation
 
-| Variable Name | Definition | Unit of Measurement | Source Definition |
-|---|---|---|---|
-| country | Country being observed | Country name | |
-| year | Year of observation | Year | |
-| forest_cover | Forest cover in the country | % | |
-| gdp | Gross domestic product | USD | |
+| Variable Name | Unit of Measurement | Source Definition |
+|---|---|---|
+| C Code | N/A | Alphanumeric code identifying the wetland classification of the polygon | 
+| NWI Type | N/A | General description of the wetland based on the Cowardin wetland classification | 
+| Hectares | N/A | Polygons larger than 1 hectare | 
+| NWI ID | N/A | NWI Unique ID| 
+|geometry|||
+|C System|N/A| Cowardin System Definition. Has 5 types: marine, estuarine, riverine lacustrine, and palustrine|
+|C Subsystem |N/A| Cowardin Subsystem Definition. |
+|C Class |N/A| Cowardin class determined by aerial imagery of the wetland. |
+	
 
-#### Fire Dataset
-**Unit of observation:** Each row represents 
+#### Fire SHP Dataset
+Unit of observation: Each row represents one fire incident
 
-| Variable Name | Definition | Unit of Measurement | Source Definition |
-|---|---|---|---|
-| country | Country being observed | Country name | |
-| year | Year of observation | Year | |
-| forest_cover | Forest cover in the country | % | |
-| gdp | Gross domestic product | USD | |
+| Variable Name | Unit of Measurement | Source Definition |
+|---|---|---|
+| YEAR_ | Int64 | Year in which the fire started |
+| STATE | Text | State in which the fire started |
+| AGENCY | Text | Direct protection agency responsible for fire |
+| UNIT_ID | Text | ICS code for unit |
+| FIRE_NAME | Text | Name of the fire, UPPER CASE, without “fire” or “incident" following name |
+| INC_NUM | Text | Number assigned by the Emergency Command Center of the responsible agency for the fire |
+| IRWINID | Text | IRWIN stands for Integrated Reporting of Wildland Fire Information, a global unique identifier assigned at the onset of an incident. |
+| ALARM_DATE | DateTime | DD/MM/YYYY format, date of fire discovery |
+| CONT_DATE | DateTime | DD/MM/YYYY format Containment date for the fire |
+| C_METHOD | Int| Method used to collect perimeter data |
+| CAUSE | Int | Reason fire ignited |
+| OBJECTIVE | N/A | Tactic for fire response |
+| GIS_ACRES | Float | GIS calculated area, in acres |
+| COMPLEX_ID | Text | If part of complex, the complex incident number |
+| COMPLEX_NAME | Text | If part of complex, the complex name |
+| COMMENTS | Text | Miscellaneous comments |
+| FIRE_NUM | Text | Former numbering system preceding incident numbers |
+| Shape_Length |||
+| Shape_Area |||
+| GlobalID | Text |Unique ID|
+| geometry |||
+
+
+#### Fire CSV Dataset
+Unit of observation: Each row represents one fire incident
+
+| Variable Name | Unit of Measurement | Source Definition |
+|---|---|---|
+OBJECTID | Text | Random object id |
+Year | Int64 | Year in which the fire started |
+State | Text | State in which the fire started |
+Agency | Text | Direct protection agency responsible for fire |
+Unit ID | Text | ICS code for unit | 
+Fire Name | Text | Name of the fire, UPPER CASE, without "fire" or "incident" following name |
+Local Incident Number | Text | Number assigned by the Emergency Command Center of the responsible agency for the fire | 
+IRWIN ID | Text | IRWIN stands for Integrated Reporting of Wildland Fire Information, a global unique identifier assigned at the onset of an incident. |
+Alarm Date | DateTime | DD/MM/YYYY format, date of fire discovery |
+Containment Date | DateTime | DD/MM/YYYY format Containment date for the fire |
+Cause | Int | Reason fire ignited |
+Collection Method | Int | Method used to collect perimeter data |
+Management Objective
+GIS Calculated Acres | Float | GIS calculated area, in acres |
+Comments | Text | Miscellaneous comments |
+Complex Name | Text | If part of complex, the complex name |
+Complex ID | Text | If part of complex, the complex number |
+Fire Number (historical use) | Text | Former numbering system preceding incident numbers |
+GlobalID | Text | Unique ID |
+Decade | Int64 | Decade in which fire started
+Shape__Area | Float | Area inside fire perimeter, acres
+Shape__Length | Float | Area of fire perimeter, ft
+
+
+Minimum mapping requirements for CalFire: 
+1. Wildland timber fires greater than 10 acres.
+2. Wildland brush fires greater than 50 acres.
+3. Wildland grass fires greater than 300 acres.
+4. Wildland fires destroying three or more residential or commercial structures.
+5. Wildland fires resulting in a fatality.
+Minimum mapping requirements for State Parks:
+1. All prescribed fires
+Minimum Mapping requirements for BLM, NPS, & USFW:
+1. Wildland fires 10 acres or greater
+2. All prescribed fires
 
 ### Sources
-1. fire
+1. California Department of Forestry and Fire Protection
 2. California wetlands from the National Wetlands Inventory
 
 ## Methods
