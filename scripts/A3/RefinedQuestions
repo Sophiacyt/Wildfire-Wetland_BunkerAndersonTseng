@@ -1,21 +1,68 @@
-Refined questions and analysis choices	
-State your central question and supporting questions. Define the observations, variables, units, and intended comparisons. Identify any unresolved data limitations. Include this discussion in your knitted PDF or HTML report.
 
-## Central Question: What role do wetlands play in wildfire movement across the landscape?
-Supporting questions include: 
-- Do fires cross wetland boundaries?
-  1. Is there a wetland inside the fire area (binary)
+## Refined Questions and Analysis Choices
 
-- Are wildfires (regardless of fire size) less frequent near wetlands? 
-  1. The overall frequency of wildfires 
-  2. The frequency of wildfires close to wetlands 
-  3. The frequency of wildfires far away from wetlands
-*need to define “close” vs “far”
-frequency: fire incidents per month
-distance: radius (miles^2?)
+### Central Research Question
 
-- Has wetland loss occurred due to wildfires?
-  1. Compare wetland loss rates in areas where fire is more frequent vs less frequent
-  2. Wetland areas (sum of all nearby) at a certain point in time before vs after a fire 
-*need to define “nearby”, need to select some certain fire incidents to look at
-loss rates: change of area (hectare?)/ month or percent of area change/month
+**What role do wetlands play in wildfire movement across the landscape?**
+
+We aim to investigate the relationship between wetlands and wildfire activity by examining whether wildfires cross wetland boundaries, whether wildfire occurrence varies with proximity to wetlands, and whether wildfires contribute to wetland loss.
+
+### 1. Do wildfires cross wetland boundaries?
+
+**Analysis:** Examine the extent to which wildfire perimeters intersect or cross wetland boundaries.
+
+- **Observations:** Individual wildfire incidents and their corresponding fire perimeter polygons, overlaid with wetland boundaries.
+- **Variables:**
+  - Fire perimeter: spatial extent of each wildfire.
+  - Wetland boundary: spatial extent of mapped wetlands.
+  - Boundary intersection: whether a fire perimeter intersects a wetland boundary.
+- **Measurement / Unit:** Percentage of wildfire incidents whose perimeters intersect wetland boundaries (%).
+- **Intended comparisons:** Compare the number and proportion of fires that intersect wetland boundaries against those that do not.
+
+### 2. Are wildfires less frequent near wetlands?
+
+**Analysis:** Examine whether wildfire occurrence differs depending on proximity to wetlands.
+
+- **Observations:** Individual wildfire incidents and their spatial proximity to mapped wetland boundaries, aggregated by month.
+- **Variables:**
+  - Fire frequency: number of wildfire incidents per month.
+  - Distance to wetland: shortest distance between the edge of a fire perimeter and the edge of the nearest wetland.
+- **Measurement / Units:**
+  - Fire frequency: number of incidents per month (fires/month).
+  - Distance: kilometers (km).
+- **Intended comparisons:**
+  1. Overall wildfire frequency across the study area.
+  2. Wildfire frequency near wetlands.
+  3. Wildfire frequency farther away from wetlands.
+
+Compare monthly fire frequencies across these distance categories to investigate whether wildfire occurrence is associated with proximity to wetlands.
+
+### 3. Has wetland loss occurred due to wildfires?
+
+**Analysis:** Investigate changes in wetland area following wildfire events and whether wetland loss varies with wildfire frequency.
+
+- **Observations:** Wetland areas within selected geographic areas affected by wildfire events, measured at different points in time before and after fires.
+- **Variables:**
+  - Wetland area: total mapped wetland area within the selected geographic area.
+  - Fire frequency: number of wildfire incidents within the selected geographic area.
+  - Wetland area change: difference in mapped wetland area between pre-fire and post-fire observations.
+- **Measurement / Units:**
+  - Wetland area: hectares (ha).
+  - Wetland area change: hectares (ha) or percentage change (%).
+  - Wetland loss rate: hectares lost per month (ha/month), if sufficient temporal observations are available.
+- **Intended comparisons:**
+  1. Compare wetland area loss rates between areas with higher and lower wildfire frequency.
+  2. Compare total wetland area before and after selected wildfire events to identify potential changes following fire exposure.
+
+### 4. Unresolved Data Limitations and Methodological Considerations
+
+Several methodological decisions and data limitations still need to be addressed:
+
+1. **Defining wetland proximity:** We have not yet established a threshold for what constitutes "near" versus "far" from a wetland. We will need to determine appropriate distance thresholds (e.g., based on distance buffers or existing literature).
+
+2. **Comparability of fire frequency:** The number of fires near and far from wetlands may be influenced by differences in the geographic area being compared. We may need to account for the size of each area when comparing fire frequency.
+
+3. **Defining wetland loss:** We need to establish how to measure wetland area changes and identify suitable pre-fire and post-fire observation periods. We also need to select specific wildfire incidents or geographic areas for closer examination.
+
+4. **Attributing wetland loss to wildfires:** Changes in wetland area may also result from other factors, such as drought, land-use changes, or seasonal variation. Therefore, observing wetland loss after a fire does not necessarily establish that the fire caused the loss.
+
