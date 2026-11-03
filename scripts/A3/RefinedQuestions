@@ -16,8 +16,10 @@ We aim to investigate the relationship between wetlands and wildfire activity by
   - Fire perimeter: spatial extent of each wildfire.
   - Wetland boundary: spatial extent of mapped wetlands.
   - Boundary intersection: whether a fire perimeter intersects a wetland boundary.
-- **Measurement / Unit:** Number of wetlands whose boundaries intersect with wildfires.
-- **Measurement / Unit:** Acreage of wetland that was burned in 2025.
+- **Measurement / Unit:** Number of wetlands whose boundaries intersect with wildfires / count.
+- **Measurement / Unit:** Area of wetland that was burned in 2025 / ha.
+- **Measurement / Unit:** Percent of wetland area burned / percent.
+- **Measurement / Unit:** Percent of total 2025 fire area inside wetland / percent.
 - **Intended comparisons:** Compare the number and proportion of fires that intersect wetland boundaries against those that do not.
 
 ### 2. Are wildfires less frequent near wetlands?
