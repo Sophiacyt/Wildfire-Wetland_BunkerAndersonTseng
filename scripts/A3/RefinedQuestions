@@ -16,7 +16,8 @@ We aim to investigate the relationship between wetlands and wildfire activity by
   - Fire perimeter: spatial extent of each wildfire.
   - Wetland boundary: spatial extent of mapped wetlands.
   - Boundary intersection: whether a fire perimeter intersects a wetland boundary.
-- **Measurement / Unit:** Percentage of wildfire incidents whose perimeters intersect wetland boundaries (%).
+- **Measurement / Unit:** Number of wetlands whose boundaries intersect with wildfires.
+- **Measurement / Unit:** Acreage of wetland that was burned in 2025.
 - **Intended comparisons:** Compare the number and proportion of fires that intersect wetland boundaries against those that do not.
 
 ### 2. Are wildfires less frequent near wetlands?
@@ -58,11 +59,11 @@ Compare monthly fire frequencies across these distance categories to investigate
 
 Several methodological decisions and data limitations still need to be addressed:
 
-1. **Defining wetland proximity:** We have not yet established a threshold for what constitutes "near" versus "far" from a wetland. We will need to determine appropriate distance thresholds (e.g., based on distance buffers or existing literature).
+1. **Defining wetland proximity:** We have not yet established a threshold for what constitutes "near" versus "far" from a wetland. We will need to determine appropriate distance thresholds (e.g., based on distance buffers or existing literature). First steps analysis use a buffer of 5 kilometers.
 
 2. **Comparability of fire frequency:** The number of fires near and far from wetlands may be influenced by differences in the geographic area being compared. We may need to account for the size of each area when comparing fire frequency.
 
-3. **Defining wetland loss:** We need to establish how to measure wetland area changes and identify suitable pre-fire and post-fire observation periods. We also need to select specific wildfire incidents or geographic areas for closer examination.
+3. **Defining wetland loss:** We need to establish how to measure wetland area changes and identify suitable pre-fire and post-fire observation periods. We also need to select specific wildfire incidents or geographic areas for closer examination. 
 
 4. **Attributing wetland loss to wildfires:** Changes in wetland area may also result from other factors, such as drought, land-use changes, or seasonal variation. Therefore, observing wetland loss after a fire does not necessarily establish that the fire caused the loss.
 
