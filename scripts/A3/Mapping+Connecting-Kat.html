@@ -7822,6 +7822,7 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h2 id="Initial-Analytical-Application">Initial Analytical Application<a class="anchor-link" href="#Initial-Analytical-Application">¶</a></h2><p>To address our central question “What role do wetlands play in wildfire movement across the landscape?”, we have chosen to use spatial analysis. This fits our data, because both the wetlands data from the National Wetlands Inventory and the CalFires Fire Perimeters datasets have associated footprints. Spatial analysis also fits well with our central question, because we want to know where and how much overlap there is between wildfires and wetlands.</p>
 <p>We began our analysis with a simple examination of both sets of data (NWI wetlands and CalFire Fire Perimeters), learning about the spatial and temporal distribution of the data. We then used the package Geopandas to perform a nearest neighbor spatial join to determine the distance between each wetland observation and the nearest fire observation. Next, we performed a spatial join between our datasets to obtain the area of wetlands burned in 2025 and determined that there were 1,134 wetlands that experienced a fire in 2025. This join was validated using nearest neighbor data - the number of wetlands with a distance of 0 to the nearest fire matched the number of intersecting records following the spatial join.  Finally, we buffered the wetland dataset by 5km and performed another spatial join to determine the area burned within 5 kilometers of a wetland and determined that there were 27,514 wetlands that had a fire within 5 kilometers.</p>
+<p>To include a robustness comparison, we include not only the amount of area burned as hectares, but also as a percentage of total wetland area and total fire area.</p>
 </div>
 </div>
 </div>
@@ -7984,7 +7985,7 @@ True
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [32]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [44]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># make sure we know shape of both datasets</span>
@@ -8044,6 +8045,40 @@ True
 EPSG:5070
 EPSG:26910
 EPSG:26910
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=4566ae63">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [43]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># calculate the total area of fire in CA in hectares</span>
+<span class="n">fire_area</span> <span class="o">=</span> <span class="n">fire_crs</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">10000</span>
+<span class="c1"># calculate the total area of wetlands in CA</span>
+<span class="n">wetlands_area</span> <span class="o">=</span> <span class="n">wetlands_crs</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">10000</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'total fire area: </span><span class="si">{</span><span class="n">fire_area</span><span class="si">}</span><span class="s1"> hectares'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'total wetlands area: </span><span class="si">{</span><span class="n">wetlands_area</span><span class="si">}</span><span class="s1"> hectares'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>total fire area: 206320.6875409995 hectares
+total wetlands area: 3382322.7053495385 hectares
 </pre>
 </div>
 </div>
@@ -8570,12 +8605,25 @@ EPSG:26910
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [52]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># now edit fire stats to include wetland area burned by system</span>
 <span class="n">burned</span> <span class="o">=</span> <span class="n">intersect</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'C System'</span><span class="p">)[</span><span class="s1">'int_area_ha'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 <span class="n">fire_stats</span><span class="p">[</span><span class="s1">'Burned Area (ha)'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fire_stats</span><span class="p">[</span><span class="s1">'C System'</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">burned</span><span class="p">)</span>
+
+<span class="c1"># add percentage of wetland area burned by system</span>
+<span class="c1"># get wetland area by system</span>
+<span class="n">total_wetlands</span> <span class="o">=</span> <span class="n">wetlands_crs</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'C System'</span><span class="p">)[</span><span class="s1">'geometry'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">10000</span><span class="p">)</span>
+
+<span class="c1"># sanity check - total wetland area does match the sum of each system</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">total_wetlands</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">==</span> <span class="nb">round</span><span class="p">(</span><span class="n">wetlands_area</span><span class="p">))</span>
+
+<span class="c1"># add wetland area to fire stats table</span>
+<span class="n">fire_stats</span><span class="p">[</span><span class="s1">'Total Wetland Area (ha)'</span><span class="p">]</span> <span class="o">=</span> <span class="n">fire_stats</span><span class="p">[</span><span class="s1">'C System'</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">total_wetlands</span><span class="p">)</span>
+
+<span class="n">fire_stats</span><span class="p">[</span><span class="s1">'Percent Wetland Area Burned'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">fire_stats</span><span class="p">[</span><span class="s1">'Burned Area (ha)'</span><span class="p">]</span> <span class="o">/</span> <span class="n">fire_stats</span><span class="p">[</span><span class="s1">'Total Wetland Area (ha)'</span><span class="p">])</span> <span class="o">*</span><span class="mi">100</span>
+
 <span class="n">fire_stats</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -8586,8 +8634,15 @@ EPSG:26910
 <div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>True
+</pre>
+</div>
+</div>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[19]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[52]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -8614,6 +8669,8 @@ EPSG:26910
 <th>Range_Dist_Fire_km</th>
 <th>IQR_Dist_Fire_km</th>
 <th>Burned Area (ha)</th>
+<th>Total Wetland Area (ha)</th>
+<th>Percent Wetland Area Burned</th>
 </tr>
 </thead>
 <tbody>
@@ -8626,6 +8683,8 @@ EPSG:26910
 <td>77.377007</td>
 <td>20.387559</td>
 <td>0.175689</td>
+<td>1.638092e+05</td>
+<td>0.000107</td>
 </tr>
 <tr>
 <th>1</th>
@@ -8636,6 +8695,8 @@ EPSG:26910
 <td>184.902020</td>
 <td>18.550049</td>
 <td>137.867565</td>
+<td>7.862960e+05</td>
+<td>0.017534</td>
 </tr>
 <tr>
 <th>2</th>
@@ -8646,6 +8707,8 @@ EPSG:26910
 <td>111.962243</td>
 <td>21.480902</td>
 <td>4.505302</td>
+<td>1.342564e+06</td>
+<td>0.000336</td>
 </tr>
 <tr>
 <th>3</th>
@@ -8656,6 +8719,8 @@ EPSG:26910
 <td>189.129597</td>
 <td>19.731767</td>
 <td>1349.317309</td>
+<td>6.795560e+05</td>
+<td>0.198559</td>
 </tr>
 <tr>
 <th>4</th>
@@ -8666,6 +8731,134 @@ EPSG:26910
 <td>191.569958</td>
 <td>20.699499</td>
 <td>1330.207814</td>
+<td>4.100976e+05</td>
+<td>0.324364</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=78539a16">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [53]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># add to table the percent of CA fire area that is in wetland by system</span>
+<span class="n">fire_stats</span><span class="p">[</span><span class="s1">'Percent of Fire Area in Wetlands'</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">fire_stats</span><span class="p">[</span><span class="s1">'Burned Area (ha)'</span><span class="p">]</span> <span class="o">/</span> <span class="n">fire_area</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="n">fire_stats</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[53]:</div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+<thead>
+<tr style="text-align: right;">
+<th></th>
+<th>C System</th>
+<th>Avg_Dist_Fire_km</th>
+<th>Std_Dist_Fire_km</th>
+<th>Median_Dist_Fire_km</th>
+<th>Range_Dist_Fire_km</th>
+<th>IQR_Dist_Fire_km</th>
+<th>Burned Area (ha)</th>
+<th>Total Wetland Area (ha)</th>
+<th>Percent Wetland Area Burned</th>
+<th>Percent of Fire Area in Wetlands</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>0</th>
+<td>Estuarine</td>
+<td>22.976303</td>
+<td>20.434598</td>
+<td>17.234116</td>
+<td>77.377007</td>
+<td>20.387559</td>
+<td>0.175689</td>
+<td>1.638092e+05</td>
+<td>0.000107</td>
+<td>0.000085</td>
+</tr>
+<tr>
+<th>1</th>
+<td>Lacustrine</td>
+<td>21.800034</td>
+<td>16.374344</td>
+<td>18.945761</td>
+<td>184.902020</td>
+<td>18.550049</td>
+<td>137.867565</td>
+<td>7.862960e+05</td>
+<td>0.017534</td>
+<td>0.066822</td>
+</tr>
+<tr>
+<th>2</th>
+<td>Marine</td>
+<td>28.184545</td>
+<td>18.768883</td>
+<td>26.063212</td>
+<td>111.962243</td>
+<td>21.480902</td>
+<td>4.505302</td>
+<td>1.342564e+06</td>
+<td>0.000336</td>
+<td>0.002184</td>
+</tr>
+<tr>
+<th>3</th>
+<td>Palustrine</td>
+<td>23.656434</td>
+<td>23.122075</td>
+<td>17.964862</td>
+<td>189.129597</td>
+<td>19.731767</td>
+<td>1349.317309</td>
+<td>6.795560e+05</td>
+<td>0.198559</td>
+<td>0.653990</td>
+</tr>
+<tr>
+<th>4</th>
+<td>Riverine</td>
+<td>23.102199</td>
+<td>25.251692</td>
+<td>15.678355</td>
+<td>191.569958</td>
+<td>20.699499</td>
+<td>1330.207814</td>
+<td>4.100976e+05</td>
+<td>0.324364</td>
+<td>0.644728</td>
 </tr>
 </tbody>
 </table>
@@ -8681,7 +8874,7 @@ EPSG:26910
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Adding to our statistics table divided by Cowardin wetland system, we see that Estuarine and Marine wetland systems had very little area burned compared to the three other systems, with Riverine and Palustrine systems having the greatest area burned. Perhaps this variation can be explained by amount of open water present in coastal (Estuarine and Marine) and Lacustrine systems.</p>
+<p>Adding to our statistics table divided by Cowardin wetland system, we see that Estuarine and Marine wetland systems had very little area burned compared to the three other systems, with Riverine and Palustrine systems having the greatest area burned. Perhaps this variation can be explained by amount of open water present in coastal (Estuarine and Marine) and Lacustrine systems. Overall we see a very small percentage of total wetland area in California being burned, and that a very small percentage of the total area burned in California was inside wetlands.</p>
 </div>
 </div>
 </div>
@@ -8994,7 +9187,7 @@ EPSG:26910
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [24]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [54]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># now edit fire stats to include area within 5km of wetlands burned by system</span>
@@ -9011,7 +9204,7 @@ EPSG:26910
 </div>
 <div class="jp-OutputArea jp-Cell-outputArea">
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[24]:</div>
+<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[54]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <div>
 <style scoped="">
@@ -9038,6 +9231,9 @@ EPSG:26910
 <th>Range_Dist_Fire_km</th>
 <th>IQR_Dist_Fire_km</th>
 <th>Burned Area (ha)</th>
+<th>Total Wetland Area (ha)</th>
+<th>Percent Wetland Area Burned</th>
+<th>Percent of Fire Area in Wetlands</th>
 <th>Burned Area w/in 5km (ha)</th>
 </tr>
 </thead>
@@ -9051,6 +9247,9 @@ EPSG:26910
 <td>77.377007</td>
 <td>20.387559</td>
 <td>0.175689</td>
+<td>1.638092e+05</td>
+<td>0.000107</td>
+<td>0.000085</td>
 <td>5.766763e+03</td>
 </tr>
 <tr>
@@ -9062,6 +9261,9 @@ EPSG:26910
 <td>184.902020</td>
 <td>18.550049</td>
 <td>137.867565</td>
+<td>7.862960e+05</td>
+<td>0.017534</td>
+<td>0.066822</td>
 <td>1.253564e+05</td>
 </tr>
 <tr>
@@ -9073,6 +9275,9 @@ EPSG:26910
 <td>111.962243</td>
 <td>21.480902</td>
 <td>4.505302</td>
+<td>1.342564e+06</td>
+<td>0.000336</td>
+<td>0.002184</td>
 <td>7.436907e+04</td>
 </tr>
 <tr>
@@ -9084,6 +9289,9 @@ EPSG:26910
 <td>189.129597</td>
 <td>19.731767</td>
 <td>1349.317309</td>
+<td>6.795560e+05</td>
+<td>0.198559</td>
+<td>0.653990</td>
 <td>2.488495e+06</td>
 </tr>
 <tr>
@@ -9095,6 +9303,9 @@ EPSG:26910
 <td>191.569958</td>
 <td>20.699499</td>
 <td>1330.207814</td>
+<td>4.100976e+05</td>
+<td>0.324364</td>
+<td>0.644728</td>
 <td>4.336169e+06</td>
 </tr>
 </tbody>
@@ -9111,12 +9322,13 @@ EPSG:26910
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The summary table provides information about each Cowardin system's distance to the nearest wildfires, total burned area for each type of wetland, and total burned area within 5 kilometers for each type of wetland. Next steps for continued analysis include identifying and running appropriate analyses to test for statistical significance.</p>
+<p>The summary table provides information about each Cowardin system's distance to the nearest wildfires, total burned area for each type of wetland, total burned area within 5 kilometers for each type of wetland, and the percentages of wetland burned by system and percentage of all California fires that took place inside wetlands. Next steps for continued analysis include identifying and running appropriate analyses to test for statistical significance.</p>
 <ul>
 <li>Average distance does not seem to vary much between system, but needs more analysis.</li>
 <li>Median distance does seem to vary between each system, with Marine wetlands having a farther distance to the nearest wildfire than the others, possibly explained by the fact that Marine wetlands are typically close to open ocean.</li>
 <li>Burned area also varies between wetland systems, with coastal wetlands having less burned area than the other systems</li>
 <li>Burned area within 5 kilometers of a wetland follows the same trend of coastal wetlands having less burned area nearby than the other systems.</li>
+<li>Fire within Riverine and Palustrine systems accounts for slightly greater than 1% of total wildfires in CA in 2025, correlating with the systems that had the most wetland area burned.</li>
 </ul>
 </div>
 </div>
