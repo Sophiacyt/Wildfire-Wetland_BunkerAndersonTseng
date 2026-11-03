@@ -1,0 +1,21 @@
+Refined questions and analysis choices	
+State your central question and supporting questions. Define the observations, variables, units, and intended comparisons. Identify any unresolved data limitations. Include this discussion in your knitted PDF or HTML report.
+
+## Central Question: What role do wetlands play in wildfire movement across the landscape?
+Supporting questions include: 
+- Do fires cross wetland boundaries?
+  1. Is there a wetland inside the fire area (binary)
+
+- Are wildfires (regardless of fire size) less frequent near wetlands? 
+  1. The overall frequency of wildfires 
+  2. The frequency of wildfires close to wetlands 
+  3. The frequency of wildfires far away from wetlands
+*need to define “close” vs “far”
+frequency: fire incidents per month
+distance: radius (miles^2?)
+
+- Has wetland loss occurred due to wildfires?
+  1. Compare wetland loss rates in areas where fire is more frequent vs less frequent
+  2. Wetland areas (sum of all nearby) at a certain point in time before vs after a fire 
+*need to define “nearby”, need to select some certain fire incidents to look at
+loss rates: change of area (hectare?)/ month or percent of area change/month
