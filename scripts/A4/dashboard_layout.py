@@ -129,12 +129,6 @@ def plot_fire_cause(alarm_start_date, alarm_end_date, cause, size):
 
 
 
-
-
-
-
-
-
 # -----------------------------------------------------------------------
 
 ## FIRE DISTANCE WIDGET SETUP
@@ -182,6 +176,9 @@ def plot_firedist(year):
     )
 
     return g.figure
+
+
+
 # -----------------------------------------------------------------------
 # WETLANDS BURNED WIDGET SETUP
 # Path to saved fire overlap data
@@ -239,7 +236,6 @@ def plot_fireint(system):
 
 
 # -----------------------------------------------------------------------
-# Dashboard Layout
 
 # Dashboard Layout
 
@@ -277,9 +273,15 @@ app_ui = ui.page_fluid(
 
     # Header
     ui.h1("Wildfires and Wetlands"),
-    ui.p(
-        "What is the spatial relationship between wildfires "
-        "and California wetlands between 2020 and 2025?"
+    # describe the goals of the project
+    ui.p("Central Question: What role do wetlands play in wildfire movement across California?"
+    ),
+    ui.p("Intended Audience: Wildfire or wetland researchers with some prior subject knowledge."
+        ),
+    ui.p("Limitations"),
+    ui.tags.ul( # add some bullet points for systems
+            ui.tags.li("Restricted to fires with available spatial data in the form of a vector perimeter."),
+            ui.tags.li("Wetlands data subset to include only wetlands greater than 10 hectares in area"),
     ),
     ui.hr(),
 
@@ -291,7 +293,9 @@ app_ui = ui.page_fluid(
     ui.h3("Wildfire Data"),
     ui.p("Wildfire shapefile data comes from the California Historical Fire Perimeters dataset, maintained by CalFire, "
     "and reporting fires greater than or equal to 10 acres inside the state between 1910 and 2025. For " \
-    "this project, data has been subset to years between 2020 and 2025."), 
+    "this project, data has been subset to years between 2020 and 2025. Use the plot below to explore " \
+    "fires in California from 2020 to 2025 by cause and by size."), 
+
 
     # add sophia's plot that shows fire by cause with date slider
     ui.input_date_range(
@@ -322,15 +326,19 @@ app_ui = ui.page_fluid(
         },
         selected=0
     ),
+ui.div(
 
+    # put plot in a container so that it does not get stretched out
     ui.output_plot("fire_cause_plot"),
-
+    style="max-width: 850px; margin: 30px auto 30px auto;"
+),
+    
     ui.hr(),
 
     # Wetlands data
     ui.h3("Wetlands Data"),
     ui.p("Wetlands shapefile data comes from the National Wetland Inventory, downloaded for the state of California. This dataset" \
-    "divides wetlands into Cowardin (1979) wetlands classifications of 5 systems, and additional subsystems," \
+    " divides wetlands into Cowardin (1979) wetlands classifications of 5 systems, and additional subsystems, " \
     "classes, and subclasses. System descriptions are as follows." ),
     
     ui.tags.ul( # add some bullet points for systems
@@ -345,9 +353,25 @@ app_ui = ui.page_fluid(
     ui.hr(),
 
     #---------------------------------------------------
+    ui.h1("Analysis"),
+
+    ui.p("To address our central question “What role do wetlands play in wildfire movement across the landscape?”, "
+    "we have chosen to use spatial analysis. This fits our data, because both the wetlands data from the National Wetlands Inventory and "
+    "the CalFires Fire Perimeters datasets have associated footprints. Spatial analysis also fits well with our central question, "
+    "because we want to know where and how much overlap there is between wildfires and wetlands. We began our analysis with a simple "
+    "examination of both sets of data (NWI wetlands and CalFire Fire Perimeters), learning about the spatial and temporal distribution of the data. "
+    "We then used the package Geopandas to perform a nearest neighbor spatial join to determine the distance between each wetland observation "
+    "and the nearest fire observation. Next, we performed a spatial join between our datasets to obtain the area of wetlands burned in 2025 and "
+    "determined that there were 1,134 wetlands that experienced a fire in 2025. This join was validated using nearest neighbor data - "
+    "the number of wetlands with a distance of 0 to the nearest fire matched the number of intersecting records following the spatial join. "
+    "To include a robustness comparison, we include not only the amount of area burned as hectares, but also as a percentage of total wetland area and total fire area."),
 
     # DISTANCE TO NEAREST FIRE WIDGET
     ui.h3("Distance to Nearest Fire"),
+
+    ui.p("The distribution of distance from each wetland to the nearest fire is heavily skewed " \
+    "to the right, with the most wetlands having a fire between 0km and 20km away from their perimeter " \
+    "during each year from 2020 to 2025."),
     ui.input_select(
         "year",
         "Select Year:",
@@ -358,7 +382,7 @@ app_ui = ui.page_fluid(
 
     # put plot in a container so that it does not get stretched out
     ui.output_plot("fire_plot"),
-    style="max-width: 850px; margin: margin: 30px auto 30px auto;"
+    style="max-width: 850px; margin: 30px auto 30px auto;"
     ),
 
     ui.hr(),
@@ -367,6 +391,13 @@ app_ui = ui.page_fluid(
     
     # PCT BURNED AREA WIDGET
     ui.h3("Percent of Wetland Area Burned by Wetland Type"),
+    ui.p("By comparing the percent of wetland area burned inside each system through the years," \
+    " we can not only see which wetland systems have the most burned area, but also which years had" \
+    " fires with great impact on wetlands. Overall, the percent of wetlands burned compared to total wetland" \
+    " area remains low, indicating that a majority of wetlands in California did not experience a wildfire " \
+    "in the last 5 years. Palustrine and Riverine wetlands had much larger percentages of area burned " \
+    "compared to the other three systems."),
+
     ui.input_select(
         "system",
         "Select Wetland System:",
@@ -377,10 +408,28 @@ app_ui = ui.page_fluid(
 
     # put plot in a container so that it does not get stretched out
     ui.output_plot("fireint_plot"),
-    style="max-width: 850px; margin: margin: 30px auto 30px auto;"
-)
+    style="max-width: 850px; margin: 30px auto 30px auto;"
+),
+
+#---------------------------------------------------
+    # SUMMARY CHART 
+    ui.h3("Data Summary Table"),
+
+
+
+
+
+
+
+
+#---------------------------------------------------
+
 
 )
+
+   
+
+
 
 
 
