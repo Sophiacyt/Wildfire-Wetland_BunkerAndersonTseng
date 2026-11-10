@@ -21,7 +21,7 @@ import platform
 # -----------------------------------------------------------------------
 
 # establish paths to datasets
-project_fldr = Path.cwd().parents[1]
+project_fldr = Path(__file__).resolve().parents[2]
 raw_fldr = project_fldr / 'data' / 'raw'
 processed_fldr = project_fldr / 'data' / 'processed'
 figure_fldr = project_fldr/"figures"
