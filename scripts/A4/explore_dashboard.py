@@ -1,16 +1,9 @@
 # TO RUN: 
 # conda activate env700-shiny
-<<<<<<< HEAD
-# shiny run --reload scripts/A4/dashboard_layout.py 
-
-# if mason and struggling, run below
-# shiny run --reload dashboard_layout.py
-=======
 # shiny run --reload scripts/A4/explore_dashboard.py 
 
 # if mason and struggling, run below
 # shiny run --reload explore_dashboard.py
->>>>>>> c402306326e9aded29feed40124d0d42baa69064
 
 # be a little patient with it starting, need to see this line in terminal output
 #       INFO:     Application startup complete.
@@ -19,9 +12,6 @@
 import folium
 from pathlib import Path
 import pandas as pd
-<<<<<<< HEAD
-import geopandas as gpd
-=======
 import geopandas as gpd
 from shiny import App, ui
 import platform
@@ -313,4 +303,3 @@ app_ui = ui.page_fluid(
 
 app = App(app_ui, server=None)
 
->>>>>>> c402306326e9aded29feed40124d0d42baa69064
