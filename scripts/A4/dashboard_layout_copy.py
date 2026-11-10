@@ -1,6 +1,6 @@
 # TO RUN: 
 # conda activate env700-shiny
-# shiny run --reload scripts/A4/dashboard_layout.py 
+# shiny run --reload scripts/A4/dashboard_layout_copy.py 
 
 # if mason and struggling, run below
 # shiny run --reload dashboard_layout.py
@@ -243,7 +243,7 @@ def plot_fireint(system):
 years = [2020, 2021, 2022, 2023, 2024, 2025]
 
 # we already went through the overlap stats
-overlap_list = fire_stats_all
+overlap_stats = fire_stats_all
 
 # Load yearly fire distance statistics
 dist_list = []
@@ -274,6 +274,37 @@ summary_table = pd.merge(
 summary_table = summary_table.sort_values(
     ["Year", "C System"]
 ).reset_index(drop=True)
+
+# Rename columns for dashboard presentation
+summary_table = summary_table.rename(columns={
+    "C System": "Wetland System",
+    "Year": "Year",
+    "Burned Area (ha)": "Burned Area (ha)",
+    "Total Wetland Area (ha)": "Total Wetland Area (ha)",
+    "Percent Wetland Area Burned": "% of Wetland Area Burned",
+    "Percent of Fire Area in Wetlands": "% of Fire Area in Wetlands",
+    "Avg_Dist_Fire_km": "Average Distance to Fire (km)",
+    "Std_Dist_Fire_km": "Standard Deviation of Distance (km)",
+    "Median_Dist_Fire_km": "Median Distance to Fire (km)"
+})
+# re-order columns for presentation
+summary_table = summary_table[
+    [
+        "Year",
+        "Wetland System",
+        "Burned Area (ha)",
+        "Total Wetland Area (ha)",
+        "% of Wetland Area Burned",
+        "% of Fire Area in Wetlands",
+        "Average Distance to Fire (km)",
+        "Standard Deviation of Distance (km)",
+        "Median Distance to Fire (km)"
+    ]
+]
+
+# change formatting to shorten decimals, show percents
+summary_table = summary_table.round(3)
+
 
 # -----------------------------------------------------------------------
 
@@ -335,6 +366,12 @@ app_ui = ui.page_fluid(
     "and reporting fires greater than or equal to 10 acres inside the state between 1910 and 2025. For " \
     "this project, data has been subset to years between 2020 and 2025. Use the plot below to explore " \
     "fires in California from 2020 to 2025 by cause and by size."), 
+
+    ui.p("Overall, the findings suggest that wildfire ignition causes are associated with " \
+    "different seasonal patterns and fire-size distributions. Lightning is particularly notable "
+    "for its association with large burned areas, while several human-related causes are more frequently " \
+    "associated with smaller fires. These observations highlight the importance of considering both ignition " \
+    "frequency and burned area when evaluating wildfire risk, rather than relying on fire occurrence alone."),
 
 
     # add sophia's plot that shows fire by cause with date slider
@@ -453,10 +490,7 @@ ui.div(
 
 #---------------------------------------------------
     # SUMMARY CHART 
-    ui.h3("Data Summary Table"),
-
-
-    ui.h2("Summary Statistics"),
+    ui.h3("Summary Statistics"),
 
     ui.input_select(
         "summary_year",
