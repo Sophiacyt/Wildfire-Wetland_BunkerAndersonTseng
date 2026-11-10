@@ -14,6 +14,127 @@ import geopandas as gpd
 import calendar
 import pygris
 from shiny import App, ui, render, reactive
+import matplotlib.ticker as ticker
+
+# -----------------------------------------------------------------------
+# FIRE BY CAUSE WIDGET SETUP
+# --------------------------------------------------
+# FIRE BY CAUSE DATA SETUP
+# --------------------------------------------------
+
+# Read in cleaned fire dataset
+project_fldr = Path(__file__).resolve().parents[2]
+
+# Locate the processed data folder
+processed_fldr = project_fldr / 'data' / 'processed'
+
+# Load the fire shapefile
+fire_shp_25 = gpd.read_file(
+    processed_fldr / 'fire_shp_25' / 'fire_shp_25.shp'
+)
+
+# Convert dates to datetime
+fire_shp_25['ALARM_DATE'] = pd.to_datetime(
+    fire_shp_25['ALARM_DATE'], utc=True
+)
+
+fire_shp_25['CONT_DATE'] = pd.to_datetime(
+    fire_shp_25['CONT_DATE'], utc=True
+)
+
+# Convert alarm month to categorical
+fire_shp_25['Alarm Mo_1'] = pd.Categorical(
+    values=fire_shp_25['Alarm Mo_1'],
+    categories=calendar.month_abbr[1:]
+)
+
+# Map fire cause codes to descriptions
+code_to_cause = {
+    1: "Lightning",
+    2: "Equipment Use",
+    3: "Smoking",
+    4: "Campfire",
+    5: "Debris",
+    6: "Railroad",
+    7: "Arson",
+    8: "Playing with fire",
+    9: "Miscellaneous",
+    10: "Vehicle",
+    11: "Powerline",
+    12: "Firefighter Training",
+    13: "Non-Firefighter Training",
+    14: "Unknown/Unidentified",
+}
+
+fire_shp_25['CAUSE_NAME'] = fire_shp_25['CAUSE'].map(
+    code_to_cause
+)
+
+# Available fire causes for dropdown
+cause_list = sorted(
+    fire_shp_25['CAUSE_NAME'].dropna().unique()
+)
+
+# Fixed containment date range
+cont_start_date = "2020-01-01"
+cont_end_date = "2025-12-31"
+
+size_options = {
+    "All sizes": 0,
+    "10,000+ hectares": 100_000_000,
+    "50,000+ hectares": 500_000_000,
+    "100,000+ hectares": 1_000_000_000,
+    "500,000+ hectares": 5_000_000_000
+}
+
+def plot_fire_cause(alarm_start_date, alarm_end_date, cause, size):
+
+    # Filter the fire data
+    fire_subset = fire_shp_25.loc[
+    (fire_shp_25['ALARM_DATE'] >= pd.to_datetime(alarm_start_date, utc=True)) &
+    (fire_shp_25['ALARM_DATE'] <= pd.to_datetime(alarm_end_date, utc=True)) &
+    (fire_shp_25['CONT_DATE'] >= pd.Timestamp("2020-01-01", tz="UTC")) &
+    (fire_shp_25['CONT_DATE'] <= pd.Timestamp("2025-12-31 23:59:59", tz="UTC")) &
+    (fire_shp_25['CAUSE_NAME'] == cause) &
+    (fire_shp_25['Shape_Area'] >= size)
+    ]
+
+    # Create the plot
+    the_plot = sns.relplot(
+        data=fire_subset,
+        x='Alarm Mo_1',
+        y='Shape_Area',
+        hue='CAUSE_NAME',
+        size='Shape_Area',
+        alpha=0.7,
+        legend=True
+    )
+
+    # Add labels and title
+    the_plot.set_axis_labels(
+        'Alarm Month',
+        'Fire Size (hectares)'
+    )
+    the_plot.set(title='Fire by Cause')
+
+    # Format the y-axis from square meters to hectares
+    ax = the_plot.ax
+    ax.yaxis.set_major_formatter(
+        ticker.FuncFormatter(lambda x, pos: f'{x / 10_000:g}')
+    )
+
+    return the_plot.figure
+
+
+
+
+
+
+
+
+
+
+
 # -----------------------------------------------------------------------
 
 ## FIRE DISTANCE WIDGET SETUP
@@ -171,7 +292,38 @@ app_ui = ui.page_fluid(
     ui.p("Wildfire shapefile data comes from the California Historical Fire Perimeters dataset, maintained by CalFire, "
     "and reporting fires greater than or equal to 10 acres inside the state between 1910 and 2025. For " \
     "this project, data has been subset to years between 2020 and 2025."), 
-    ui.tags.ul(),
+
+    # add sophia's plot that shows fire by cause with date slider
+    ui.input_date_range(
+    "alarm_dates",
+    "Select Alarm Date Range:",
+    start="2020-01-01",
+    end="2025-12-31",
+    min="2020-01-01",
+    max="2025-12-31"
+    ),
+
+    ui.input_select(
+        "cause",
+        "Select Fire Cause:",
+        choices=cause_list,
+        selected="Lightning"
+    ),
+
+    ui.input_select(
+        "fire_size",
+        "Minimum Fire Size:",
+        choices={
+            "All sizes": 0,
+            "10,000+ hectares": 100_000_000,
+            "50,000+ hectares": 500_000_000,
+            "100,000+ hectares": 1_000_000_000,
+            "500,000+ hectares": 5_000_000_000
+        },
+        selected=0
+    ),
+
+    ui.output_plot("fire_cause_plot"),
 
     ui.hr(),
 
@@ -238,6 +390,29 @@ app_ui = ui.page_fluid(
 # INIT SERVER
 
 def server(input, output, session):
+
+    @render.plot
+    def fire_cause_plot():
+
+        # Get the selected alarm date range
+        alarm_dates = input.alarm_dates()
+        alarm_start_date = alarm_dates[0]
+        alarm_end_date = alarm_dates[1]
+
+        # Get the selected fire cause
+        selected_cause = input.cause()
+
+        # Get the selected minimum fire size
+        selected_size = size_options[input.fire_size()]
+
+        # Generate the plot
+        return plot_fire_cause(
+            alarm_start_date,
+            alarm_end_date,
+            selected_cause,
+            selected_size
+        )
+
 
     @render.plot
     def fire_plot():
