@@ -1,9 +1,10 @@
 # TO RUN: 
 # conda activate env700-shiny
-# shiny run --reload scripts/A4/dashboard_layout_copy.py 
+# shiny run --reload scripts/A4/dashboard_layout_a4.py 
 
 # if mason and struggling, run below
-# shiny run --reload dashboard_layout.py
+# cd ~/Desktop/Duke/Environmental\ Data\ Exploration/Wildfire-Wetland_BunkerAndersonTseng/scripts/A4
+# shiny run --reload dashboard_layout_a4.py
 
 # be a little patient with it starting, need to see this line in terminal output
 #       INFO:     Application startup complete.
@@ -613,7 +614,6 @@ app_ui = ui.page_fluid(
     
                 ui.HTML(fire_map_left._repr_html_()),
     
-                height="800px"
             ),
     
             # WETLAND CONTAINER
@@ -624,7 +624,7 @@ app_ui = ui.page_fluid(
     
                 ui.HTML(wetland_map_right._repr_html_()),
     
-                height="800px"
+
             ),
     
             col_widths=[6, 6]
