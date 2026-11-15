@@ -653,25 +653,14 @@ app_ui = ui.page_fluid(
     max="2025-12-31"
     ),
 
-    ui.input_select(
-        "cause",
-        "Select Fire Cause:",
-        choices=cause_list,
-        selected="Lightning"
+    ui.input_checkbox_group(
+    "cause",
+    "Select Fire Cause:",
+    choices=cause_list,
+    selected=["Lightning"],
+    inline=False    
     ),
 
-    ui.input_select(
-        "fire_size",
-        "Minimum Fire Size:",
-        choices={
-            "All sizes": 0,
-            "10,000+ hectares": 100_000_000,
-            "50,000+ hectares": 500_000_000,
-            "100,000+ hectares": 1_000_000_000,
-            "500,000+ hectares": 5_000_000_000
-        },
-        selected=0
-    ),
 ui.div(
 
     # put plot in a container so that it does not get stretched out
@@ -806,15 +795,11 @@ def server(input, output, session):
         # Get the selected fire cause
         selected_cause = input.cause()
 
-        # Get the selected minimum fire size
-        selected_size = size_options[input.fire_size()]
-
         # Generate the plot
         return plot_fire_cause(
             alarm_start_date,
             alarm_end_date,
-            selected_cause,
-            selected_size
+            selected_cause
         )
 
 
