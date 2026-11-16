@@ -154,14 +154,27 @@ for year in year_list:
 
 
 # Plotting function
-def plot_firedist(year):
+def plot_firedist(years):
 
+    # Combine data from selected years
+    combined_data = pd.concat(
+        [
+            fire_data[int(year)].assign(Year=str(year))
+            for year in years
+        ],
+        ignore_index=True
+    )
+
+    # Create the plot
     g = sns.displot(
-        data=fire_data[year],
+        data=combined_data,
         x='Dist_Closest_km',
+        hue='Year',
         height=3,
         aspect=2,
-        color="orange"
+        kind='hist',
+        element='step',
+        fill=False
     )
 
     g.set(
@@ -171,8 +184,6 @@ def plot_firedist(year):
     )
 
     return g.figure
-
-
 
 # -----------------------------------------------------------------------
 # WETLANDS BURNED WIDGET SETUP
@@ -707,11 +718,11 @@ ui.div(
     ui.p("The distribution of distance from each wetland to the nearest fire is heavily skewed " \
     "to the right, with the most wetlands having a fire between 0km and 20km away from their perimeter " \
     "during each year from 2020 to 2025."),
-    ui.input_select(
+    ui.input_checkbox_group(
         "year",
         "Select Year:",
         choices=[str(y) for y in year_list],
-        selected=str(year_list[0])
+        selected=[str(year_list[0])]
     ),
     ui.div(
 
@@ -805,8 +816,11 @@ def server(input, output, session):
 
     @render.plot
     def fire_plot():
-        year = int(input.year())
-        return plot_firedist(year)
+        selected_years = input.year()
+
+        if not selected_years:
+            return None
+        return plot_firedist(selected_years)
 
     @render.plot
     def fireint_plot():
