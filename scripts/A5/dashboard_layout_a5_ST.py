@@ -170,6 +170,7 @@ def plot_firedist(years):
         data=combined_data,
         x='Dist_Closest_km',
         hue='Year',
+        palette=fire_colors,
         height=3,
         aspect=2,
         kind='hist',
@@ -227,6 +228,7 @@ def plot_fireint(system):
         height=3,
         aspect=2,
         hue='C System',
+        palette=system_colors,
         kind='bar'
     )
 
@@ -826,7 +828,7 @@ def server(input, output, session):
     @render.plot
     def fireint_plot():
         selected_system = input.system()
-        
+
         if not selected_system:
             return None
         system = fire_stats_all[
