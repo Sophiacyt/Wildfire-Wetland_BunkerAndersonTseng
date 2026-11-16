@@ -764,14 +764,14 @@ ui.div(
     # SUMMARY CHART 
     ui.h3("Summary Statistics"),
 
-    ui.input_select(
+    ui.input_checkbox_group(
         "summary_year",
         "Select Year:",
         choices={
             str(year): str(year)
             for year in range(2020, 2026)
         },
-        selected="2020"
+        selected=["2020"]
     ),
 
     ui.output_table("summary_table_output"),
@@ -840,13 +840,15 @@ def server(input, output, session):
 
     @render.table
     def summary_table_output():
-        selected_year = int(input.summary_year())
+        selected_year = [int(year) for year in input.summary_year()]
 
         table = summary_table.loc[
-            summary_table["Year"] == selected_year
+            summary_table["Year"].isin(selected_year)
         ]
 
         return table
+
+
 # ---------------------------------------------
 # run application
 
