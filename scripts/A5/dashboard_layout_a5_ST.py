@@ -226,12 +226,12 @@ def plot_fireint(system):
         y='Percent Wetland Area Burned',
         height=3,
         aspect=2,
-        color="orange",
+        hue='C System',
         kind='bar'
     )
 
     g.set(
-        title=f"Percent of Wetland Area Burned by Year ({system['C System'].iloc[0]})",
+        title=f"Percent of Wetland Area Burned by Year and Wetland System",
         xlabel="Year",
         ylabel="Wetland Area Burned (%)"
     )
@@ -744,11 +744,12 @@ ui.div(
     "in the last 5 years. Palustrine and Riverine wetlands had much larger percentages of area burned " \
     "compared to the other three systems."),
 
-    ui.input_select(
+    ui.input_checkbox_group(
         "system",
         "Select Wetland System:",
         choices=system_list,
-        selected=system_list[0]
+        selected=system_list,
+        inline=False
     ),
     ui.div(
 
@@ -825,9 +826,11 @@ def server(input, output, session):
     @render.plot
     def fireint_plot():
         selected_system = input.system()
-
+        
+        if not selected_system:
+            return None
         system = fire_stats_all[
-            fire_stats_all['C System'] == selected_system
+            fire_stats_all['C System'].isin(selected_system)
         ]
 
         return plot_fireint(system)
