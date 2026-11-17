@@ -26,11 +26,11 @@ import pygris
 from shiny import App, ui, render, reactive
 import matplotlib.ticker as ticker
 import folium
+#for sankey
+import plotly.graph_objects as go
+from shinywidgets import output_widget, render_widget
+# -----------------------------------------------------------------------
 
-
-# ---------------------------------------------------------
-# DATA SETUP
-# ---------------------------------------------------------
 
 # Read in cleaned fire dataset
 project_fldr = Path(__file__).resolve().parents[2]
@@ -89,29 +89,16 @@ cause_list = sorted(
 cont_start_date = "2020-01-01"
 cont_end_date = "2025-12-31"
 
-size_options = {
-    "All sizes": 0,
-    "10,000+ hectares": 100_000_000,
-    "50,000+ hectares": 500_000_000,
-    "100,000+ hectares": 1_000_000_000,
-    "500,000+ hectares": 5_000_000_000
-}
 
-
-# ---------------------------------------------------------
-# FIRE CAUSE PLOT
-# ---------------------------------------------------------
-
-def plot_fire_cause(alarm_start_date, alarm_end_date, cause, size):
+def plot_fire_cause(alarm_start_date, alarm_end_date, cause):
 
     # Filter the fire data
     fire_subset = fire_shp_25.loc[
-        (fire_shp_25['ALARM_DATE'] >= pd.to_datetime(alarm_start_date, utc=True)) &
-        (fire_shp_25['ALARM_DATE'] <= pd.to_datetime(alarm_end_date, utc=True)) &
-        (fire_shp_25['CONT_DATE'] >= pd.Timestamp("2020-01-01", tz="UTC")) &
-        (fire_shp_25['CONT_DATE'] <= pd.Timestamp("2025-12-31 23:59:59", tz="UTC")) &
-        (fire_shp_25['CAUSE_NAME'] == cause) &
-        (fire_shp_25['Shape_Area'] >= size)
+    (fire_shp_25['ALARM_DATE'] >= pd.to_datetime(alarm_start_date, utc=True)) &
+    (fire_shp_25['ALARM_DATE'] <= pd.to_datetime(alarm_end_date, utc=True)) &
+    (fire_shp_25['CONT_DATE'] >= pd.Timestamp("2020-01-01", tz="UTC")) &
+    (fire_shp_25['CONT_DATE'] <= pd.Timestamp("2025-12-31 23:59:59", tz="UTC")) &
+    (fire_shp_25['CAUSE_NAME'].isin(cause))
     ]
 
     # Create the plot
@@ -120,7 +107,6 @@ def plot_fire_cause(alarm_start_date, alarm_end_date, cause, size):
         x='Alarm Mo_1',
         y='Shape_Area',
         hue='CAUSE_NAME',
-        size='Shape_Area',
         alpha=0.7,
         legend=True
     )
@@ -130,7 +116,6 @@ def plot_fire_cause(alarm_start_date, alarm_end_date, cause, size):
         'Alarm Month',
         'Fire Size (hectares)'
     )
-
     the_plot.set(title='Fire by Cause')
 
     # Format the y-axis from square meters to hectares
@@ -142,10 +127,12 @@ def plot_fire_cause(alarm_start_date, alarm_end_date, cause, size):
     return the_plot.figure
 
 
-# ---------------------------------------------------------
-# FIRE DISTANCE WIDGET SETUP
-# ---------------------------------------------------------
 
+
+
+# -----------------------------------------------------------------------
+
+## FIRE DISTANCE WIDGET SETUP
 # load data
 # Set path to Box folder
 if platform.system() == 'Windows':
@@ -173,14 +160,28 @@ for year in year_list:
 
 
 # Plotting function
-def plot_firedist(year):
+def plot_firedist(years):
 
+    # Combine data from selected years
+    combined_data = pd.concat(
+        [
+            fire_data[int(year)].assign(Year=str(year))
+            for year in years
+        ],
+        ignore_index=True
+    )
+
+    # Create the plot
     g = sns.displot(
-        data=fire_data[year],
+        data=combined_data,
         x='Dist_Closest_km',
+        hue='Year',
+        palette=fire_colors,
         height=3,
         aspect=2,
-        color="orange"
+        kind='hist',
+        element='step',
+        fill=False
     )
 
     g.set(
@@ -191,11 +192,8 @@ def plot_firedist(year):
 
     return g.figure
 
-
-# ---------------------------------------------------------
+# -----------------------------------------------------------------------
 # WETLANDS BURNED WIDGET SETUP
-# ---------------------------------------------------------
-
 # Path to saved fire overlap data
 overlap_folder = (
     box_path / 'ENVIRON 712L-Students' /
@@ -235,23 +233,21 @@ def plot_fireint(system):
         y='Percent Wetland Area Burned',
         height=3,
         aspect=2,
-        color="orange",
+        hue='C System',
+        palette=system_colors,
         kind='bar'
     )
 
     g.set(
-        title=f"Percent of Wetland Area Burned by Year ({system['C System'].iloc[0]})",
+        title=f"Percent of Wetland Area Burned by Year and Wetland System",
         xlabel="Year",
         ylabel="Wetland Area Burned (%)"
     )
 
     return g.figure
 
-
-# ---------------------------------------------------------
-# SUMMARY TABLE SETUP
-# ---------------------------------------------------------
-
+# -----------------------------------------------------------------------
+# Summary table setup
 years = [2020, 2021, 2022, 2023, 2024, 2025]
 
 # we already went through the overlap stats
@@ -299,7 +295,6 @@ summary_table = summary_table.rename(columns={
     "Std_Dist_Fire_km": "Standard Deviation of Distance (km)",
     "Median_Dist_Fire_km": "Median Distance to Fire (km)"
 })
-
 # re-order columns for presentation
 summary_table = summary_table[
     [
@@ -319,25 +314,28 @@ summary_table = summary_table[
 summary_table = summary_table.round(3)
 
 
-# ---------------------------------------------------------
+# -----------------------------------------------------------------------
 # VISUALIZATIONS SETUP
-# ---------------------------------------------------------
+
+# IMPORT DATA
+# -----------------------------------------------------------------------
 
 # establish paths to datasets
+
 project_fldr = Path(__file__).resolve().parents[2]
 raw_fldr = project_fldr / 'data' / 'raw'
 processed_fldr = project_fldr / 'data' / 'processed'
 figure_fldr = project_fldr/"figures"
 
 # set a path to the main box folder based on machine's os
-# if windows:
+# if windows: 
 if platform.system() == 'Windows':
     box_path = Path.home() / 'Box'
 # if mac:
 else:
     box_path = Path.home() / "Library" / "CloudStorage" / "Box-Box"
 
-# Confirm that the box path is valid
+#Confirm that the box path is valid
 if box_path.exists():
     print(f'Box folder found at {box_path}')
 else:
@@ -347,21 +345,17 @@ else:
 # uploading wetlands that are bigger than a hectare
 html_map_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAndersonTseng' / 'html_maps'
 
-
 # --------------------------fire-explore-data----------------------------
-
-# california outline for wildfire map
-fire_ca_outline = gpd.read_file(
-    processed_fldr / "fire_explore" / "ca_outline.geojson"
-)
+# california outline
+ca_outline = gpd.read_file(processed_fldr/"fire_explore/ca_outline.geojson")
 
 # pull in the fires into dfs from geojsons
 fires = ["fire_2020", "fire_2021", "fire_2022", "fire_2023", "fire_2024", "fire_2025"]
-years = [2020, 2021, 2022, 2023, 2024, 2025]
+years=[2020, 2021, 2022, 2023, 2024, 2025]
 
 for fire, year in zip(fires, years):
     globals()[fire] = gpd.read_file(
-        processed_fldr / "fire_explore" / f"fire_{year}.geojson"
+        processed_fldr/ "fire_explore" / f"fire_{year}.geojson"
     )
 
 fire_dfs = [fire_2020, fire_2021, fire_2022, fire_2023, fire_2024, fire_2025]
@@ -372,34 +366,13 @@ years = [2020, 2021, 2022, 2023, 2024, 2025]
 for fire_df in fire_dfs:
     fire_df.drop(columns=["ALARM_DATE", "CONT_DATE"], inplace=True)
 
-
-# ------------------------wetland-explore-data---------------------------
-
-# palustrine and riverine to come later
-wetland_ca_outline = gpd.read_file(
-    processed_fldr / 'wetland_explore' / "ca_outline.geojson"
-)
-
-marine = gpd.read_file(
-    processed_fldr / 'wetland_explore' / "marine_simpler.geojson"
-)
-
-estuarine = gpd.read_file(
-    processed_fldr / 'wetland_explore' / "estuarine_simpler.geojson"
-)
-
-lacustrine = gpd.read_file(
-    processed_fldr / 'wetland_explore' / "lacustrine_simpler.geojson"
-)
-
-
-# ---------------------------------------------------------
 # ------------------------wetland-explore-data---------------------------
 # palustrine and riverine to come later
 ca_outline = gpd.read_file(processed_fldr/'wetland_explore'/"ca_outline.geojson")
 marine = gpd.read_file(processed_fldr/'wetland_explore'/"marine_simpler.geojson")
 estuarine = gpd.read_file(processed_fldr/'wetland_explore'/"estuarine_simpler.geojson")
 lacustrine = gpd.read_file(processed_fldr/'wetland_explore'/"lacustrine_simpler.geojson")
+
 
 # -----------------------------------------------------------------------
 # MAP SET UP
@@ -553,10 +526,104 @@ folium.GeoJson(
 # Add layer control
 folium.LayerControl(collapsed=False).add_to(wetland_map_right)
 
+#--------------------------wetland sankey-----------------------------
+wetlands_subset_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAndersonTseng' / 'wetlands_subset'
+wetlands = gpd.read_file(
+    wetlands_subset_path / "wetlands_subset.gpkg"
+)
 
-# ---------------------------------------------------------
-# DASHBOARD LEGEND
-# ---------------------------------------------------------
+def plot_sankey(wetlands):
+
+    df = wetlands.copy()
+
+    df["Hectares"] = pd.to_numeric(df["Hectares"], errors="coerce")
+    df = df.dropna(subset=["Hectares"])
+
+    cols = ["C System", "C Subsystem", "C Class"]
+
+    for col in cols:
+        df[col] = df[col].fillna("Unknown").astype(str)
+
+    # Calculate total hectares for each transition
+    flow1 = (
+        df.groupby(["C System", "C Subsystem"])["Hectares"]
+        .sum()
+        .reset_index()
+    )
+
+    flow2 = (
+        df.groupby(["C Subsystem", "C Class"])["Hectares"]
+        .sum()
+        .reset_index()
+    )
+
+    # Create separate nodes for each classification level
+    systems = df["C System"].unique().tolist()
+    subsystems = df["C Subsystem"].unique().tolist()
+    classes = df["C Class"].unique().tolist()
+
+    labels = (
+        [f"System: {x}" for x in systems]
+        + [f"Subsystem: {x}" for x in subsystems]
+        + [f"Class: {x}" for x in classes]
+    )
+
+    system_map = {x: i for i, x in enumerate(systems)}
+
+    subsystem_map = {
+        x: i + len(systems)
+        for i, x in enumerate(subsystems)
+    }
+
+    class_map = {
+        x: i + len(systems) + len(subsystems)
+        for i, x in enumerate(classes)
+    }
+
+    # Build links
+    sources = (
+        flow1["C System"].map(system_map).tolist()
+        + flow2["C Subsystem"].map(subsystem_map).tolist()
+    )
+
+    targets = (
+        flow1["C Subsystem"].map(subsystem_map).tolist()
+        + flow2["C Class"].map(class_map).tolist()
+    )
+
+    values = (
+        flow1["Hectares"].tolist()
+        + flow2["Hectares"].tolist()
+    )
+
+    # Generate Sankey diagram
+    fig_subset = go.Figure(go.Sankey(
+        node=dict(label=labels),
+        link=dict(
+            source=sources,
+            target=targets,
+            value=values,
+            hovertemplate=(
+                "%{source.label} → %{target.label}<br>"
+                "Area: %{value:.2f} hectares"
+                "<extra></extra>"
+            )
+        )
+    ))
+
+    fig_subset.update_layout(
+        title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
+        font_size=11,
+        height=700
+    )
+
+    return fig_subset
+# -----------------------------------------------------------------------
+# save maps just in case - this worked
+#   fire_map_left.save("fire_map.html")
+#   wetland_map_right.save("wetland_map.html")
+# -----------------------------------------------------------------------
+# --------------------------dashboard-legend-----------------------------
 
 def make_legend(colors):
 
@@ -590,250 +657,22 @@ def make_legend(colors):
     )
 
 
-# ---------------------------------------------------------
-# DASHBOARD LAYOUT
-# ---------------------------------------------------------
 
 
-app_ui = ui.page_navbar(
-
-    # -----------------------------------------------------
-    # HOME TAB
-    # -----------------------------------------------------
-
-    ui.nav_panel(
-        "Home",
-
-        ui.layout_columns(
-            ui.card(
-                ui.card_header("Central Questions"),
-
-                ui.p("Central Question: What role do wetlands play in wildfire movement across California?"),
-
-                ui.p("Intended Audience: Wildfire or wetland researchers with some prior subject knowledge."),
-            ),
-
-            ui.card(
-                ui.card_header("Data Limitations"),
-
-                ui.tags.ul(
-                    ui.tags.li("Restricted to fires with available spatial data in the form of a vector perimeter."),
-                    ui.tags.li("Wetlands data subset to include only wetlands greater than 10 hectares in area"),
-                ),
-            ),
-
-            col_widths=[6, 6]
-        ),
-    ),
 
 
-    # -----------------------------------------------------
-    # WILDFIRE TAB
-    # -----------------------------------------------------
-
-    ui.nav_panel(
-        "Wildfire",
-
-        ui.card(
-            ui.h2("CA Wildfire Data"),
-            ui.p("Explore our fire dataset"),
-        ),
-
-        ui.card(
-            ui.card_header("California Wildfires (2020–2025)"),
-
-            make_legend(fire_colors),
-
-            ui.HTML(fire_map_left._repr_html_()),
-        ),
-
-        ui.card(
-            ui.card_header("Wildfire Data"),
-
-            ui.p("Wildfire shapefile data comes from the California Historical Fire Perimeters dataset, maintained by CalFire, "
-            "and reporting fires greater than or equal to 10 acres inside the state between 1910 and 2025. For "
-            "this project, data has been subset to years between 2020 and 2025. Use the plot below to explore "
-            "fires in California from 2020 to 2025 by cause and by size."),
-
-            ui.p("Overall, the findings suggest that wildfire ignition causes are associated with "
-            "different seasonal patterns and fire-size distributions. Lightning is particularly notable "
-            "for its association with large burned areas, while several human-related causes are more frequently "
-            "associated with smaller fires. These observations highlight the importance of considering both ignition "
-            "frequency and burned area when evaluating wildfire risk, rather than relying on fire occurrence alone."),
-        ),
-
-        ui.card(
-            ui.card_header("Fire by Cause"),
-
-            ui.input_date_range(
-                "alarm_dates",
-                "Select Alarm Date Range:",
-                start="2020-01-01",
-                end="2025-12-31",
-                min="2020-01-01",
-                max="2025-12-31"
-            ),
-
-            ui.input_select(
-                "cause",
-                "Select Fire Cause:",
-                choices=cause_list,
-                selected="Lightning"
-            ),
-
-            ui.input_select(
-                "fire_size",
-                "Minimum Fire Size:",
-                choices={
-                    "All sizes": 0,
-                    "10,000+ hectares": 100_000_000,
-                    "50,000+ hectares": 500_000_000,
-                    "100,000+ hectares": 1_000_000_000,
-                    "500,000+ hectares": 5_000_000_000
-                },
-                selected=0
-            ),
-
-            ui.div(
-                ui.output_plot("fire_cause_plot"),
-                style="max-width: 850px; margin: 30px auto 30px auto;"
-            ),
-        ),
-    ),
+# Dashboard Layout
 
 
-    # -----------------------------------------------------
-    # WETLANDS TAB
-    # -----------------------------------------------------
+app_ui = ui.page_fluid(
 
-    ui.nav_panel(
-        "Wetlands",
+    # -----------------------------------------------------------------------
+    # Add some color and font choices
 
-        ui.card(
-            ui.h2("CA Wetlands Data"),
-            ui.p("Explore our wetlands dataset"),
-        ),
-
-        ui.card(
-            ui.card_header("California Wetlands"),
-
-            make_legend(system_colors),
-
-            ui.HTML(wetland_map_right._repr_html_()),
-        ),
-
-        ui.card(
-            ui.card_header("Wetlands Data"),
-
-            ui.p("Wetlands shapefile data comes from the National Wetland Inventory, downloaded for the state of California. This dataset"
-            " divides wetlands into Cowardin (1979) wetlands classifications of 5 systems, and additional subsystems, "
-            "classes, and subclasses. System descriptions are as follows."),
-
-            ui.tags.ul(
-                ui.tags.li("Marine: open ocean or high energy wetlands with salinity greater than 0.5ppt."),
-                ui.tags.li("Estuarine: semi-enclosed or low energy wetlands with salinity greater than 0.5ppt."),
-                ui.tags.li("Riverine: freshwater wetlands confined to a channel."),
-                ui.tags.li("Lacustrine: freshwater wetlands exceeding 20 acres or being deeper than 2.5m."),
-                ui.tags.li("Palustrine: freshwater wetlands dominated by trees or woody vegetation, or those"
-                "freshwater inland wetlands less than 20 acres or shallower than 2.5m.")
-            ),
-        ),
-    ),
-
-
-    # -----------------------------------------------------
-    # ANALYSIS TAB
-    # -----------------------------------------------------
-
-    ui.nav_panel(
-        "Analysis",
-
-        ui.card(
-            ui.card_header("Analysis"),
-
-            ui.p("To address our central question “What role do wetlands play in wildfire movement across the landscape?”, "
-            "we have chosen to use spatial analysis. This fits our data, because both the wetlands data from the National Wetlands Inventory and "
-            "the CalFires Fire Perimeters datasets have associated footprints. Spatial analysis also fits well with our central question, "
-            "because we want to know where and how much overlap there is between wildfires and wetlands. We began our analysis with a simple "
-            "examination of both sets of data (NWI wetlands and CalFire Fire Perimeters), learning about the spatial and temporal distribution of the data. "
-            "We then used the package Geopandas to perform a nearest neighbor spatial join to determine the distance between each wetland observation "
-            "and the nearest fire observation. Next, we performed a spatial join between our datasets to obtain the area of wetlands burned in 2025 and "
-            "determined that there were 1,134 wetlands that experienced a fire in 2025. This join was validated using nearest neighbor data - "
-            "the number of wetlands with a distance of 0 to the nearest fire matched the number of intersecting records following the spatial join. "
-            "To include a robustness comparison, we include not only the amount of area burned as hectares, but also as a percentage of total wetland area and total fire area."),
-        ),
-
-        ui.card(
-            ui.card_header("Distance to Nearest Fire"),
-
-            ui.p("The distribution of distance from each wetland to the nearest fire is heavily skewed "
-            "to the right, with the most wetlands having a fire between 0km and 20km away from their perimeter "
-            "during each year from 2020 to 2025."),
-
-            ui.input_select(
-                "year",
-                "Select Year:",
-                choices=[str(y) for y in year_list],
-                selected=str(year_list[0])
-            ),
-
-            ui.div(
-                ui.output_plot("fire_plot"),
-                style="max-width: 850px; margin: 30px auto 30px auto;"
-            ),
-        ),
-
-        ui.card(
-            ui.card_header("Percent of Wetland Area Burned by Wetland Type"),
-
-            ui.p("By comparing the percent of wetland area burned inside each system through the years,"
-            " we can not only see which wetland systems have the most burned area, but also which years had"
-            " fires with great impact on wetlands. Overall, the percent of wetlands burned compared to total wetland"
-            " area remains low, indicating that a majority of wetlands in California did not experience a wildfire "
-            "in the last 5 years. Palustrine and Riverine wetlands had much larger percentages of area burned "
-            "compared to the other three systems."),
-
-            ui.input_select(
-                "system",
-                "Select Wetland System:",
-                choices=system_list,
-                selected=system_list[0]
-            ),
-
-            ui.div(
-                ui.output_plot("fireint_plot"),
-                style="max-width: 850px; margin: 30px auto 30px auto;"
-            ),
-        ),
-
-        ui.card(
-            ui.card_header("Summary Statistics"),
-
-            ui.input_select(
-                "summary_year",
-                "Select Year:",
-                choices={
-                    str(year): str(year)
-                    for year in range(2020, 2026)
-                },
-                selected="2020"
-            ),
-
-            ui.output_table("summary_table_output"),
-        ),
-    ),
-
-
-    # -----------------------------------------------------
-    # NAVBAR TITLE AND STYLING
-    # -----------------------------------------------------
-
-    title="Wildfires & Wetlands",
-
-    header=ui.tags.style("""
+    ui.tags.style("""
         body {
             background-color: #F7F7F2;
-            font-family: 'Calibri', 'Candara', 'Segoe UI', sans-serif;
+            font-family: 'Arial', sans-serif;
             color: #333D36;
         }
 
@@ -857,13 +696,217 @@ app_ui = ui.page_navbar(
             line-height: 1.6;
         }
     """),
+
+    # -----------------------------------------------------------------------
+    # NAVIGATION BAR
+
+    ui.navset_bar(
+
+        # HOME PAGE
+        ui.nav_panel(
+            "Home",
+
+            ui.h1("California Wildfire & Wetlands Dashboard"),
+
+            ui.p("Central Question: What role do wetlands play in wildfire movement across California?"),
+
+            ui.p("Intended Audience: Wildfire or wetland researchers with some prior subject knowledge."),
+
+            ui.p("Limitations"),
+
+            ui.tags.ul(
+                ui.tags.li("Restricted to fires with available spatial data in the form of a vector perimeter."),
+                ui.tags.li("Wetlands data subset to include only wetlands greater than 10 hectares in area"),
+            ),
+        ),
+
+        # WILDFIRE PAGE
+        ui.nav_panel(
+            "Wildfire",
+
+            ui.card(
+                ui.card_header("California Wildfires (2020–2025)"),
+
+                make_legend(fire_colors),
+
+                ui.HTML(fire_map_left._repr_html_()),
+            ),
+
+            ui.hr(),
+
+            # Wildfire Data
+            ui.h3("Wildfire Data"),
+
+            ui.p(
+                "Wildfire shapefile data comes from the California Historical Fire Perimeters dataset, maintained by CalFire, "
+                "and reporting fires greater than or equal to 10 acres inside the state between 1910 and 2025. For "
+                "this project, data has been subset to years between 2020 and 2025. Use the plot below to explore "
+                "fires in California from 2020 to 2025 by cause and by size."
+            ),
+
+            ui.p(
+                "Overall, the findings suggest that wildfire ignition causes are associated with "
+                "different seasonal patterns and fire-size distributions. Lightning is particularly notable "
+                "for its association with large burned areas, while several human-related causes are more frequently "
+                "associated with smaller fires. These observations highlight the importance of considering both ignition "
+                "frequency and burned area when evaluating wildfire risk, rather than relying on fire occurrence alone."
+            ),
+
+            ui.input_date_range(
+                "alarm_dates",
+                "Select Alarm Date Range:",
+                start="2020-01-01",
+                end="2025-12-31",
+                min="2020-01-01",
+                max="2025-12-31"
+            ),
+
+            ui.input_checkbox_group(
+                "cause",
+                "Select Fire Cause:",
+                choices=cause_list,
+                selected=["Lightning"],
+                inline=False
+            ),
+
+            ui.div(
+                ui.output_plot("fire_cause_plot"),
+                style="max-width: 850px; margin: 30px auto 30px auto;"
+            ),
+        ),
+
+        # WETLANDS PAGE
+        ui.nav_panel(
+            "Wetlands",
+
+            ui.card(
+                ui.card_header("California Wetlands"),
+
+                make_legend(system_colors),
+
+                ui.HTML(wetland_map_right._repr_html_()),
+            ),
+
+            ui.hr(),
+
+            # Wetlands Data
+            ui.h3("Wetlands Data"),
+
+            ui.p(
+                "Wetlands shapefile data comes from the National Wetland Inventory, downloaded for the state of California. This dataset"
+                " divides wetlands into Cowardin (1979) wetlands classifications of 5 systems, and additional subsystems, "
+                "classes, and subclasses. System descriptions are as follows."
+            ),
+
+            ui.tags.ul(
+                ui.tags.li("Marine: open ocean or high energy wetlands with salinity greater than 0.5ppt."),
+                ui.tags.li("Estuarine: semi-enclosed or low energy wetlands with salinity greater than 0.5ppt."),
+                ui.tags.li("Riverine: freshwater wetlands confined to a channel."),
+                ui.tags.li("Lacustrine: freshwater wetlands exceeding 20 acres or being deeper than 2.5m."),
+                ui.tags.li(
+                    "Palustrine: freshwater wetlands dominated by trees or woody vegetation, or those"
+                    "freshwater inland wetlands less than 20 acres or shallower than 2.5m."
+                )
+            ),
+
+            ui.h3("Wetland Classification Sankey Diagram"),
+
+            output_widget("sankey_plot"),
+        ),
+
+        # ANALYSIS PAGE
+        ui.nav_panel(
+            "Analysis",
+
+            ui.h1("Analysis"),
+
+            ui.p(
+                "To address our central question “What role do wetlands play in wildfire movement across the landscape?”, "
+                "we have chosen to use spatial analysis. This fits our data, because both the wetlands data from the National Wetlands Inventory and "
+                "the CalFires Fire Perimeters datasets have associated footprints. Spatial analysis also fits well with our central question, "
+                "because we want to know where and how much overlap there is between wildfires and wetlands. We began our analysis with a simple "
+                "examination of both sets of data (NWI wetlands and CalFire Fire Perimeters), learning about the spatial and temporal distribution of the data. "
+                "We then used the package Geopandas to perform a nearest neighbor spatial join to determine the distance between each wetland observation "
+                "and the nearest fire observation. Next, we performed a spatial join between our datasets to obtain the area of wetlands burned in 2025 and "
+                "determined that there were 1,134 wetlands that experienced a fire in 2025. This join was validated using nearest neighbor data - "
+                "the number of wetlands with a distance of 0 to the nearest fire matched the number of intersecting records following the spatial join. "
+                "To include a robustness comparison, we include not only the amount of area burned as hectares, but also as a percentage of total wetland area and total fire area."
+            ),
+
+            # DISTANCE TO NEAREST FIRE WIDGET
+            ui.h3("Distance to Nearest Fire"),
+
+            ui.p(
+                "The distribution of distance from each wetland to the nearest fire is heavily skewed "
+                "to the right, with the most wetlands having a fire between 0km and 20km away from their perimeter "
+                "during each year from 2020 to 2025."
+            ),
+
+            ui.input_checkbox_group(
+                "year",
+                "Select Year:",
+                choices=[str(y) for y in year_list],
+                selected=[str(year_list[0])]
+            ),
+
+            ui.div(
+                ui.output_plot("fire_plot"),
+                style="max-width: 850px; margin: 30px auto 30px auto;"
+            ),
+
+            ui.hr(),
+
+            # PCT BURNED AREA WIDGET
+            ui.h3("Percent of Wetland Area Burned by Wetland Type"),
+
+            ui.p(
+                "By comparing the percent of wetland area burned inside each system through the years,"
+                " we can not only see which wetland systems have the most burned area, but also which years had"
+                " fires with great impact on wetlands. Overall, the percent of wetlands burned compared to total wetland"
+                " area remains low, indicating that a majority of wetlands in California did not experience a wildfire "
+                "in the last 5 years. Palustrine and Riverine wetlands had much larger percentages of area burned "
+                "compared to the other three systems."
+            ),
+
+            ui.input_checkbox_group(
+                "system",
+                "Select Wetland System:",
+                choices=system_list,
+                selected=system_list,
+                inline=False
+            ),
+
+            ui.div(
+                ui.output_plot("fireint_plot"),
+                style="max-width: 850px; margin: 30px auto 30px auto;"
+            ),
+
+            ui.hr(),
+
+            # SUMMARY CHART
+            ui.h3("Summary Statistics"),
+
+            ui.input_checkbox_group(
+                "summary_year",
+                "Select Year:",
+                choices={
+                    str(year): str(year)
+                    for year in range(2020, 2026)
+                },
+                selected=["2020"]
+            ),
+
+            ui.output_table("summary_table_output"),
+        ),
+
+        # NAVBAR TITLE
+        title="Wildfires & Wetlands Dashboard",
+    )
 )
 
 
-
-# ---------------------------------------------------------
+# -----------------------------------------------------------------------
 # INIT SERVER
-# ---------------------------------------------------------
 
 def server(input, output, session):
 
@@ -878,33 +921,32 @@ def server(input, output, session):
         # Get the selected fire cause
         selected_cause = input.cause()
 
-        # Get the selected minimum fire size
-        selected_size = size_options[input.fire_size()]
-
         # Generate the plot
         return plot_fire_cause(
             alarm_start_date,
             alarm_end_date,
-            selected_cause,
-            selected_size
+            selected_cause
         )
 
 
     @render.plot
     def fire_plot():
+        selected_years = input.year()
 
-        year = int(input.year())
-
-        return plot_firedist(year)
+        if not selected_years:
+            return None
+        return plot_firedist(selected_years)
 
 
     @render.plot
     def fireint_plot():
-
         selected_system = input.system()
 
+        if not selected_system:
+            return None
+
         system = fire_stats_all[
-            fire_stats_all['C System'] == selected_system
+            fire_stats_all['C System'].isin(selected_system)
         ]
 
         return plot_fireint(system)
@@ -912,18 +954,25 @@ def server(input, output, session):
 
     @render.table
     def summary_table_output():
-
-        selected_year = int(input.summary_year())
+        selected_year = [int(year) for year in input.summary_year()]
 
         table = summary_table.loc[
-            summary_table["Year"] == selected_year
+            summary_table["Year"].isin(selected_year)
         ]
 
         return table
 
 
-# ---------------------------------------------------------
+    @render_widget
+    def sankey_plot():
+        return plot_sankey(wetlands)
+
+
+# -----------------------------------------------------------------------
 # RUN APPLICATION
-# ---------------------------------------------------------
 
 app = App(app_ui, server)
+
+
+
+

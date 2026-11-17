@@ -1,6 +1,6 @@
 # TO RUN: 
 # conda activate env700-shiny
-# shiny run --reload scripts/A4/dashboard_layout_a4.py 
+# shiny run --reload scripts/A5/dashboard_layout_a5_NEW.py 
 
 # if mason and struggling, run below
 # cd ~/Desktop/Duke/Environmental\ Data\ Exploration/Wildfire-Wetland_BunkerAndersonTseng/scripts/A4
@@ -658,7 +658,7 @@ def make_legend(colors):
 
 # Dashboard Layout
 
-app_ui = ui.page_fluid(
+app_ui = ui.page_navbar(
 
     # -----------------------------------------------------------------------
     # Add some color and font choices
@@ -690,22 +690,26 @@ app_ui = ui.page_fluid(
             }
         """),
 
-    # Header
-    ui.h1("California Wildfire & Wetlands Dashboard"),
-    # describe the goals of the project
-    ui.p("Central Question: What role do wetlands play in wildfire movement across California?"
-    ),
-    ui.p("Intended Audience: Wildfire or wetland researchers with some prior subject knowledge."
-        ),
-    ui.p("Limitations"),
-    ui.tags.ul( # add some bullet points for systems
-            ui.tags.li("Restricted to fires with available spatial data in the form of a vector perimeter."),
-            ui.tags.li("Wetlands data subset to include only wetlands greater than 10 hectares in area"),
-    ),
+    # HOME PAGE
 
-    
-        ui.layout_columns(
-    
+    ui.nav_panel(
+            "Home",
+
+            ui.h1("California Wildfire & Wetlands Dashboard"),
+            # describe the goals of the project
+            ui.p("Central Question: What role do wetlands play in wildfire movement across California?"
+            ),
+            ui.p("Intended Audience: Wildfire or wetland researchers with some prior subject knowledge."
+              ),
+            ui.p("Limitations"),
+            ui.tags.ul( # add some bullet points for systems
+                ui.tags.li("Restricted to fires with available spatial data in the form of a vector perimeter."),
+                ui.tags.li("Wetlands data subset to include only wetlands greater than 10 hectares in area"),
+            ),
+
+        # WILDFIRE PAGE
+        ui.nav_panel(
+            "Wildfire",
             # WILDFIRE CONTAINER
             ui.card(
                 ui.card_header("California Wildfires (2020–2025)"),
@@ -714,18 +718,20 @@ app_ui = ui.page_fluid(
     
                 ui.HTML(fire_map_left._repr_html_()),
     
-            ),
+        ),
     
-            # WETLAND CONTAINER
+         # WETLAND PAGE
+        ui.nav_panel(
+            "Wetlands"
             ui.card(
                 ui.card_header("California Wetlands"),
     
                 make_legend(system_colors),
     
                 ui.HTML(wetland_map_right._repr_html_()),
-    
+            )
 
-            ),
+        ),
     
             col_widths=[6, 6]
         ),
