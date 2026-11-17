@@ -1,3 +1,4 @@
+
 # TO RUN:
 # conda activate env700-shiny
 # shiny run --reload scripts/A5/dashboard_tabs.py
@@ -56,10 +57,10 @@ else:
 
 
 # ----------------------------------------------------------
-# FIRE DISTANCE DATA SETUP
+# DATA PATH SETUP
 # ----------------------------------------------------------
 
-# Path to saved spatial data
+# Path to saved spatial data and yearly statistics
 output_folder = (
     box_path / 'ENVIRON 712L-Students' /
     'Data' / 'BunkerAndersonTseng' /
@@ -68,21 +69,6 @@ output_folder = (
 
 # Available years
 year_list = [2020, 2021, 2022, 2023, 2024, 2025]
-
-# Load all fire data
-fire_data = {}
-
-for year in year_list:
-    file_path = output_folder / f'nearest_fires_{year}.gpkg'
-
-    print(f"Loading {year}: {file_path}", flush=True)
-
-    fire_data[year] = gpd.read_file(file_path, engine="fiona")
-
-    print(
-        f"Successfully loaded {year}: {len(fire_data[year])} records",
-        flush=True
-    )
 
 # create path object that goes to the specific folder on Box drive
 # uploading wetlands that are bigger than a hectare
@@ -203,7 +189,7 @@ wetland_map_right = folium.Map(
 
 # ESRI satellite basemap
 folium.TileLayer(
-    tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}",
     attr="Esri, Maxar, Earthstar Geographics, and the GIS User Community",
     name="Satellite Imagery",
     overlay=False,
@@ -502,7 +488,7 @@ def plot_fire_cause(alarm_start_date, alarm_end_date, cause):
 
 
 # ----------------------------------------------------------
-# WETLANDS BURNED WIDGET SETUP
+# PCT WETLANDS BURNED WIDGET SETUP
 # ----------------------------------------------------------
 
 # Path to saved fire overlap data
@@ -567,6 +553,57 @@ def plot_fireint(years, systems):
         g._legend.set_title("Wetland System")
 
     g.figure.tight_layout()
+
+    return g.figure
+
+
+
+# ----------------------------------------------------------
+# DISTANCE TO NEAREST FIRE SETUP
+# ----------------------------------------------------------
+## FIRE DISTANCE WIDGET SETUP
+# load data
+# Set path to Box folder
+if platform.system() == 'Windows':
+    box_path = Path.home() / 'Box'
+else:
+    box_path = Path.home() / "Library" / "CloudStorage" / "Box-Box"
+
+# Path to saved spatial data
+output_folder = (
+    box_path / 'ENVIRON 712L-Students' /
+    'Data' / 'BunkerAndersonTseng' /
+    'fire_distance_data'
+)
+
+# Available years
+year_list = [2020, 2021, 2022, 2023, 2024, 2025]
+
+# Load all fire data
+fire_data = {}
+
+for year in year_list:
+    fire_data[year] = gpd.read_file(
+        output_folder / f'nearest_fires_{year}.gpkg'
+    )
+
+
+# Plotting function
+def plot_firedist(year):
+
+    g = sns.displot(
+        data=fire_data[year],
+        x='Dist_Closest_km',
+        height=3,
+        aspect=2,
+        color="orange"
+    )
+
+    g.set(
+        title="Distance from Wetlands to Nearest Fire (km)",
+        xlabel="Distance (km)",
+        ylabel="Count"
+    )
 
     return g.figure
 
@@ -658,11 +695,13 @@ app_ui = ui.page_navbar(
 
             ui.p(
                 'This dashboard uses CalFire fire perimeters data and National Wetlands Inventory '
-                'wetland data to explore the relationship between wetlands and wildfires in California.'
+                'wetland data to explore the relationship between wetlands and wildfires in California. California ' \
+                'has over INSERT HERE hectares of wetland, but has lost more than 90% of wetland area in the last century. ' \
+                'Wetlands provide many benefits including flood mitigation, water filtration, carbon sequestration, and wildlife habitat. ' \
+                'Use our dashboards to examine wildfire impact on wetlands in the state from 2020 to 2025.'
             ),
 
             ui.h4("Central Questions"),
-
             ui.tags.ul(
                 ui.tags.li('What types of wetlands are most impacted by wildfires in the state of California?'),
                 ui.tags.li('Are wetlands less likely to burn than other land in California?'),
@@ -820,190 +859,162 @@ app_ui = ui.page_navbar(
     # ANALYSIS tab
     # --------------------------------------------------
 
+    ui.nav_panel(
+        "Analysis",
 
-ui.nav_panel(
-    "Analysis",
+        # ---------------------------------------------------
+        # INTRODUCTION
+        # ---------------------------------------------------
 
-    # ---------------------------------------------------
-    # INTRODUCTION
-    # ---------------------------------------------------
+        ui.card(
+            ui.card_header("Analysis Overview"),
 
-    ui.card(
-        ui.card_header("Analysis Overview"),
-
-        ui.p(
-            "To address our central question “What role do wetlands play in wildfire movement across the landscape?”, "
-            "we have chosen to use spatial analysis. This fits our data, because both the wetlands data from the National Wetlands Inventory and "
-            "the CalFires Fire Perimeters datasets have associated footprints. Spatial analysis also fits well with our central question, "
-            "because we want to know where and how much overlap there is between wildfires and wetlands. We began our analysis with a simple "
-            "examination of both sets of data (NWI wetlands and CalFire Fire Perimeters), learning about the spatial and temporal distribution of the data. "
-            "We then used the package Geopandas to perform a nearest neighbor spatial join to determine the distance between each wetland observation "
-            "and the nearest fire observation. Next, we performed a spatial join between our datasets to obtain the area of wetlands burned in 2025 and "
-            "determined that there were 1,134 wetlands that experienced a fire in 2025. This join was validated using nearest neighbor data - "
-            "the number of wetlands with a distance of 0 to the nearest fire matched the number of intersecting records following the spatial join. "
-            "To include a robustness comparison, we include not only the amount of area burned as hectares, but also as a percentage of total wetland area and total fire area."
-        ),
-    ),
-
-    # ---------------------------------------------------
-    # 1. DISTANCE TO NEAREST FIRE
-    # ---------------------------------------------------
-
-    ui.card(
-        ui.card_header("1. Distance to Nearest Fire"),
-
-        ui.layout_columns(
-
-            # TEXT AND FILTERS
-            ui.div(
-                ui.p(
-                    "The distribution of distance from each wetland to the nearest fire is heavily skewed "
-                    "to the right, with the most wetlands having a fire between 0km and 20km away from their perimeter "
-                    "during each year from 2020 to 2025."
-                ),
-
-                ui.input_checkbox_group(
-                    "year",
-                    "Select Year:",
-                    choices=[str(y) for y in year_list],
-                    selected=[str(year_list[0])]
-                ),
-            ),
-
-            # PLOT
-            ui.output_plot("fire_plot"),
-
-            col_widths=[4, 8],
-        ),
-    ),
-
-    # ---------------------------------------------------
-    # 2. PERCENT OF WETLAND AREA BURNED
-    # ---------------------------------------------------
-
-    ui.card(
-        ui.card_header("2. Percent of Wetland Area Burned by Wetland Type"),
-
-        ui.layout_columns(
-
-            # TEXT AND FILTERS
-
-        ui.div(
             ui.p(
-                "By comparing the percent of wetland area burned inside each system through the years, "
-                "we can not only see which wetland systems have the most burned area, but also which years had "
-                "fires with great impact on wetlands. Overall, the percent of wetlands burned compared to total wetland "
-                "area remains low, indicating most area in CA wetlands did not experience a wildfire "
-                "in the last 6 years. Palustrine and Riverine wetlands had much larger percentages of area burned "
-                "compared to the other three systems."
+                "To address our central questions about wildfire impacts on wetlands across " \
+                "California, we use a spatial analysis approach. Both the NWI wetlands dataset and the " \
+                "CalFire fire dataset contain shapefiles that show perimeters, allowing us to examine the " \
+                "extent to which wetlands overlap with wildfire boundaries, compare wildfire occurance in wetland and " \
+                "non-wetland areas, and investigate how proximity to wetlands relates to wildfire occurance."
             ),
+            ui.p("")
+        ),
+
+        # ---------------------------------------------------
+                # 1. distance to nearest fire
+                # ---------------------------------------------------
+        
+        ui.card(
+            ui.card_header("1. Distance from Wetlands to Nearest Fire"),
+
+            ui.layout_columns(
+
+                ui.div(
+                    ui.p("We begin by performing a nearest-neighbor spatial join to determine the distance between each wetland " \
+                    "perimeter and its nearest wildfire, for each of the 6 years. "),
+                    ui.tags.ul(
+                                ui.tags.li('Distribution heavily skewed to the right.'),
+                                ui.tags.li('Most wetlands have a fire between 0km and 20km.')
+                    ),
+                    
+
+                    ui.input_select(
+                        "year",
+                        "Select Year:",
+                        choices=[str(y) for y in year_list],
+                        selected=str(year_list[0])
+                    ),
+
+                ),
+
+                ui.output_plot("fire_plot"),
+
+                col_widths=[4, 8],
+            ),
+        ),
+
+
+        # ---------------------------------------------------
+        # 2. PERCENT OF WETLAND AREA BURNED
+        # ---------------------------------------------------
+
+        ui.card(
+            ui.card_header("2. Percent of Wetland Area Burned by Wetland Type"),
+
+            ui.layout_columns(
+
+                ui.div(
+                    ui.p(
+                        "Next, we perform an intersection between the wetlands data and the " \
+                        "fire data to identify wetland area that overlaps with fire perimeters. " \
+                        "We use total wetland area for each system to determine the percent of each " \
+                        "wetland system that was burned."
+                    ),
+                    ui.tags.ul(
+                                ui.tags.li('Overall, percent of wetland area burned remains low, indicating a ' \
+                                'majority of wetland area did not experience wildfire in the last 6 years.'),
+                                ui.tags.li('Palustrine and riverine wetlands, which typically have more woody vegetation, have higher ' \
+                                'percentages of wetland burned compared to the other three systems.')
+                    ),
+
+                    
+
+                    ui.input_checkbox_group(
+                        "fireint_year",
+                        "Select Year:",
+                        choices=[str(y) for y in year_list],
+                        selected=[str(y) for y in year_list],
+                    ),
+
+                    ui.input_checkbox_group(
+                        "system",
+                        "Select Wetland System:",
+                        choices=system_list,
+                        selected=system_list,
+                        inline=False
+                    ),
+                ),
+
+                ui.output_plot("fireint_plot"),
+
+                col_widths=[4, 8],
+            ),
+        ),
+
+
+        # ---------------------------------------------------
+        # 3. SPATIAL RELATIONSHIP BETWEEN WETLANDS AND FIRES
+        # ---------------------------------------------------
+
+        ui.card(
+            ui.card_header("3. Spatial Relationship Between Wetlands and Fires"),
+
+            ui.layout_columns(
+
+                ui.div(
+                    ui.p(
+                        "This analysis examines the relationship between distance to the nearest wetland "
+                        "and distance to the nearest fire using randomly generated points across California."
+                    ),
+
+                    ui.p(
+                        "PLACEHOLDER: Add explanation of the distance analysis and its findings."
+                    ),
+                ),
+
+                ui.div(
+                    ui.p("PLACEHOLDER: Add random-point distance relationship plot."),
+                ),
+
+                col_widths=[4, 8],
+            ),
+        ),
+
+        # ---------------------------------------------------
+        # 4. SUMMARY STATISTICS
+        # ---------------------------------------------------
+
+        ui.card(
+            ui.card_header("5. Summary Statistics"),
 
             ui.input_checkbox_group(
-                "fireint_year",
+                "summary_year",
                 "Select Year:",
-                choices=[str(y) for y in year_list],
-                selected=[str(y) for y in year_list],
+                choices={
+                    str(year): str(year)
+                    for year in range(2020, 2026)
+                },
+                selected=["2020"]
             ),
 
-            ui.input_checkbox_group(
-                "system",
-                "Select Wetland System:",
-                choices=system_list,
-                selected=system_list,
-                inline=False
-            ),
+            ui.output_table("summary_table_output"),
         ),
 
-            # PLOT
-            ui.output_plot("fireint_plot"),
-
-            col_widths=[4, 8],
-        ),
     ),
-
-    # ---------------------------------------------------
-    # 3. CHI-SQUARED ANALYSIS
-    # ---------------------------------------------------
-
-    ui.card(
-        ui.card_header("3. Wetland vs. Non-Wetland Fire Occurrence"),
-
-        ui.layout_columns(
-
-            ui.div(
-                ui.p(
-                    "This analysis compares fire occurrence at wetland and non-wetland locations "
-                    "to investigate whether wetlands are more or less likely to experience wildfire."
-                ),
-
-                ui.p(
-                    "PLACEHOLDER: Add explanation of random-point sampling, "
-                    "chi-squared results, and statistical significance."
-                ),
-            ),
-
-            ui.div(
-                ui.p("PLACEHOLDER: Chi-squared results visualization or summary table."),
-            ),
-
-            col_widths=[4, 8],
-        ),
-    ),
-
-    # ---------------------------------------------------
-    # 4. SPATIAL RELATIONSHIP BETWEEN WETLANDS AND FIRES
-    # ---------------------------------------------------
-
-    ui.card(
-        ui.card_header("4. Spatial Relationship Between Wetlands and Fires"),
-
-        ui.layout_columns(
-
-            ui.div(
-                ui.p(
-                    "This analysis examines the relationship between distance to the nearest wetland "
-                    "and distance to the nearest fire using randomly generated points across California."
-                ),
-
-                ui.p(
-                    "PLACEHOLDER: Add explanation of the distance analysis and its findings."
-                ),
-            ),
-
-            ui.div(
-                ui.p("PLACEHOLDER: Add random-point distance relationship plot."),
-            ),
-
-            col_widths=[4, 8],
-        ),
-    ),
-
-    # ---------------------------------------------------
-    # 5. SUMMARY STATISTICS
-    # ---------------------------------------------------
-
-    ui.card(
-        ui.card_header("5. Summary Statistics"),
-
-        ui.input_checkbox_group(
-            "summary_year",
-            "Select Year:",
-            choices={
-                str(year): str(year)
-                for year in range(2020, 2026)
-            },
-            selected=["2020"]
-        ),
-
-        ui.output_table("summary_table_output"),
-    ),
-
-),
-
 
     title="Wildfires & Wetlands Dashboard",
 
 )
+
 
 def server(input, output, session):
 
@@ -1027,14 +1038,6 @@ def server(input, output, session):
 
 
     @render.plot
-    def fire_plot():
-        selected_years = input.year()
-
-        if not selected_years:
-            return None
-        return plot_firedist(selected_years)
-
-    @render.plot
     def fireint_plot():
 
         selected_years = input.fireint_year()
@@ -1049,6 +1052,10 @@ def server(input, output, session):
         )
 
 
+    @render.plot
+    def fire_plot():
+        year = int(input.year())
+        return plot_firedist(year)
 
     @render.table
     def summary_table_output():
@@ -1060,12 +1067,14 @@ def server(input, output, session):
 
         return table
 
+
     @render_widget
     def sankey_plot():
         return plot_sankey(wetlands)
+
+
 # ---------------------------------------------
 # run application
 
 print("Dashboard UI created successfully.", flush=True)
 app = App(app_ui, server)
-
