@@ -23,6 +23,9 @@ import pygris
 from shiny import App, ui, render, reactive
 import matplotlib.ticker as ticker
 import folium
+#for sankey
+import plotly.graph_objects as go
+from shinywidgets import output_widget, render_widget
 # -----------------------------------------------------------------------
 
 
@@ -367,6 +370,7 @@ marine = gpd.read_file(processed_fldr/'wetland_explore'/"marine_simpler.geojson"
 estuarine = gpd.read_file(processed_fldr/'wetland_explore'/"estuarine_simpler.geojson")
 lacustrine = gpd.read_file(processed_fldr/'wetland_explore'/"lacustrine_simpler.geojson")
 
+
 # -----------------------------------------------------------------------
 # MAP SET UP
 # -----------------------------------------------------------------------
@@ -519,6 +523,98 @@ folium.GeoJson(
 # Add layer control
 folium.LayerControl(collapsed=False).add_to(wetland_map_right)
 
+#--------------------------wetland sankey-----------------------------
+wetlands_subset_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAndersonTseng' / 'wetlands_subset'
+wetlands = gpd.read_file(
+    wetlands_subset_path / "wetlands_subset.gpkg"
+)
+
+def plot_sankey(wetlands):
+
+    df = wetlands.copy()
+
+    df["Hectares"] = pd.to_numeric(df["Hectares"], errors="coerce")
+    df = df.dropna(subset=["Hectares"])
+
+    cols = ["C System", "C Subsystem", "C Class"]
+
+    for col in cols:
+        df[col] = df[col].fillna("Unknown").astype(str)
+
+    # Calculate total hectares for each transition
+    flow1 = (
+        df.groupby(["C System", "C Subsystem"])["Hectares"]
+        .sum()
+        .reset_index()
+    )
+
+    flow2 = (
+        df.groupby(["C Subsystem", "C Class"])["Hectares"]
+        .sum()
+        .reset_index()
+    )
+
+    # Create separate nodes for each classification level
+    systems = df["C System"].unique().tolist()
+    subsystems = df["C Subsystem"].unique().tolist()
+    classes = df["C Class"].unique().tolist()
+
+    labels = (
+        [f"System: {x}" for x in systems]
+        + [f"Subsystem: {x}" for x in subsystems]
+        + [f"Class: {x}" for x in classes]
+    )
+
+    system_map = {x: i for i, x in enumerate(systems)}
+
+    subsystem_map = {
+        x: i + len(systems)
+        for i, x in enumerate(subsystems)
+    }
+
+    class_map = {
+        x: i + len(systems) + len(subsystems)
+        for i, x in enumerate(classes)
+    }
+
+    # Build links
+    sources = (
+        flow1["C System"].map(system_map).tolist()
+        + flow2["C Subsystem"].map(subsystem_map).tolist()
+    )
+
+    targets = (
+        flow1["C Subsystem"].map(subsystem_map).tolist()
+        + flow2["C Class"].map(class_map).tolist()
+    )
+
+    values = (
+        flow1["Hectares"].tolist()
+        + flow2["Hectares"].tolist()
+    )
+
+    # Generate Sankey diagram
+    fig_subset = go.Figure(go.Sankey(
+        node=dict(label=labels),
+        link=dict(
+            source=sources,
+            target=targets,
+            value=values,
+            hovertemplate=(
+                "%{source.label} → %{target.label}<br>"
+                "Area: %{value:.2f} hectares"
+                "<extra></extra>"
+            )
+        )
+    ))
+
+    fig_subset.update_layout(
+        title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
+        font_size=11,
+        height=700
+    )
+
+    return fig_subset
 # -----------------------------------------------------------------------
 # save maps just in case - this worked
 #   fire_map_left.save("fire_map.html")
@@ -698,6 +794,9 @@ ui.div(
         "freshwater inland wetlands less than 20 acres or shallower than 2.5m.")
 ),
 
+    ui.h3("Wetland Classification Sankey Diagram"),
+    output_widget("sankey_plot"),
+
     ui.hr(),
 
     #---------------------------------------------------
@@ -848,7 +947,9 @@ def server(input, output, session):
 
         return table
 
-
+    @render_widget
+    def sankey_plot():
+        return plot_sankey(wetlands)
 # ---------------------------------------------
 # run application
 
