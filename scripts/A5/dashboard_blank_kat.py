@@ -539,10 +539,77 @@ def plot_firedist(years):
     return g.figure
 
 
+# Summary table setup
+years = [2020, 2021, 2022, 2023, 2024, 2025]
+
+# we already went through the overlap stats
+overlap_stats = fire_stats_all
+
+# Load yearly fire distance statistics
+dist_list = []
+
+for year in years:
+    data = pd.read_csv(
+        output_folder / f"fire_stats_{year}.csv"
+    )
+
+    data["Year"] = year
+    dist_list.append(data)
+
+dist_stats = pd.concat(
+    dist_list,
+    ignore_index=True
+)
+
+
+# Combine overlap and distance statistics
+summary_table = pd.merge(
+    overlap_stats,
+    dist_stats,
+    on=["C System", "Year"],
+    how="outer"
+)
+
+# Sort by year and wetland system
+summary_table = summary_table.sort_values(
+    ["Year", "C System"]
+).reset_index(drop=True)
+
+# Rename columns for dashboard presentation
+summary_table = summary_table.rename(columns={
+    "C System": "Wetland System",
+    "Year": "Year",
+    "Burned Area (ha)": "Burned Area (ha)",
+    "Total Wetland Area (ha)": "Total Wetland Area (ha)",
+    "Percent Wetland Area Burned": "% of Wetland Area Burned",
+    "Percent of Fire Area in Wetlands": "% of Fire Area in Wetlands",
+    "Avg_Dist_Fire_km": "Average Distance to Fire (km)",
+    "Std_Dist_Fire_km": "Standard Deviation of Distance (km)",
+    "Median_Dist_Fire_km": "Median Distance to Fire (km)"
+})
+# re-order columns for presentation
+summary_table = summary_table[
+    [
+        "Year",
+        "Wetland System",
+        "Burned Area (ha)",
+        "Total Wetland Area (ha)",
+        "% of Wetland Area Burned",
+        "% of Fire Area in Wetlands",
+        "Average Distance to Fire (km)",
+        "Standard Deviation of Distance (km)",
+        "Median Distance to Fire (km)"
+    ]
+]
+
+# change formatting to shorten decimals, show percents
+summary_table = summary_table.round(3)
 
 
 
+# -----------------------------------------------------------------------
 # WETLANDS BURNED WIDGET SETUP
+
 # Path to saved fire overlap data
 overlap_folder = (
     box_path / 'ENVIRON 712L-Students' /
@@ -574,8 +641,6 @@ system_list = sorted(fire_stats_all['C System'].unique())
 
 
 # Plotting function
-
-# Plotting function
 def plot_fireint(years, systems):
 
     # Filter data to selected years and wetland systems
@@ -592,26 +657,24 @@ def plot_fireint(years, systems):
         height=3.5,
         aspect=1.5,
         hue='C System',
-        hue_order=system_list,
+        hue_order=[s for s in system_list if s in systems],
         palette=system_colors,
         kind='bar'
     )
 
-    # Add title and axis labels
     g.set(
         title="Percent of Wetland Area Burned by Year and Wetland System",
         xlabel="Year",
         ylabel="Wetland Area Burned (%)"
     )
 
-    # Improve legend title
     if g._legend is not None:
         g._legend.set_title("Wetland System")
 
-    # Adjust spacing
     g.figure.tight_layout()
 
     return g.figure
+
 
 
 # DASHBOARD CONTENT ----------------------------------------------------
@@ -860,31 +923,33 @@ ui.nav_panel(
         ui.layout_columns(
 
             # TEXT AND FILTERS
-            ui.div(
-                ui.p(
-                    "By comparing the percent of wetland area burned inside each system through the years, "
-                    "we can not only see which wetland systems have the most burned area, but also which years had "
-                    "fires with great impact on wetlands. Overall, the percent of wetlands burned compared to total wetland "
-                    "area remains low, indicating most area in CA wetlands did not experience a wildfire "
-                    "in the last 6 years. Palustrine and Riverine wetlands had much larger percentages of area burned "
-                    "compared to the other three systems."
-                ),
-
-                ui.input_checkbox_group(
-                    "fireint_year",
-                    "Select Year:",
-                    choices=[str(y) for y in year_list],
-                    selected=[str(y) for y in year_list],
-                ),
-
-                ui.input_checkbox_group(
-                    "system",
-                    "Select Wetland System:",
-                    choices=system_list,
-                    selected=system_list,
-                    inline=False
-                ),
+            
+        ui.div(
+            ui.p(
+                "By comparing the percent of wetland area burned inside each system through the years, "
+                "we can not only see which wetland systems have the most burned area, but also which years had "
+                "fires with great impact on wetlands. Overall, the percent of wetlands burned compared to total wetland "
+                "area remains low, indicating most area in CA wetlands did not experience a wildfire "
+                "in the last 6 years. Palustrine and Riverine wetlands had much larger percentages of area burned "
+                "compared to the other three systems."
             ),
+
+            ui.input_checkbox_group(
+                "fireint_year",
+                "Select Year:",
+                choices=[str(y) for y in year_list],
+                selected=[str(y) for y in year_list],
+            ),
+
+            ui.input_checkbox_group(
+                "system",
+                "Select Wetland System:",
+                choices=system_list,
+                selected=system_list,
+                inline=False
+            ),
+        ),
+
             # PLOT
             ui.output_plot("fireint_plot"),
 
@@ -1014,7 +1079,11 @@ def server(input, output, session):
         if not selected_years or not selected_systems:
             return None
 
-        return plot_fireint(selected_years, selected_systems)
+        return plot_fireint(
+            selected_years,
+            selected_systems
+        )
+
 
 
     @render.table
@@ -1033,4 +1102,5 @@ def server(input, output, session):
 # ---------------------------------------------
 # run application
 
+print("Dashboard UI created successfully.", flush=True)
 app = App(app_ui, server)
