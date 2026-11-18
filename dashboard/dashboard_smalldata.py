@@ -1373,11 +1373,11 @@ app_ui = ui.page_navbar(
                     "perimeter and its nearest wildfire, for each of the 6 years. "),
                     ui.tags.ul(
                                 ui.tags.li('Distribution heavily skewed to the right.'),
-                                ui.tags.li(f'Overall average distance to nearest fire: {total_average_distance:.2f} km.')
+                                #ui.tags.li(f'Overall average distance to nearest fire: {total_average_distance:.2f} km.')
                                 
                     ),
                     
-
+                ),
                 #     ui.input_select(
                 #         "year",
                 #         "Select Year:",
