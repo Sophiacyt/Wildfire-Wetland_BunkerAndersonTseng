@@ -179,7 +179,8 @@ def plot_points(System, Subsystems=None):
             xaxis_title="Distance to Nearest Wetland (m)",
             yaxis_title="Distance to Nearest Fire (m)",
             width=960,
-            height=800
+            height=800,
+            showlegend=False
         )
 
         return fig
@@ -227,7 +228,8 @@ def plot_points(System, Subsystems=None):
                         size=7,
                         opacity=0.7
                     ),
-                    hoverinfo="skip"
+                    hoverinfo="skip",
+                    showlegend=False
                 )
             )
 
@@ -275,7 +277,8 @@ def plot_points(System, Subsystems=None):
                         color="black",
                         width=4
                     ),
-                    hoverinfo="skip"
+                    hoverinfo="skip",
+                    showlegend=False
                 )
             )
 
@@ -434,7 +437,7 @@ def plot_points(System, Subsystems=None):
         yaxis_title="Distance to Nearest Fire (m)",
         width=960,
         height=800,
-        showlegend=(System == "All Wetland Systems"),
+        showlegend=False,
         hovermode="closest",
         hoverdistance=30
     )
@@ -486,7 +489,7 @@ app_ui = ui.page_fluid(
     ui.layout_sidebar(
 
         # ----------------------------------------------------
-        # SIDEBAR: USER INPUTS
+        # SIDEBAR: USER INPUTS AND LEGEND
         # ----------------------------------------------------
 
         ui.sidebar(
@@ -502,7 +505,13 @@ app_ui = ui.page_fluid(
             ),
 
             # C Subsystem
-            ui.output_ui("subsystem_choices")
+            ui.output_ui("subsystem_choices"),
+
+            # Divider between filters and legend
+            ui.hr(),
+
+            # Dynamic system color legend
+            ui.output_ui("system_legend")
 
         ),
 
@@ -570,6 +579,48 @@ def server(input, output, session):
                 choices=["All"] + available_subsystems,
                 selected="All"
             )
+
+        )
+
+    # --------------------------------------------------------
+    # DYNAMIC SYSTEM LEGEND
+    # --------------------------------------------------------
+
+    @render.ui
+    def system_legend():
+
+        selected_system = input.system()
+
+        # Only display legend when all systems are selected
+        if selected_system != "All Wetland Systems":
+            return ui.div()
+
+        return ui.div(
+
+            ui.h5("Wetland System Colors"),
+
+            *[
+                ui.div(
+                    ui.span(
+                        "●",
+                        style=(
+                            f"color: {color}; "
+                            "font-size: 20px; "
+                            "margin-right: 8px;"
+                        )
+                    ),
+
+                    ui.span(system),
+
+                    style=(
+                        "display: flex; "
+                        "align-items: center; "
+                        "margin-bottom: 5px;"
+                    )
+                )
+
+                for system, color in system_colors.items()
+            ]
 
         )
 
