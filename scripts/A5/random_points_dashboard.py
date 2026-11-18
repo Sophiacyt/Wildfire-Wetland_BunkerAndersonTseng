@@ -25,7 +25,6 @@ import matplotlib.pyplot as plt
 from shiny import App, ui, render, reactive
 from shinywidgets import output_widget, render_widget
 
-import pandas as pd
 import plotly.graph_objects as go
 
 
@@ -84,24 +83,46 @@ simpler_path = (
 # ============================================================
 # READ IN THE RANDOM POINTS
 # ============================================================
-n100000 = gpd.read_file(processed_fldr/"n100000_random_pts.geojson")
+
+n100000 = gpd.read_file(
+    processed_fldr / "n100000_random_pts.geojson"
+)
+
 print("n100,000 found and loaded")
+
+
+# ============================================================
+# DEFINE COWARDIN SYSTEM COLORS AND SYMBOLS
+# ============================================================
+
+system_colors = {
+    "Marine": "#02518a",
+    "Estuarine": "#0b2ce9",
+    "Riverine": "#17becf",
+    "Lacustrine": "#01f694",
+    "Palustrine": "#4bcb00"
+}
+
+system_markers = {
+    "Marine": "o",       # Circle
+    "Estuarine": "s",    # Square
+    "Riverine": "^",     # Triangle
+    "Lacustrine": "D",   # Diamond
+    "Palustrine": "P"    # Plus-filled
+}
+
 
 # ============================================================
 # DEVELOP THE PLOTTING FUNCTION
 # ============================================================
 
-def plot_points(System, Subsystem):
+def plot_points(System, Subsystems):
 
-    # Subset data based on selected dropdown values
+    # Subset data based on selected System and Subsystems
     df_subset = n100000.loc[
-
         (n100000["C System"] == System) &
-
-        (n100000["C Subsystem"] == Subsystem)
-
+        (n100000["C Subsystem"].isin(Subsystems))
     ].copy()
-
 
     # Handle cases where no observations match
     if df_subset.empty:
@@ -121,18 +142,17 @@ def plot_points(System, Subsystem):
 
         return fig
 
-
     # Create regression plot
-    # Each selected System gets its own color and regression line
+    # Each selected System gets its corresponding system color
     dist_plot = sns.lmplot(
         data=df_subset,
         x="Wet_dist",
         y="Fire_dist",
-        hue="C System",
+        hue="C Subsystem",
+        markers=system_markers,
         height=8,
         aspect=1.2
     )
-
 
     # Set title and axis labels
     dist_plot.set_axis_labels(
@@ -147,7 +167,6 @@ def plot_points(System, Subsystem):
         )
     )
 
-
     # Adjust legend location
     if dist_plot.legend is not None:
 
@@ -156,7 +175,6 @@ def plot_points(System, Subsystem):
             loc="upper right",
             bbox_to_anchor=(0.95, 0.95)
         )
-
 
     # Return matplotlib figure
     return dist_plot.fig
@@ -170,31 +188,26 @@ system_list = sorted(
     n100000["C System"].dropna().unique()
 )
 
-subsystem_list = sorted(
-    n100000["C Subsystem"].dropna().unique()
-)
 
-# Initial selections
+# Initial System selection
 initial_system = (
     "Riverine" if "Riverine" in system_list
     else system_list[0]
 )
 
-initial_subsystem = (
-    "Intermittent" if "Intermittent" in subsystem_list
-    else subsystem_list[0]
-)
 
+# ============================================================
+# SANKEY GRAPH TO INPUT TO DASHBOARD
+# ============================================================
 
-# # ============================================================
-# # SANKEY GRAPH TO INPUT TO DASHBOARD
-# # ============================================================
-
-# # read in the wetlands file
+# read in the wetlands file
 # wetlands = gpd.read_file(wetlands_path)
+
 # print("wetlands data found and loaded!")
 
+
 # def plot_sankey(wetlands):
+
 #     # 1. Define Cowardin System colors
 #     system_colors = {
 #         "Marine": "#02518a",
@@ -216,6 +229,7 @@ initial_subsystem = (
 
 
 #     # 2. Calculate total hectares for each transition
+
 #     flow1 = (
 #         df.groupby(["C System", "C Subsystem"])["Hectares"]
 #         .sum()
@@ -230,6 +244,7 @@ initial_subsystem = (
 
 
 #     # 3. Create separate nodes for each classification level
+
 #     systems = df["C System"].unique().tolist()
 #     subsystems = df["C Subsystem"].unique().tolist()
 #     classes = df["C Class"].unique().tolist()
@@ -254,6 +269,7 @@ initial_subsystem = (
 
 
 #     # 4. Build links
+
 #     sources = (
 #         flow1["C System"].map(system_map).tolist()
 #         + flow2["C Subsystem"].map(subsystem_map).tolist()
@@ -274,6 +290,7 @@ initial_subsystem = (
 
 #     # Subsystem colors
 #     subsystem_colors = {
+
 #         # Riverine
 #         "Intermittent": system_colors["Riverine"],
 #         "Streambed": system_colors["Riverine"],
@@ -300,6 +317,7 @@ initial_subsystem = (
 
 #     # Class colors
 #     class_colors = {
+
 #         # Marine
 #         "Unconsolidated Bottom": system_colors["Marine"],
 #         "Aquatic Bed": system_colors["Marine"],
@@ -326,6 +344,7 @@ initial_subsystem = (
 #     # 6. Assign colors to all nodes
 
 #     node_colors = (
+
 #         # System nodes
 #         [system_colors.get(x, "#808080") for x in systems]
 
@@ -345,7 +364,9 @@ initial_subsystem = (
 #         for x in flow1["C Subsystem"]
 #     ]
 
+
 #     # Special cases for System -> Subsystem links
+
 #     for i, row in flow1.iterrows():
 
 #         # Estuarine -> Subtidal is Estuarine blue
@@ -409,6 +430,7 @@ initial_subsystem = (
 
 
 #     # 9. Generate the Sankey diagram
+
 #     fig_subset = go.Figure(go.Sankey(
 #         node=dict(
 #             label=labels,
@@ -432,6 +454,7 @@ initial_subsystem = (
 
 
 #     # 10. Format and display figure
+
 #     fig_subset.update_layout(
 #         title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
 #         font_size=11,
@@ -471,14 +494,10 @@ app_ui = ui.page_fluid(
                 selected=initial_system
             ),
 
-            # C Subsystem
-            ui.input_select(
-                "subsystem",
-                "Subsystem:",
-                choices=subsystem_list,
-                selected=initial_subsystem
-            ),
+            # C Subsystem checkboxes
+            ui.output_ui("subsystem_choices"),
 
+        ),
 
         # ----------------------------------------
         # MAIN PANEL: PLOT
@@ -492,15 +511,16 @@ app_ui = ui.page_fluid(
 
             ui.output_plot(
                 "distance_plot",
-                height="700px",
+                height="700px"
             )
         ),
 
+        # Sankey card (currently commented out)
         # ui.card(
         #     ui.card_header("Wetland Classification Sankey Diagram"),
         #     output_widget("sankey_plot"),
-
         # )
+
     )
 )
 
@@ -512,15 +532,15 @@ app_ui = ui.page_fluid(
 def server(input, output, session):
 
     # --------------------------------------------------------
-    # UPDATE SUBSYSTEM OPTIONS
+    # DYNAMIC SUBSYSTEM CHECKBOXES
     # --------------------------------------------------------
 
-    @reactive.effect
-    def update_subsystem():
+    @render.ui
+    def subsystem_choices():
 
         selected_system = input.system()
 
-        # Find available subsystems
+        # Find available subsystems for selected System
         available_subsystems = sorted(
             n100000.loc[
                 n100000["C System"] == selected_system,
@@ -528,25 +548,14 @@ def server(input, output, session):
             ].dropna().unique()
         )
 
-        # Preserve selection if possible
-        current = input.subsystem()
-
-        if current in available_subsystems:
-            selected = current
-
-        elif available_subsystems:
-            selected = available_subsystems[0]
-
-        else:
-            selected = None
-
-        # Update dropdown
-        ui.update_select(
-            "subsystem",
+        # Display available subsystems as checkboxes
+        return ui.input_checkbox_group(
+            "subsystems",
+            "Subsystems:",
             choices=available_subsystems,
-            selected=selected,
-            session=session
+            selected=available_subsystems
         )
+
 
     # --------------------------------------------------------
     # REACTIVE PLOT
@@ -557,16 +566,12 @@ def server(input, output, session):
 
         # Get current selections
         selected_system = input.system()
-
-        selected_subsystem = input.subsystem()
+        selected_subsystems = input.subsystems() or []
 
         # Generate updated plot
         return plot_points(
-
             System=selected_system,
-
-            Subsystem=selected_subsystem
-
+            Subsystems=selected_subsystems
         )
 
 
