@@ -691,7 +691,11 @@ total_pct_burned_wetland = (
     total_burned_wetland / total_wetland_ha
 ) * 100
 
+# and calculate overall total average dist from wetland to fire
 
+total_average_distance = pd.concat(
+    [fire_data[year]["Dist_Closest_km"] for year in year_list]
+).mean()
 
 # DASHBOARD CONTENT ----------------------------------------------------
 
@@ -945,7 +949,7 @@ app_ui = ui.page_navbar(
         ),
 
         ui.card(
-            ui.card_header("Wetland Burned (%)"),
+            ui.card_header("Wetland Burned"),
             ui.h2(f"{total_pct_burned_wetland:.1f}%"),
             ui.p("Cumulative annual burned area relative to total wetland area"),
         ),
@@ -967,7 +971,8 @@ app_ui = ui.page_navbar(
                     "perimeter and its nearest wildfire, for each of the 6 years. "),
                     ui.tags.ul(
                                 ui.tags.li('Distribution heavily skewed to the right.'),
-                                ui.tags.li('Most wetlands have a fire between 0km and 20km.')
+                                ui.tags.li(f'Overall average distance to nearest fire: {total_average_distance:.2f} km.')
+                                
                     ),
                     
 
