@@ -23,6 +23,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from shiny import App, ui, render, reactive
+from shinywidgets import output_widget, render_widget
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -210,7 +211,7 @@ initial_code = (
 # SANKEY GRAPH TO INPUT TO DASHBOARD
 # ============================================================
 
-read in the wetlands file
+# read in the wetlands file
 wetlands = gpd.read_file(wetlands_path)
 
 def plot_sankey(wetlands):
@@ -528,6 +529,7 @@ app_ui = ui.page_fluid(
                 "distance_plot",
                 height="700px",
             )
+        ),
 
         ui.card(
             ui.card_header("Wetland Classification Sankey Diagram"),
@@ -555,7 +557,7 @@ def server(input, output, session):
 
         # Find available subsystems
         available_subsystems = sorted(
-            0.loc[
+            n100000.loc[
                 n100000["C System"] == selected_system,
                 "C Subsystem"
             ].dropna().unique()
