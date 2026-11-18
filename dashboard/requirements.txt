@@ -1,0 +1,11 @@
+pandas
+seaborn
+ipywidgets
+matplotlib
+ipython
+geopandas
+pygris
+shiny
+folium
+plotly
+shinywidgets
