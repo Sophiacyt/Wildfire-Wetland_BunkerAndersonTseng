@@ -91,18 +91,14 @@ print("n100,000 found and loaded")
 # DEVELOP THE PLOTTING FUNCTION
 # ============================================================
 
-def plot_points(System, Subsystem, Class, Code):
+def plot_points(System, Subsystem):
 
     # Subset data based on selected dropdown values
     df_subset = n100000.loc[
 
         (n100000["C System"] == System) &
 
-        (n100000["C Subsystem"] == Subsystem) &
-
-        (n100000["C Class"] == Class) &
-
-        (n100000["C Code"].isin(Code))
+        (n100000["C Subsystem"] == Subsystem)
 
     ].copy()
 
@@ -127,12 +123,12 @@ def plot_points(System, Subsystem, Class, Code):
 
 
     # Create regression plot
-    # Each selected C Code gets its own color and regression line
+    # Each selected System gets its own color and regression line
     dist_plot = sns.lmplot(
         data=df_subset,
         x="Wet_dist",
         y="Fire_dist",
-        hue="C Code",
+        hue="C System",
         height=8,
         aspect=1.2
     )
@@ -178,15 +174,6 @@ subsystem_list = sorted(
     n100000["C Subsystem"].dropna().unique()
 )
 
-class_list = sorted(
-    n100000["C Class"].dropna().unique()
-)
-
-codes = sorted(
-    n100000["C Code"].dropna().unique()
-)
-
-
 # Initial selections
 initial_system = (
     "Riverine" if "Riverine" in system_list
@@ -198,15 +185,6 @@ initial_subsystem = (
     else subsystem_list[0]
 )
 
-initial_class = (
-    "Streambed" if "Streambed" in class_list
-    else class_list[0]
-)
-
-initial_code = (
-    ["R4SBA"] if "R4SBA" in codes
-    else [codes[0]]
-)
 
 # # ============================================================
 # # SANKEY GRAPH TO INPUT TO DASHBOARD
@@ -501,21 +479,6 @@ app_ui = ui.page_fluid(
                 selected=initial_subsystem
             ),
 
-            # C Class
-            ui.input_select(
-                "class",
-                "Class:",
-                choices=class_list,
-                selected=initial_class
-            ),
-
-            # C Code checkboxes
-            ui.h5("Select C Codes:"),
-
-            ui.output_ui("code_checkboxes"),
-
-            width=300
-        ),
 
         # ----------------------------------------
         # MAIN PANEL: PLOT
@@ -585,87 +548,6 @@ def server(input, output, session):
             session=session
         )
 
-
-    # --------------------------------------------------------
-    # UPDATE CLASS OPTIONS
-    # --------------------------------------------------------
-
-    @reactive.effect
-    def update_class():
-
-        selected_system = input.system()
-        selected_subsystem = input.subsystem()
-
-        # Find available classes
-        available_classes = sorted(
-            n100000.loc[
-                (n100000["C System"] == selected_system) &
-                (n100000["C Subsystem"] == selected_subsystem),
-                "C Class"
-            ].dropna().unique()
-        )
-
-        # Preserve selection if possible
-        current = input["class"]()
-
-        if current in available_classes:
-            selected = current
-
-        elif available_classes:
-            selected = available_classes[0]
-
-        else:
-            selected = None
-
-        # Update dropdown
-        ui.update_select(
-            "class",
-            choices=available_classes,
-            selected=selected,
-            session=session
-        )
-
-
-    # --------------------------------------------------------
-    # GENERATE C CODE CHECKBOXES
-    # --------------------------------------------------------
-
-    @render.ui
-    def code_checkboxes():
-
-        selected_system = input.system()
-        selected_subsystem = input.subsystem()
-        selected_class = input["class"]()
-
-        # Find available codes
-        available_codes = sorted(
-            n100000.loc[
-                (n100000["C System"] == selected_system) &
-                (n100000["C Subsystem"] == selected_subsystem) &
-                (n100000["C Class"] == selected_class),
-                "C Code"
-            ].dropna().unique()
-        )
-
-        # Select initial code if available;
-        # otherwise select the first available code
-        if initial_code[0] in available_codes:
-            selected = initial_code
-        elif available_codes:
-            selected = [available_codes[0]]
-        else:
-            selected = []
-
-        # Create individual checkboxes
-        return ui.input_checkbox_group(
-            "codes",
-            label="",
-            choices=available_codes,
-            selected=selected,
-            inline=False
-        )
-
-
     # --------------------------------------------------------
     # REACTIVE PLOT
     # --------------------------------------------------------
@@ -678,26 +560,14 @@ def server(input, output, session):
 
         selected_subsystem = input.subsystem()
 
-        selected_class = input["class"]()
-
-        # Multiple checkbox selections return a list
-        selected_codes = input.codes() or []
-
         # Generate updated plot
         return plot_points(
 
             System=selected_system,
 
-            Subsystem=selected_subsystem,
-
-            Class=selected_class,
-
-            Code=selected_codes
+            Subsystem=selected_subsystem
 
         )
-
-
-
 
 
 # ============================================================
