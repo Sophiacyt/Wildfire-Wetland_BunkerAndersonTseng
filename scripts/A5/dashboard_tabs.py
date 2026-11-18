@@ -677,6 +677,12 @@ summary_table = summary_table[
 # change formatting to shorten decimals, show percents
 summary_table = summary_table.round(3)
 
+#calculate total wetland area to display
+total_wetland_ha = summary_table.loc[
+    summary_table["Year"] == 2025,
+    "Total Wetland Area (ha)"
+].sum()
+
 
 # DASHBOARD CONTENT ----------------------------------------------------
 
@@ -687,37 +693,48 @@ app_ui = ui.page_navbar(
     # --------------------------------------------------
 
     ui.nav_panel(
-        "Home",
+    "Home",
 
-        # add a box with some project information
-        ui.card(
-            ui.card_header('Wildfires & Wetlands Dashboard'),
+    ui.card(
+        ui.card_header('Wildfires & Wetlands Dashboard'),
 
-            ui.p(
-                'This dashboard uses CalFire fire perimeters data and National Wetlands Inventory '
-                'wetland data to explore the relationship between wetlands and wildfires in California. California ' \
-                'has over INSERT HERE hectares of wetland, but has lost more than 90% of wetland area in the last century. ' \
-                'Wetlands provide many benefits including flood mitigation, water filtration, carbon sequestration, and wildlife habitat. ' \
-                'Use our dashboards to examine wildfire impact on wetlands in the state from 2020 to 2025.'
-            ),
-
-            ui.h4("Central Questions"),
-            ui.tags.ul(
-                ui.tags.li('What types of wetlands are most impacted by wildfires in the state of California?'),
-                ui.tags.li('Are wetlands less likely to burn than other land in California?'),
-                ui.tags.li('Is land near wetlands less likely to burn than land farther away?'),
-            ),
+        ui.p(
+            'This dashboard uses CalFire fire perimeters data and National Wetlands Inventory '
+            'wetland data to explore the relationship between wetlands and wildfires in California. California '
+            'currently has over 3 million hectares of wetland, but has undergone an estimate loss of 90% in the last century. '
+            'Wetlands suppy many benefits including flood mitigation, water filtration, carbon sequestration, and wildlife habitat, '
+            'and are important resources to study and protect. '
+            'Use our dashboards to examine wildfire impact on wetlands in the state from 2020 to 2025.'
         ),
 
-        ui.card(
-            ui.card_header('Data'),
-            ui.h4('Wildfire Data'),
-            ui.p('insert info about wildfire data & limitations here'),
-            ui.h4('Wetlands Data'),
-            ui.p('insert info about wetlands data & limtations here'),
+        ui.h4("How are wetlands impacted by wildfires in the state of California?"),
+        ui.tags.ul(
+            ui.tags.li('What types of wetlands are most impacted by wildfires in the state of California?'),
+            ui.tags.li('Are wetlands less likely to burn than other land in California?'),
+            ui.tags.li('Is land near wetlands less likely to burn than land farther away?'),
+        ),
+
+        ui.h4("Hypotheses"),
+        ui.tags.ul(
+            ui.tags.li(
+                'Woodier wetland systems with less frequent inundation such as palustrine and riverine wetlands will be more '
+                'vulnerable to wildfires.'
+            ),
+            ui.tags.li(
+                'The presence of surface or near-surface water in wetlands will make them less vulnerable to wildfire than non-wetland '
+                'area.'
+            ),
         )
     ),
 
+    ui.card(
+        ui.card_header('Data'),
+        ui.h4('Wildfire Data'),
+        ui.p('insert info about wildfire data & limitations here'),
+        ui.h4('Wetlands Data'),
+        ui.p('insert info about wetlands data & limtations here'),
+    )
+),
     # --------------------------------------------------
     # WILDFIRE tab
     # --------------------------------------------------
@@ -866,18 +883,28 @@ app_ui = ui.page_navbar(
         # INTRODUCTION
         # ---------------------------------------------------
 
-        ui.card(
-            ui.card_header("Analysis Overview"),
+        ui.layout_columns(
 
-            ui.p(
-                "To address our central questions about wildfire impacts on wetlands across " \
-                "California, we use a spatial analysis approach. Both the NWI wetlands dataset and the " \
-                "CalFire fire dataset contain shapefiles that show perimeters, allowing us to examine the " \
-                "extent to which wetlands overlap with wildfire boundaries, compare wildfire occurance in wetland and " \
-                "non-wetland areas, and investigate how proximity to wetlands relates to wildfire occurance."
+            ui.card(
+                ui.card_header("Analysis Overview"),
+
+                ui.p(
+                    "To address our central questions about wildfire impacts on wetlands across "
+                    "California, we use a spatial analysis approach. Both the NWI wetlands dataset and the "
+                    "CalFire fire dataset contain shapefiles that show perimeters, allowing us to examine the "
+                    "extent to which wetlands overlap with wildfire boundaries, compare wildfire occurance in wetland and "
+                    "non-wetland areas, and investigate how proximity to wetlands relates to wildfire occurance."
+                ),
             ),
-            ui.p("")
-        ),
+
+            ui.card(
+                ui.card_header("Total Wetland Area"),
+                ui.h2(f"{total_wetland_ha:,.0f}"),
+                ui.p("Hectares across California"),
+            ),
+
+            col_widths=[8, 4],
+),
 
         # ---------------------------------------------------
                 # 1. distance to nearest fire
