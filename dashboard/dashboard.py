@@ -1447,29 +1447,65 @@ app_ui = ui.page_navbar(
         # 3. SPATIAL RELATIONSHIP BETWEEN WETLANDS AND FIRES
         # ---------------------------------------------------
 
-        ui.card(
-            ui.card_header("3. Spatial Relationship Between Wetlands and Fires"),
+ui.card(
+    ui.card_header("3. Spatial Relationship Between Wetlands and Fires"),
 
-            ui.layout_columns(
+    ui.layout_columns(
 
-                ui.div(
-                    ui.p(
-                        "This analysis examines the relationship between distance to the nearest wetland "
-                        "and distance to the nearest fire using randomly generated points across California."
-                    ),
+        # ----------------------------------------------------
+        # LEFT COLUMN: EXPLANATION
+        # ----------------------------------------------------
 
-                    ui.p(
-                        "PLACEHOLDER: Add explanation of the distance analysis and its findings."
-                    ),
-                ),
-
-                ui.div(
-                    ui.p("PLACEHOLDER: Add random-point distance relationship plot."),
-                ),
-
-                col_widths=[4, 8],
+        ui.div(
+            ui.p(
+                "This analysis examines the relationship between distance to the nearest wetland "
+                "and distance to the nearest fire using randomly generated points across California."
             ),
+
+            ui.p(
+                "PLACEHOLDER: Add explanation of the distance analysis and its findings."
+            )
         ),
+
+        # ----------------------------------------------------
+        # RIGHT COLUMN: INTERACTIVE DASHBOARD
+        # ----------------------------------------------------
+
+        ui.div(
+            ui.layout_sidebar(
+
+                # SIDEBAR: FILTERS AND LEGEND
+                ui.sidebar(
+                    ui.h4("Filter Wetland Classification"),
+
+                    ui.input_select(
+                        "system",
+                        "System:",
+                        choices=system_choices,
+                        selected=initial_system
+                    ),
+
+                    ui.output_ui("subsystem_choices"),
+
+                    ui.hr(),
+
+                    ui.output_ui("system_legend")
+                ),
+
+                # MAIN PANEL: PLOT
+                ui.card(
+                    ui.card_header(
+                        "Distance to Wetlands vs Fire"
+                    ),
+                    output_widget("distance_plot")
+                )
+            )
+        ),
+
+        col_widths=[4, 8]
+    )
+),
+
 
         # ---------------------------------------------------
         # 4. SUMMARY STATISTICS
@@ -1554,6 +1590,119 @@ def server(input, output, session):
     def sankey_plot():
         return plot_sankey(wetlands)
 
+    # dynamically update subsystem options
+    @render.ui
+    def subsystem_choices():
+
+        selected_system = input.system()
+
+        # Hide subsystem selection when all systems selected
+        if selected_system == "All Wetland Systems":
+            return ui.div()
+
+        available_subsystems = sorted(
+            n100000.loc[
+                n100000["C System"] == selected_system,
+                "C Subsystem"
+            ].dropna().unique()
+        )
+
+        return ui.div(
+
+            ui.input_select(
+                "subsystems",
+                "Subsystem:",
+                choices=["All"] + available_subsystems,
+                selected="All"
+            )
+
+        )    
+
+    # dynamic system legend
+    @render.ui
+    def system_legend():
+
+        selected_system = input.system()
+
+        # Only display legend when all systems are selected
+        if selected_system != "All Wetland Systems":
+            return ui.div()
+
+        return ui.div(
+
+            ui.h5("Wetland System Colors"),
+
+            *[
+                ui.div(
+                    ui.span(
+                        "●",
+                        style=(
+                            f"color: {color}; "
+                            "font-size: 20px; "
+                            "margin-right: 8px;"
+                        )
+                    ),
+
+                    ui.span(system),
+
+                    style=(
+                        "display: flex; "
+                        "align-items: center; "
+                        "margin-bottom: 5px;"
+                    )
+                )
+
+                for system, color in system_colors.items()
+            ]
+
+        )
+
+# --------------------------------------------------------
+    # REACTIVE DISTANCE PLOT
+    # --------------------------------------------------------
+
+    @render_plotly
+    def distance_plot():
+
+        selected_system = input.system()
+
+        # ----------------------------------------------------
+        # ALL WETLAND SYSTEMS
+        # ----------------------------------------------------
+
+        if selected_system == "All Wetland Systems":
+
+            return plot_points(
+                System="All Wetland Systems"
+            )
+
+        # ----------------------------------------------------
+        # INDIVIDUAL WETLAND SYSTEM
+        # ----------------------------------------------------
+
+        selected_subsystem = input.subsystems()
+
+        # If All is selected, include every subsystem
+        # belonging to the selected system.
+
+        if selected_subsystem == "All":
+
+            selected_subsystems = sorted(
+                n100000.loc[
+                    n100000["C System"] == selected_system,
+                    "C Subsystem"
+                ].dropna().unique()
+            )
+
+        else:
+
+            selected_subsystems = [selected_subsystem]
+
+        # Generate updated plot
+        return plot_points(
+            System=selected_system,
+            Subsystems=selected_subsystems
+        )
 
 # ---------------------------------------------
 # run application
