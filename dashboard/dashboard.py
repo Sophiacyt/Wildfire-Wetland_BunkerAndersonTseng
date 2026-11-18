@@ -4,7 +4,7 @@
 # shiny run --reload dashboard/dashboard.py
 
 # if mason and struggling, run below
-# cd ~/Desktop/Duke/Environmental\ Data Exploration/Wildfire-Wetland_BunkerAndersonTseng/dashboard/dashboard.py
+# cd ~/Desktop/Duke/Environmental\ Data\ Exploration/Wildfire-Wetland_BunkerAndersonTseng/dashboard
 # shiny run --reload dashboard.py
 
 # be a little patient with it starting, need to see this line in terminal output
@@ -28,6 +28,18 @@ import folium
 #for sankey
 import plotly.graph_objects as go
 from shinywidgets import output_widget, render_widget
+
+from pathlib import Path
+import pandas as pd
+import geopandas as gpd
+import platform
+import numpy as np
+
+from shiny import App, ui, render, reactive
+from shinywidgets import output_widget, render_plotly
+
+import plotly.graph_objects as go
+import plotly.express as px
 
 # ----------------------------------------------------------
 # DATA SETUP
@@ -59,6 +71,23 @@ else:
 # ----------------------------------------------------------
 # DATA PATH SETUP
 # ----------------------------------------------------------
+
+wetlands_path = (
+    box_path
+    / "ENVIRON 712L-Students"
+    / "Data"
+    / "BunkerAndersonTseng"
+    / "wetlands_subset"
+    / "wetlands_subset.geojson"
+)
+
+simpler_path = (
+    box_path
+    / "ENVIRON 712L-Students"
+    / "Data"
+    / "BunkerAndersonTseng"
+    / "simpler_wetlands"
+)
 
 # Path to saved spatial data and yearly statistics
 output_folder = (
@@ -126,6 +155,376 @@ system_colors = {
     "Lacustrine": "#01f694",
     "Palustrine": "#4bcb00"
 }
+
+# -----------------------random-points-graph-----------------------------
+
+n100000 = gpd.read_file(
+    processed_fldr / "n100000_random_pts.geojson"
+)
+
+print("n100,000 random points found and loaded")
+
+
+# ============================================================
+# DEVELOP THE PLOTTING FUNCTION
+# ============================================================
+
+def plot_points(System, Subsystems=None):
+
+    # --------------------------------------------------------
+    # SUBSET DATA
+    # --------------------------------------------------------
+
+    if System == "All Wetland Systems":
+
+        # Include all wetland systems and subsystems
+        df_subset = n100000.copy()
+
+        subsystem_title = "All Subsystems"
+
+    else:
+
+        # Include only the selected wetland system
+        if Subsystems is None:
+            Subsystems = []
+
+        df_subset = n100000.loc[
+            (n100000["C System"] == System) &
+            (n100000["C Subsystem"].isin(Subsystems))
+        ].copy()
+
+        # Format subsystem title
+        if len(Subsystems) > 1:
+            subsystem_title = "All Subsystems"
+        elif len(Subsystems) == 1:
+            subsystem_title = Subsystems[0]
+        else:
+            subsystem_title = "No Subsystems"
+
+    # Remove observations missing either distance
+    df_subset = df_subset.dropna(
+        subset=["Wet_dist", "Fire_dist"]
+    )
+
+    # --------------------------------------------------------
+    # HANDLE EMPTY DATA
+    # --------------------------------------------------------
+
+    if df_subset.empty:
+
+        fig = go.Figure()
+
+        fig.add_annotation(
+            text="No matching observations",
+            x=0.5,
+            y=0.5,
+            xref="paper",
+            yref="paper",
+            showarrow=False,
+            font=dict(size=18)
+        )
+
+        if System == "All Wetland Systems":
+            plot_title = (
+                "100,000 Random Points in California — "
+                "All Wetland Systems"
+            )
+        else:
+            plot_title = (
+                f"100,000 Random Points in California — "
+                f"{System}: {subsystem_title}"
+            )
+
+        fig.update_layout(
+            title=plot_title,
+            xaxis_title="Distance to Nearest Wetland (m)",
+            yaxis_title="Distance to Nearest Fire (m)",
+            width=960,
+            height=800,
+            showlegend=False
+        )
+
+        return fig
+
+    # --------------------------------------------------------
+    # DETERMINE WHETHER OLS TRENDLINE CAN BE CALCULATED
+    # --------------------------------------------------------
+
+    use_trendline = (
+        len(df_subset) >= 2
+        and df_subset["Wet_dist"].nunique() > 1
+    )
+
+    # --------------------------------------------------------
+    # CREATE FIGURE
+    # --------------------------------------------------------
+
+    fig = go.Figure()
+
+    # --------------------------------------------------------
+    # ALL WETLAND SYSTEMS
+    # --------------------------------------------------------
+
+    if System == "All Wetland Systems":
+
+        # Add one scatter trace for each wetland system
+        for wetland_system in system_colors:
+
+            system_subset = df_subset.loc[
+                df_subset["C System"] == wetland_system
+            ]
+
+            if system_subset.empty:
+                continue
+
+            fig.add_trace(
+                go.Scatter(
+                    x=system_subset["Wet_dist"],
+                    y=system_subset["Fire_dist"],
+                    mode="markers",
+                    name=wetland_system,
+                    marker=dict(
+                        color=system_colors[wetland_system],
+                        symbol="circle",
+                        size=7,
+                        opacity=0.7
+                    ),
+                    hoverinfo="skip",
+                    showlegend=False
+                )
+            )
+
+        # ----------------------------------------------------
+        # ONE OVERALL REGRESSION LINE
+        # ----------------------------------------------------
+
+        if use_trendline:
+
+            x = df_subset["Wet_dist"].to_numpy()
+            y = df_subset["Fire_dist"].to_numpy()
+
+            # Calculate overall OLS regression
+            slope, intercept = np.polyfit(x, y, 1)
+
+            # Calculate predicted values
+            y_pred = slope * x + intercept
+
+            # Calculate R-squared
+            ss_res = np.sum((y - y_pred) ** 2)
+            ss_tot = np.sum((y - np.mean(y)) ** 2)
+
+            r2 = (
+                1 - ss_res / ss_tot
+                if ss_tot > 0
+                else np.nan
+            )
+
+            # Add overall regression line
+            x_line = np.linspace(
+                x.min(),
+                x.max(),
+                100
+            )
+
+            y_line = slope * x_line + intercept
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x_line,
+                    y=y_line,
+                    mode="lines",
+                    name="Overall Regression",
+                    line=dict(
+                        color="black",
+                        width=4
+                    ),
+                    hoverinfo="skip",
+                    showlegend=False
+                )
+            )
+
+            # Add regression statistics annotation
+            fig.add_annotation(
+                x=0.98,
+                y=0.98,
+                xref="paper",
+                yref="paper",
+                text=(
+                    f"<b>System: All Wetland Systems<br>"
+                    f"Subsystem: Not applicable<br>"
+                    f"Slope: {slope:.4f}<br>"
+                    f"Y-intercept: {intercept:.4f}<br>"
+                    f"R² = {r2:.4f}</b>"
+                ),
+                showarrow=False,
+                xanchor="right",
+                yanchor="top",
+                font=dict(
+                    size=16,
+                    color="black"
+                ),
+                bgcolor="white",
+                bordercolor="black",
+                borderwidth=1,
+                borderpad=8
+            )
+
+    # --------------------------------------------------------
+    # INDIVIDUAL WETLAND SYSTEM
+    # --------------------------------------------------------
+
+    else:
+
+        # Add points using the selected system color
+        color = system_colors.get(System, "#808080")
+
+        fig.add_trace(
+            go.Scatter(
+                x=df_subset["Wet_dist"],
+                y=df_subset["Fire_dist"],
+                mode="markers",
+                name=System,
+                marker=dict(
+                    color=color,
+                    symbol="circle",
+                    size=7,
+                    opacity=0.7
+                ),
+                hoverinfo="skip",
+                showlegend=False
+            )
+        )
+
+        # ----------------------------------------------------
+        # ONE REGRESSION LINE
+        # ----------------------------------------------------
+
+        if use_trendline:
+
+            x = df_subset["Wet_dist"].to_numpy()
+            y = df_subset["Fire_dist"].to_numpy()
+
+            # Calculate OLS regression
+            slope, intercept = np.polyfit(x, y, 1)
+
+            # Calculate predicted values
+            y_pred = slope * x + intercept
+
+            # Calculate R-squared
+            ss_res = np.sum((y - y_pred) ** 2)
+            ss_tot = np.sum((y - np.mean(y)) ** 2)
+
+            r2 = (
+                1 - ss_res / ss_tot
+                if ss_tot > 0
+                else np.nan
+            )
+
+            # Generate regression line
+            x_line = np.linspace(
+                x.min(),
+                x.max(),
+                100
+            )
+
+            y_line = slope * x_line + intercept
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x_line,
+                    y=y_line,
+                    mode="lines",
+                    name="Regression",
+                    line=dict(
+                        color="black",
+                        width=4
+                    ),
+                    hoverinfo="skip",
+                    showlegend=False
+                )
+            )
+
+            # Add regression statistics annotation
+            fig.add_annotation(
+                x=0.98,
+                y=0.98,
+                xref="paper",
+                yref="paper",
+                text=(
+                    f"<b>System: {System}<br>"
+                    f"Subsystem: {subsystem_title}<br>"
+                    f"Slope: {slope:.4f}<br>"
+                    f"Y-intercept: {intercept:.4f}<br>"
+                    f"R² = {r2:.4f}</b>"
+                ),
+                showarrow=False,
+                xanchor="right",
+                yanchor="top",
+                font=dict(
+                    size=16,
+                    color="black"
+                ),
+                bgcolor="white",
+                bordercolor="black",
+                borderwidth=1,
+                borderpad=8
+            )
+
+    # --------------------------------------------------------
+    # FORMAT FIGURE TITLE
+    # --------------------------------------------------------
+
+    if System == "All Wetland Systems":
+
+        plot_title = (
+            "100,000 Random Points in California — "
+            "All Wetland Systems"
+        )
+
+    else:
+
+        plot_title = (
+            f"100,000 Random Points in California — "
+            f"{System}: {subsystem_title}"
+        )
+
+    # --------------------------------------------------------
+    # FORMAT FIGURE
+    # --------------------------------------------------------
+
+    fig.update_layout(
+        title=plot_title,
+        xaxis_title="Distance to Nearest Wetland (m)",
+        yaxis_title="Distance to Nearest Fire (m)",
+        width=960,
+        height=800,
+        showlegend=False,
+        hovermode="closest",
+        hoverdistance=30
+    )
+
+    # Add commas to axis tick labels
+    fig.update_xaxes(tickformat=",")
+    fig.update_yaxes(tickformat=",")
+
+    return fig
+
+
+# ============================================================
+# ESTABLISH DROPDOWN OPTIONS
+# ============================================================
+
+system_list = sorted(
+    n100000["C System"].dropna().unique()
+)
+
+# Add All Wetland Systems option
+system_choices = [
+    "All Wetland Systems"
+] + system_list
+
+# Initial system selection
+initial_system = "All Wetland Systems"
 
 # --------------------------fire-explore-map-----------------------------
 fire_map_left = folium.Map(
@@ -294,6 +693,8 @@ wetlands_subset_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAnde
 wetlands = gpd.read_file(
     wetlands_subset_path / "wetlands_subset.gpkg"
 )
+
+print("wetlands data secured!")
 
 def plot_sankey(wetlands):
 
@@ -698,6 +1099,8 @@ total_average_distance = pd.concat(
 ).mean()
 
 # DASHBOARD CONTENT ----------------------------------------------------
+print("all data and functions loaded in! Setting up dashboard now :)")
+
 
 app_ui = ui.page_navbar(
 
