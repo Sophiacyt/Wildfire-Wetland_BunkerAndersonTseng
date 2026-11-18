@@ -1,20 +1,38 @@
 # Wildfire Wetland_BunkerAndersonTseng
-Group Project - Wildfire &amp; Wetland
+Group Project - Wildfires & Wetlands
 Group project about wildfire & wetland
 
 - Team Name: Wildfire and Wetland Interactions in California (Team 8)
 - Team Members: Kat Anderson, Mason Bunker, Sophia Tseng
 - Intended Audience: Wildfire and wetland researchers
 
-## Research Question: What role do wetlands plan in wildfire movement across the landscape? 
-### Optional Research Questions: 
-1. Do fires cross wetland boundaries?
-2. Are wildfires less frequent near wetlands? 
-3. Has wetland loss occured due to wildfires? 
+## Research Question: How are wetlands affected by wildfires in the state of California? 
+### Supporting Questions: 
+1. How close are CA wetlands to wildfires? 
+2. How much wetland was burned in the last 6 years and which wetland systems are most affected?
+3. What is the spatial relationship, if any, between wetlands and wildfires?
+
+# To access dashboard: 
+- locate dashboard.py script under dashboard folder in repository
+- Install shiny environment if necessary using the following commands 
+    - conda create -n env700-shiny python=3.12
+    - activate env700-shiny
+    - conda install pandas geopandas shiny ipyleaflet seaborn ipykernel shinywidgets rsconnect-python pip
+    - pip install shinyswatch
+
+- Run the following commands in terminal to deploy dashboard, then follow the link populated.
+    - conda activate env700-shiny
+    - shiny run --reload dashboard/dashboard.py
+
+
+
+
+
+
 
 ## Data 
 ### Data Dictionary
-#### Wetland Dataset
+#### Wetlands Dataset
 Unit of observation: Each row represents one wetland observation
 
 | Variable Name | Unit of Measurement | Source Definition |
@@ -29,7 +47,7 @@ Unit of observation: Each row represents one wetland observation
 |C Class |N/A| Cowardin class determined by aerial imagery of the wetland. |
 	
 
-#### Fire SHP Dataset
+#### Fires Dataset
 Unit of observation: Each row represents one fire incident
 
 | Variable Name | Unit of Measurement | Source Definition |
@@ -56,37 +74,7 @@ Unit of observation: Each row represents one fire incident
 | GlobalID | Text |Unique ID|
 | geometry |||
 
-
-#### Fire CSV Dataset
-Unit of observation: Each row represents one fire incident
-
-| Variable Name | Unit of Measurement | Source Definition |
-|---|---|---|
-OBJECTID | Text | Random object id |
-Year | Int64 | Year in which the fire started |
-State | Text | State in which the fire started |
-Agency | Text | Direct protection agency responsible for fire |
-Unit ID | Text | ICS code for unit | 
-Fire Name | Text | Name of the fire, UPPER CASE, without "fire" or "incident" following name |
-Local Incident Number | Text | Number assigned by the Emergency Command Center of the responsible agency for the fire | 
-IRWIN ID | Text | IRWIN stands for Integrated Reporting of Wildland Fire Information, a global unique identifier assigned at the onset of an incident. |
-Alarm Date | DateTime | DD/MM/YYYY format, date of fire discovery |
-Containment Date | DateTime | DD/MM/YYYY format Containment date for the fire |
-Cause | Int | Reason fire ignited |
-Collection Method | Int | Method used to collect perimeter data |
-Management Objective
-GIS Calculated Acres | Float | GIS calculated area, in acres |
-Comments | Text | Miscellaneous comments |
-Complex Name | Text | If part of complex, the complex name |
-Complex ID | Text | If part of complex, the complex number |
-Fire Number (historical use) | Text | Former numbering system preceding incident numbers |
-GlobalID | Text | Unique ID |
-Decade | Int64 | Decade in which fire started
-Shape__Area | Float | Area inside fire perimeter, acres
-Shape__Length | Float | Area of fire perimeter, ft
-
-
-Minimum mapping requirements for CalFire: 
+CalFire Minimum Mapping Requirements: 
 1. Wildland timber fires greater than 10 acres.
 2. Wildland brush fires greater than 50 acres.
 3. Wildland grass fires greater than 300 acres.
@@ -108,14 +96,13 @@ To work with large datasets, we use **Box Drive** to store and access data rathe
 #### 1. Set Up Box Drive
 - Download and install [Box Drive](https://www.box.com/resources/downloads).
 - Log in using your Duke account.
-- Make sure Box Drive is running and your project data is accessible.
+- Make sure Box Drive is running to access project data via the ENVIRON 712L-Students/Data/BunkerAndersonTseng
 
 #### 2. Organize Project Data
-- Store large datasets in the appropriate folder within the class Box Drive.
-- Keep project data organized in folders.
-- Do not upload large datasets to GitHub. GitHub should contain our code, documentation, and other project files.
+- Store large datasets in the appropriate folder within the class Box Drive, small datasets organized in data folder in project repository.
+- GitHub stores small data files along with all working files, notes, metadata, and documents for the project.
 
-#### 3. Access Data in Python (VS Code)
+#### 3. Access Box Data in Python (VS Code)
 
 ```python
 import platform
@@ -158,6 +145,11 @@ df.head()
 Replace `YOUR_PROJECT_FOLDER` and `your_dataset.csv` with the appropriate folder and file names
 
 ### Data cleaning 
+- All data reprojected to UTM zone 10N
+- Wetlands data subset to all wetlands greater than 1 hectare.
+- Fire data subset to fires between 2020 and 2025. Fires without valid geometries were removed. 
+
+
 ### Statistical analysis 
 ### Mapping
 

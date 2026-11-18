@@ -1,0 +1,4 @@
+1. Box connection to host platform
+2. Sankey diagram colors on Wetlands tab, see if easier to run without Class and Subclass
+3. Map with both fire and wetland footprints on home page
+

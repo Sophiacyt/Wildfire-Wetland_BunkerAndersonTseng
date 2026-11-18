@@ -1,7 +1,7 @@
 
 # TO RUN:
 # conda activate env700-shiny
-# shiny run --reload scripts/A5/dashboard_tabs.py
+# shiny run --reload dashboard/dashboard.py
 
 # if mason and struggling, run below
 # cd ~/Desktop/Duke/Environmental\ Data Exploration/Wildfire-Wetland_BunkerAndersonTseng/scripts/A4
