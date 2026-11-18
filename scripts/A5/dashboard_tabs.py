@@ -729,11 +729,37 @@ app_ui = ui.page_navbar(
 
     ui.card(
         ui.card_header('Data'),
+
         ui.h4('Wildfire Data'),
-        ui.p('insert info about wildfire data & limitations here'),
+        ui.p(
+            'The CA wildfire data is a direct download of the ',
+            ui.tags.a(
+                'California Historic Fire Perimeters',
+                href="https://www.fire.ca.gov/what-we-do/fire-resource-assessment-program/fire-perimeters",
+                target="_blank"
+            ),
+            ' managed by CalFire. The dataset records fires greater than or equal to 10 acres by Year, Reporting Agency, '
+            'Unit ID, Fire Name, Local Incident Number, Alarm Date, Containment Date, Cause, Collection Method, '
+            'Management Objective, and GIS Calculated Acres. Raw data was projected in the '
+            'California Albers Projection (EPSG:3310) but has been reprojected to EPSG:26910, UTM Zone 10N.'
+        ),
+
         ui.h4('Wetlands Data'),
-        ui.p('insert info about wetlands data & limtations here'),
-    )
+        ui.p(
+            'The CA wetlands data is a direct download from the '
+            'USFW National Wetland Inventory. Metadata for the NWI can be '
+            'accessed from the ',
+            ui.tags.a(
+                'Wetlands Mapper Tool',
+                href="https://fwsprimary.wim.usgs.gov/wetlands/apps/wetlands-mapper/",
+                target="_blank"
+            ),
+            '. Data was downloaded for the state of California and subset to include only wetlands '
+            'greater than 1 hectare. Raw data was projected in equal-area Albers '
+            'projection for the 1983 North American Datum, but has been reprojected '
+            'to EPSG:26910, UTM Zone 10N.'
+        ),
+)
 ),
     # --------------------------------------------------
     # WILDFIRE tab
