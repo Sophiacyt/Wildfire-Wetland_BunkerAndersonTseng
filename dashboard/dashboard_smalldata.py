@@ -1093,81 +1093,81 @@ app_ui = ui.page_navbar(
     # HOME tab
     # --------------------------------------------------
 
-    ui.nav_panel(
-    "Home",
+        ui.nav_panel(
+        "Home",
 
-    ui.card(
-        ui.card_header('Wildfires & Wetlands Dashboard'),
+        ui.card(
+            ui.card_header('Wildfires & Wetlands Dashboard'),
 
-        ui.p(
-            'This dashboard uses CalFire fire perimeters data and National Wetlands Inventory '
-            'wetland data to explore the relationship between wetlands and wildfires in California. California '
-            'currently has over 3 million hectares of wetland, but has undergone an estimate loss of 90% in the last century. '
-            'Wetlands suppy many benefits including flood mitigation, water filtration, carbon sequestration, and wildlife habitat, '
-            'and are important resources to study and protect. '
-            'Use our dashboards to examine wildfire impact on wetlands in the state from 2020 to 2025.'
+            ui.p(
+                'This dashboard uses CalFire fire perimeters data and National Wetlands Inventory '
+                'wetland data to explore the relationship between wetlands and wildfires in California. California '
+                'currently has over 3 million hectares of wetland, but has undergone an estimated loss of 90% in the last century. '
+                'Wetlands supply many benefits including flood mitigation, water filtration, carbon sequestration, and wildlife habitat, '
+                'and are important resources to study and protect. '
+                'Use our dashboards to examine wildfire impact on wetlands in the state from 2020 to 2025.'
+            ),
+
+            ui.h4("How are wetlands impacted by wildfires in the state of California?"),
+            ui.tags.ul(
+                ui.tags.li('What types of wetlands are most impacted by wildfires in the state of California?'),
+                ui.tags.li('Are wetlands less likely to burn than other land in California?'),
+                ui.tags.li('Is land near wetlands less likely to burn than land farther away?'),
+            ),
+
+            ui.h4("Hypotheses"),
+            ui.tags.ul(
+                ui.tags.li(
+                    'Woodier wetland systems with less frequent inundation such as palustrine and riverine wetlands will be more '
+                    'vulnerable to wildfires.'
+                ),
+                ui.tags.li(
+                    'The presence of surface or near-surface water in wetlands will make them less vulnerable to wildfire than non-wetland '
+                    'area.'
+                ),
+            )
         ),
 
-        ui.h4("How are wetlands impacted by wildfires in the state of California?"),
-        ui.tags.ul(
-            ui.tags.li('What types of wetlands are most impacted by wildfires in the state of California?'),
-            ui.tags.li('Are wetlands less likely to burn than other land in California?'),
-            ui.tags.li('Is land near wetlands less likely to burn than land farther away?'),
+        ui.card(
+            ui.card_header('Data'),
+
+            ui.h4('Wildfire Data'),
+            ui.p(
+                'The CA wildfire data is a direct download of the ',
+                ui.tags.a(
+                    'California Historic Fire Perimeters',
+                    href="https://www.fire.ca.gov/what-we-do/fire-resource-assessment-program/fire-perimeters",
+                    target="_blank"
+                ),
+                ' managed by CalFire. The dataset records fires greater than or equal to 10 acres by Year, Reporting Agency, '
+                'Unit ID, Fire Name, Local Incident Number, Alarm Date, Containment Date, Cause, Collection Method, '
+                'Management Objective, and GIS Calculated Acres. Raw data was projected in the '
+                'California Albers Projection (EPSG:3310) but has been reprojected to EPSG:26910, UTM Zone 10N.'
+            ),
+
+            ui.h4('Wetlands Data'),
+            ui.p(
+                'The CA wetlands data is a direct download from the '
+                'USFW National Wetland Inventory. Metadata for the NWI can be '
+                'accessed from the ',
+                ui.tags.a(
+                    'Wetlands Mapper Tool',
+                    href="https://fwsprimary.wim.usgs.gov/wetlands/apps/wetlands-mapper/",
+                    target="_blank"
+                ),
+                '. Data was downloaded for the state of California and subset to include only wetlands '
+                'greater than 1 hectare. Raw data was projected in equal-area Albers '
+                'projection for the 1983 North American Datum, but has been reprojected '
+                'to EPSG:26910, UTM Zone 10N.'
+            ),
         ),
 
-        ui.h4("Hypotheses"),
-        ui.tags.ul(
-            ui.tags.li(
-                'Woodier wetland systems with less frequent inundation such as palustrine and riverine wetlands will be more '
-                'vulnerable to wildfires.'
-            ),
-            ui.tags.li(
-                'The presence of surface or near-surface water in wetlands will make them less vulnerable to wildfire than non-wetland '
-                'area.'
-            ),
-        )
-    ),
-
-    ui.card(
-        ui.card_header('Data'),
-
-        ui.h4('Wildfire Data'),
-        ui.p(
-            'The CA wildfire data is a direct download of the ',
-            ui.tags.a(
-                'California Historic Fire Perimeters',
-                href="https://www.fire.ca.gov/what-we-do/fire-resource-assessment-program/fire-perimeters",
-                target="_blank"
-            ),
-            ' managed by CalFire. The dataset records fires greater than or equal to 10 acres by Year, Reporting Agency, '
-            'Unit ID, Fire Name, Local Incident Number, Alarm Date, Containment Date, Cause, Collection Method, '
-            'Management Objective, and GIS Calculated Acres. Raw data was projected in the '
-            'California Albers Projection (EPSG:3310) but has been reprojected to EPSG:26910, UTM Zone 10N.'
-        ),
-    )
         ui.card(
             ui.card_header('Authors'),
             ui.p('Fill in Authorship Info')
-        )
-
-
-        ui.h4('Wetlands Data'),
-        ui.p(
-            'The CA wetlands data is a direct download from the '
-            'USFW National Wetland Inventory. Metadata for the NWI can be '
-            'accessed from the ',
-            ui.tags.a(
-                'Wetlands Mapper Tool',
-                href="https://fwsprimary.wim.usgs.gov/wetlands/apps/wetlands-mapper/",
-                target="_blank"
-            ),
-            '. Data was downloaded for the state of California and subset to include only wetlands '
-            'greater than 1 hectare. Raw data was projected in equal-area Albers '
-            'projection for the 1983 North American Datum, but has been reprojected '
-            'to EPSG:26910, UTM Zone 10N.'
         ),
-)
-),
+
+    ),
     # --------------------------------------------------
     # WILDFIRE tab
     # --------------------------------------------------
@@ -1355,30 +1355,38 @@ app_ui = ui.page_navbar(
                 # 1. distance to nearest fire
                 # ---------------------------------------------------
         
+                # ---------------------------------------------------
+        # 1. DISTANCE TO NEAREST FIRE
+        # ---------------------------------------------------
+
         ui.card(
             ui.card_header("1. Distance from Wetlands to Nearest Fire"),
 
             ui.layout_columns(
 
+                # LEFT COLUMN: EXPLANATION AND FILTER
                 ui.div(
-                    ui.p("We begin by performing a nearest-neighbor spatial join to determine the distance between each wetland " \
-                    "perimeter and its nearest wildfire, for each of the 6 years. "),
-                    ui.tags.ul(
-                                ui.tags.li('Distribution heavily skewed to the right.'),
-                                ui.tags.li(f'Overall average distance to nearest fire: {total_average_distance:.2f} km.')
-                                
+                    ui.p(
+                        "We begin by performing a nearest-neighbor spatial join to determine the distance between each wetland "
+                        "perimeter and its nearest wildfire, for each of the 6 years."
                     ),
-                    
-                ),
+
+                    ui.tags.ul(
+                        ui.tags.li('Distribution heavily skewed to the right.'),
+                        ui.tags.li(
+                            f'Overall average distance to nearest fire: {total_average_distance:.2f} km.'
+                        )
+                    ),
+
                     ui.input_select(
                         "year",
                         "Select Year:",
                         choices=[str(y) for y in year_list],
                         selected=str(year_list[0])
                     ),
-
                 ),
 
+                # RIGHT COLUMN: GRAPH
                 ui.output_plot("fire_plot"),
 
                 col_widths=[4, 8],
