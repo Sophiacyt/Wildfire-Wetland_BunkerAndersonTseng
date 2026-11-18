@@ -104,21 +104,19 @@ system_colors = {
 }
 
 system_markers = {
-    "Marine": "o",       # Circle
-    "Estuarine": "s",    # Square
-    "Riverine": "^",     # Triangle
-    "Lacustrine": "D",   # Diamond
-    "Palustrine": "P"    # Plus-filled
+    "Marine": "o",
+    "Estuarine": "s",
+    "Riverine": "^",
+    "Lacustrine": "D",
+    "Palustrine": "P"
 }
-
 
 # ============================================================
 # DEVELOP THE PLOTTING FUNCTION
 # ============================================================
 
 def plot_points(System, Subsystems):
-
-    # Subset data based on selected System and Subsystems
+# Subset data based on selected System and Subsystems
     df_subset = n100000.loc[
         (n100000["C System"] == System) &
         (n100000["C Subsystem"].isin(Subsystems))
@@ -127,57 +125,145 @@ def plot_points(System, Subsystems):
     # Handle cases where no observations match
     if df_subset.empty:
 
-        fig, ax = plt.subplots(figsize=(8, 5))
+        fig = go.Figure()
 
-        ax.text(
-            0.5,
-            0.5,
-            "No matching observations",
-            ha="center",
-            va="center",
-            transform=ax.transAxes
+        fig.add_annotation(
+            text="No matching observations",
+            x=0.5,
+            y=0.5,
+            xref="paper",
+            yref="paper",
+            showarrow=False
         )
 
-        ax.set_axis_off()
+        fig.update_layout(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            width=960,
+            height=800
+        )
 
         return fig
 
-    # Create regression plot
-    # Each selected System gets its corresponding system color
-    dist_plot = sns.lmplot(
-        data=df_subset,
-        x="Wet_dist",
-        y="Fire_dist",
-        hue="C Subsystem",
-        markers=system_markers,
-        height=8,
-        aspect=1.2
-    )
+    # Create Plotly figure
+    fig = go.Figure()
 
-    # Set title and axis labels
-    dist_plot.set_axis_labels(
-        "Distance to Nearest Wetland (m)",
-        "Distance to Nearest Fire (m)"
-    )
+    # Get selected subsystems
+    subsystem_order = sorted(df_subset["C Subsystem"].dropna().unique())
 
-    dist_plot.set(
-        title=(
-            "10,000 Random Points in California\n"
-            "Distance to Wetlands vs Fire"
+    # Plot points and regression lines for each subsystem
+    for subsystem in subsystem_order:
+
+        subset = df_subset[
+            df_subset["C Subsystem"] == subsystem
+        ].dropna(subset=["Wet_dist", "Fire_dist"])
+
+        if subset.empty:
+            continue
+
+        # System marker shape
+        marker = system_markers.get(System, "circle")
+
+        # Subsystem color
+        color = subsystem_colors.get(subsystem, "#808080")
+
+        # Scatter points
+        fig.add_trace(go.Scatter(
+            x=subset["Wet_dist"],
+            y=subset["Fire_dist"],
+            mode="markers",
+            name=subsystem,
+            legendgroup=subsystem,
+            marker=dict(
+                color=color,
+                symbol=marker,
+                size=7,
+                opacity=0.7
+            ),
+            hovertemplate=(
+                "<b>%{fullData.name}</b><br>"
+                "Wetland Distance: %{x:,.2f} m<br>"
+                "Fire Distance: %{y:,.2f} m"
+                "<extra></extra>"
+            )
+        ))
+
+        # Calculate regression
+        if len(subset) >= 2 and subset["Wet_dist"].nunique() > 1:
+
+            slope, intercept = np.polyfit(
+                subset["Wet_dist"],
+                subset["Fire_dist"],
+                1
+            )
+
+            predictions = (
+                slope * subset["Wet_dist"] + intercept
+            )
+
+            ss_res = np.sum(
+                (subset["Fire_dist"] - predictions) ** 2
+            )
+
+            ss_tot = np.sum(
+                (subset["Fire_dist"] - subset["Fire_dist"].mean()) ** 2
+            )
+
+            r2 = 1 - (ss_res / ss_tot) if ss_tot != 0 else np.nan
+
+            # Regression line endpoints
+            x_line = np.array([
+                subset["Wet_dist"].min(),
+                subset["Wet_dist"].max()
+            ])
+
+            y_line = slope * x_line + intercept
+
+            # Regression line with hover information
+            fig.add_trace(go.Scatter(
+                x=x_line,
+                y=y_line,
+                mode="lines",
+                name=f"{subsystem} Regression",
+                legendgroup=subsystem,
+                line=dict(
+                    color=color,
+                    width=3
+                ),
+                customdata=[
+                    [r2, slope, intercept, len(subset)]
+                ] * 2,
+                hovertemplate=(
+                    f"<b>{subsystem} Regression</b><br>"
+                    "R²: %{customdata[0]:.4f}<br>"
+                    "Slope: %{customdata[1]:.4f}<br>"
+                    "Intercept: %{customdata[2]:,.2f}<br>"
+                    "Observations: %{customdata[3]:,}"
+                    "<extra></extra>"
+                )
+            ))
+
+    # Update layout
+    fig.update_layout(
+        title="10,000 Random Points in California",
+        xaxis_title="Distance to Nearest Wetland (m)",
+        yaxis_title="Distance to Nearest Fire (m)",
+        width=960,
+        height=800,
+        hovermode="closest",
+        legend=dict(
+            title="Cowardin Subsystem",
+            x=0.95,
+            y=0.95,
+            xanchor="right",
+            yanchor="top"
         )
     )
 
-    # Adjust legend location
-    if dist_plot.legend is not None:
+    fig.update_xaxes(tickformat=",")
+    fig.update_yaxes(tickformat=",")
 
-        sns.move_legend(
-            dist_plot,
-            loc="upper right",
-            bbox_to_anchor=(0.95, 0.95)
-        )
-
-    # Return matplotlib figure
-    return dist_plot.fig
+    return fig
 
 
 # ============================================================
