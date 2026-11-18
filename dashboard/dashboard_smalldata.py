@@ -892,11 +892,8 @@ def plot_fire_cause(alarm_start_date, alarm_end_date, cause):
 # ----------------------------------------------------------
 
 # Path to saved fire overlap data
-overlap_folder = (
-    box_path / 'ENVIRON 712L-Students' /
-    'Data' / 'BunkerAndersonTseng' /
-    'fire_overlap_data'
-)
+overlap_folder = processed_fldr / 'fire_overlap_data' 
+
 year_list = [2020, 2021, 2022, 2023, 2024, 2025]
 # Load yearly fire overlap data
 fire_stats_list = []
