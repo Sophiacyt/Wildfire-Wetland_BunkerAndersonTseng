@@ -1,11 +1,11 @@
 
 # TO RUN:
 # conda activate env700-shiny
-# shiny run --reload scripts/A5/dashboard_tabs.py
+# shiny run --reload dashboard/dashboard.py
 
 # if mason and struggling, run below
-# cd ~/Desktop/Duke/Environmental\ Data Exploration/Wildfire-Wetland_BunkerAndersonTseng/scripts/A4
-# shiny run --reload dashboard_layout_a4.py
+# cd ~/Desktop/Duke/Environmental\ Data Exploration/Wildfire-Wetland_BunkerAndersonTseng/dashboard/dashboard.py
+# shiny run --reload dashboard.py
 
 # be a little patient with it starting, need to see this line in terminal output
 #       INFO:     Application startup complete.
@@ -36,7 +36,7 @@ from shinywidgets import output_widget, render_widget
 # Maps
 # establish paths to datasets
 
-project_fldr = Path(__file__).resolve().parents[2]
+project_fldr = Path(__file__).resolve().parents[1]
 raw_fldr = project_fldr / 'data' / 'raw'
 processed_fldr = project_fldr / 'data' / 'processed'
 figure_fldr = project_fldr/"figures"
@@ -386,7 +386,7 @@ def plot_sankey(wetlands):
 # FIRE DATA GRAPH 
 
 # Read in cleaned fire dataset
-project_fldr = Path(__file__).resolve().parents[2]
+project_fldr = Path(__file__).resolve().parents[1]
 
 # Locate the processed data folder
 processed_fldr = project_fldr / 'data' / 'processed'
@@ -683,6 +683,15 @@ total_wetland_ha = summary_table.loc[
     "Total Wetland Area (ha)"
 ].sum()
 
+# calculate total burned area 2020-2026 to display
+total_burned_wetland = summary_table["Burned Area (ha)"].sum()
+
+# and calculate total percent of the burn
+total_pct_burned_wetland = (
+    total_burned_wetland / total_wetland_ha
+) * 100
+
+
 
 # DASHBOARD CONTENT ----------------------------------------------------
 
@@ -909,28 +918,40 @@ app_ui = ui.page_navbar(
         # INTRODUCTION
         # ---------------------------------------------------
 
-        ui.layout_columns(
+        ui.card(
+    ui.card_header("Analysis Overview"),
 
-            ui.card(
-                ui.card_header("Analysis Overview"),
-
-                ui.p(
-                    "To address our central questions about wildfire impacts on wetlands across "
-                    "California, we use a spatial analysis approach. Both the NWI wetlands dataset and the "
-                    "CalFire fire dataset contain shapefiles that show perimeters, allowing us to examine the "
-                    "extent to which wetlands overlap with wildfire boundaries, compare wildfire occurance in wetland and "
-                    "non-wetland areas, and investigate how proximity to wetlands relates to wildfire occurance."
-                ),
-            ),
-
-            ui.card(
-                ui.card_header("Total Wetland Area"),
-                ui.h2(f"{total_wetland_ha:,.0f}"),
-                ui.p("Hectares across California"),
-            ),
-
-            col_widths=[8, 4],
+    ui.p(
+        "To address our central questions about wildfire impacts on wetlands across "
+        "California, we use a spatial analysis approach. Both the NWI wetlands dataset and the "
+        "CalFire fire dataset contain shapefiles that show perimeters, allowing us to examine the "
+        "extent to which wetlands overlap with wildfire boundaries, compare wildfire occurance in wetland and "
+        "non-wetland areas, and investigate how proximity to wetlands relates to wildfire occurance."
+    ),
 ),
+
+    ui.layout_columns(
+
+        ui.card(
+            ui.card_header("Total Wetland Area"),
+            ui.h2(f"{total_wetland_ha:,.0f}"),
+            ui.p("Hectares across California"),
+        ),
+
+        ui.card(
+            ui.card_header("Total Burned Wetland Area"),
+            ui.h2(f"{total_burned_wetland:,.0f}"),
+            ui.p("Cumulative hectares, 2020–2025"),
+        ),
+
+        ui.card(
+            ui.card_header("Wetland Burned (%)"),
+            ui.h2(f"{total_pct_burned_wetland:.1f}%"),
+            ui.p("Cumulative annual burned area relative to total wetland area"),
+        ),
+
+        col_widths=[4, 4, 4],
+    ),
 
         # ---------------------------------------------------
                 # 1. distance to nearest fire
