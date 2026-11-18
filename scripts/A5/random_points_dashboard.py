@@ -3,7 +3,7 @@
 # conda activate env700-shiny
 # shiny run --reload scripts/A5/random_points_dashboard.py
 
-# If Mason and running from the A5 directory:
+# If running from the A5 directory:
 # cd ~/Desktop/Duke/Environmental\ Data\ Exploration/Wildfire-Wetland_BunkerAndersonTseng/scripts/A5
 # shiny run --reload random_points_dashboard.py
 
@@ -19,13 +19,13 @@ from pathlib import Path
 import pandas as pd
 import geopandas as gpd
 import platform
-import seaborn as sns
-import matplotlib.pyplot as plt
+import numpy as np
 
 from shiny import App, ui, render, reactive
-from shinywidgets import output_widget, render_widget
+from shinywidgets import output_widget, render_plotly
 
 import plotly.graph_objects as go
+import plotly.express as px
 
 
 # ============================================================
@@ -81,18 +81,7 @@ simpler_path = (
 
 
 # ============================================================
-# READ IN THE RANDOM POINTS
-# ============================================================
-
-n100000 = gpd.read_file(
-    processed_fldr / "n100000_random_pts.geojson"
-)
-
-print("n100,000 found and loaded")
-
-
-# ============================================================
-# DEFINE COWARDIN SYSTEM COLORS AND SYMBOLS
+# DEFINE COWARDIN SYSTEM COLORS
 # ============================================================
 
 system_colors = {
@@ -103,26 +92,63 @@ system_colors = {
     "Palustrine": "#4bcb00"
 }
 
-system_markers = {
-    "Marine": "o",
-    "Estuarine": "s",
-    "Riverine": "^",
-    "Lacustrine": "D",
-    "Palustrine": "P"
-}
+
+# ============================================================
+# READ IN THE RANDOM POINTS
+# ============================================================
+
+n100000 = gpd.read_file(
+    processed_fldr / "n100000_random_pts.geojson"
+)
+
+print("n100,000 random points found and loaded")
+
 
 # ============================================================
 # DEVELOP THE PLOTTING FUNCTION
 # ============================================================
 
-def plot_points(System, Subsystems):
-# Subset data based on selected System and Subsystems
-    df_subset = n100000.loc[
-        (n100000["C System"] == System) &
-        (n100000["C Subsystem"].isin(Subsystems))
-    ].copy()
+def plot_points(System, Subsystems=None):
 
-    # Handle cases where no observations match
+    # --------------------------------------------------------
+    # SUBSET DATA
+    # --------------------------------------------------------
+
+    if System == "All Wetland Systems":
+
+        # Include all wetland systems and subsystems
+        df_subset = n100000.copy()
+
+        subsystem_title = "All Subsystems"
+
+    else:
+
+        # Include only the selected wetland system
+        if Subsystems is None:
+            Subsystems = []
+
+        df_subset = n100000.loc[
+            (n100000["C System"] == System) &
+            (n100000["C Subsystem"].isin(Subsystems))
+        ].copy()
+
+        # Format subsystem title
+        if len(Subsystems) > 1:
+            subsystem_title = "All Subsystems"
+        elif len(Subsystems) == 1:
+            subsystem_title = Subsystems[0]
+        else:
+            subsystem_title = "No Subsystems"
+
+    # Remove observations missing either distance
+    df_subset = df_subset.dropna(
+        subset=["Wet_dist", "Fire_dist"]
+    )
+
+    # --------------------------------------------------------
+    # HANDLE EMPTY DATA
+    # --------------------------------------------------------
+
     if df_subset.empty:
 
         fig = go.Figure()
@@ -133,133 +159,287 @@ def plot_points(System, Subsystems):
             y=0.5,
             xref="paper",
             yref="paper",
-            showarrow=False
+            showarrow=False,
+            font=dict(size=18)
         )
 
+        if System == "All Wetland Systems":
+            plot_title = (
+                "100,000 Random Points in California — "
+                "All Wetland Systems"
+            )
+        else:
+            plot_title = (
+                f"100,000 Random Points in California — "
+                f"{System}: {subsystem_title}"
+            )
+
         fig.update_layout(
-            xaxis=dict(visible=False),
-            yaxis=dict(visible=False),
+            title=plot_title,
+            xaxis_title="Distance to Nearest Wetland (m)",
+            yaxis_title="Distance to Nearest Fire (m)",
             width=960,
             height=800
         )
 
         return fig
 
-    # Create Plotly figure
+    # --------------------------------------------------------
+    # DETERMINE WHETHER OLS TRENDLINE CAN BE CALCULATED
+    # --------------------------------------------------------
+
+    use_trendline = (
+        len(df_subset) >= 2
+        and df_subset["Wet_dist"].nunique() > 1
+    )
+
+    # --------------------------------------------------------
+    # CREATE FIGURE
+    # --------------------------------------------------------
+
     fig = go.Figure()
 
-    # Get selected subsystems
-    subsystem_order = sorted(df_subset["C Subsystem"].dropna().unique())
+    # --------------------------------------------------------
+    # ALL WETLAND SYSTEMS
+    # --------------------------------------------------------
 
-    # Plot points and regression lines for each subsystem
-    for subsystem in subsystem_order:
+    if System == "All Wetland Systems":
 
-        subset = df_subset[
-            df_subset["C Subsystem"] == subsystem
-        ].dropna(subset=["Wet_dist", "Fire_dist"])
+        # Add one scatter trace for each wetland system
+        for wetland_system in system_colors:
 
-        if subset.empty:
-            continue
+            system_subset = df_subset.loc[
+                df_subset["C System"] == wetland_system
+            ]
 
-        # System marker shape
-        marker = system_markers.get(System, "circle")
+            if system_subset.empty:
+                continue
 
-        # Subsystem color
-        color = subsystem_colors.get(subsystem, "#808080")
-
-        # Scatter points
-        fig.add_trace(go.Scatter(
-            x=subset["Wet_dist"],
-            y=subset["Fire_dist"],
-            mode="markers",
-            name=subsystem,
-            legendgroup=subsystem,
-            marker=dict(
-                color=color,
-                symbol=marker,
-                size=7,
-                opacity=0.7
-            ),
-            hovertemplate=(
-                "<b>%{fullData.name}</b><br>"
-                "Wetland Distance: %{x:,.2f} m<br>"
-                "Fire Distance: %{y:,.2f} m"
-                "<extra></extra>"
-            )
-        ))
-
-        # Calculate regression
-        if len(subset) >= 2 and subset["Wet_dist"].nunique() > 1:
-
-            slope, intercept = np.polyfit(
-                subset["Wet_dist"],
-                subset["Fire_dist"],
-                1
+            fig.add_trace(
+                go.Scatter(
+                    x=system_subset["Wet_dist"],
+                    y=system_subset["Fire_dist"],
+                    mode="markers",
+                    name=wetland_system,
+                    marker=dict(
+                        color=system_colors[wetland_system],
+                        symbol="circle",
+                        size=7,
+                        opacity=0.7
+                    ),
+                    hoverinfo="skip"
+                )
             )
 
-            predictions = (
-                slope * subset["Wet_dist"] + intercept
+        # ----------------------------------------------------
+        # ONE OVERALL REGRESSION LINE
+        # ----------------------------------------------------
+
+        if use_trendline:
+
+            x = df_subset["Wet_dist"].to_numpy()
+            y = df_subset["Fire_dist"].to_numpy()
+
+            # Calculate overall OLS regression
+            slope, intercept = np.polyfit(x, y, 1)
+
+            # Calculate predicted values
+            y_pred = slope * x + intercept
+
+            # Calculate R-squared
+            ss_res = np.sum((y - y_pred) ** 2)
+            ss_tot = np.sum((y - np.mean(y)) ** 2)
+
+            r2 = (
+                1 - ss_res / ss_tot
+                if ss_tot > 0
+                else np.nan
             )
 
-            ss_res = np.sum(
-                (subset["Fire_dist"] - predictions) ** 2
+            # Add overall regression line
+            x_line = np.linspace(
+                x.min(),
+                x.max(),
+                100
             )
-
-            ss_tot = np.sum(
-                (subset["Fire_dist"] - subset["Fire_dist"].mean()) ** 2
-            )
-
-            r2 = 1 - (ss_res / ss_tot) if ss_tot != 0 else np.nan
-
-            # Regression line endpoints
-            x_line = np.array([
-                subset["Wet_dist"].min(),
-                subset["Wet_dist"].max()
-            ])
 
             y_line = slope * x_line + intercept
 
-            # Regression line with hover information
-            fig.add_trace(go.Scatter(
-                x=x_line,
-                y=y_line,
-                mode="lines",
-                name=f"{subsystem} Regression",
-                legendgroup=subsystem,
-                line=dict(
-                    color=color,
-                    width=3
-                ),
-                customdata=[
-                    [r2, slope, intercept, len(subset)]
-                ] * 2,
-                hovertemplate=(
-                    f"<b>{subsystem} Regression</b><br>"
-                    "R²: %{customdata[0]:.4f}<br>"
-                    "Slope: %{customdata[1]:.4f}<br>"
-                    "Intercept: %{customdata[2]:,.2f}<br>"
-                    "Observations: %{customdata[3]:,}"
-                    "<extra></extra>"
+            fig.add_trace(
+                go.Scatter(
+                    x=x_line,
+                    y=y_line,
+                    mode="lines",
+                    name="Overall Regression",
+                    line=dict(
+                        color="black",
+                        width=4
+                    ),
+                    hoverinfo="skip"
                 )
-            ))
+            )
 
-    # Update layout
+            # Add regression statistics annotation
+            fig.add_annotation(
+                x=0.98,
+                y=0.98,
+                xref="paper",
+                yref="paper",
+                text=(
+                    f"<b>System: All Wetland Systems<br>"
+                    f"Subsystem: Not applicable<br>"
+                    f"Slope: {slope:.4f}<br>"
+                    f"Y-intercept: {intercept:.4f}<br>"
+                    f"R² = {r2:.4f}</b>"
+                ),
+                showarrow=False,
+                xanchor="right",
+                yanchor="top",
+                font=dict(
+                    size=16,
+                    color="black"
+                ),
+                bgcolor="white",
+                bordercolor="black",
+                borderwidth=1,
+                borderpad=8
+            )
+
+    # --------------------------------------------------------
+    # INDIVIDUAL WETLAND SYSTEM
+    # --------------------------------------------------------
+
+    else:
+
+        # Add points using the selected system color
+        color = system_colors.get(System, "#808080")
+
+        fig.add_trace(
+            go.Scatter(
+                x=df_subset["Wet_dist"],
+                y=df_subset["Fire_dist"],
+                mode="markers",
+                name=System,
+                marker=dict(
+                    color=color,
+                    symbol="circle",
+                    size=7,
+                    opacity=0.7
+                ),
+                hoverinfo="skip",
+                showlegend=False
+            )
+        )
+
+        # ----------------------------------------------------
+        # ONE REGRESSION LINE
+        # ----------------------------------------------------
+
+        if use_trendline:
+
+            x = df_subset["Wet_dist"].to_numpy()
+            y = df_subset["Fire_dist"].to_numpy()
+
+            # Calculate OLS regression
+            slope, intercept = np.polyfit(x, y, 1)
+
+            # Calculate predicted values
+            y_pred = slope * x + intercept
+
+            # Calculate R-squared
+            ss_res = np.sum((y - y_pred) ** 2)
+            ss_tot = np.sum((y - np.mean(y)) ** 2)
+
+            r2 = (
+                1 - ss_res / ss_tot
+                if ss_tot > 0
+                else np.nan
+            )
+
+            # Generate regression line
+            x_line = np.linspace(
+                x.min(),
+                x.max(),
+                100
+            )
+
+            y_line = slope * x_line + intercept
+
+            fig.add_trace(
+                go.Scatter(
+                    x=x_line,
+                    y=y_line,
+                    mode="lines",
+                    name="Regression",
+                    line=dict(
+                        color="black",
+                        width=4
+                    ),
+                    hoverinfo="skip",
+                    showlegend=False
+                )
+            )
+
+            # Add regression statistics annotation
+            fig.add_annotation(
+                x=0.98,
+                y=0.98,
+                xref="paper",
+                yref="paper",
+                text=(
+                    f"<b>System: {System}<br>"
+                    f"Subsystem: {subsystem_title}<br>"
+                    f"Slope: {slope:.4f}<br>"
+                    f"Y-intercept: {intercept:.4f}<br>"
+                    f"R² = {r2:.4f}</b>"
+                ),
+                showarrow=False,
+                xanchor="right",
+                yanchor="top",
+                font=dict(
+                    size=16,
+                    color="black"
+                ),
+                bgcolor="white",
+                bordercolor="black",
+                borderwidth=1,
+                borderpad=8
+            )
+
+    # --------------------------------------------------------
+    # FORMAT FIGURE TITLE
+    # --------------------------------------------------------
+
+    if System == "All Wetland Systems":
+
+        plot_title = (
+            "100,000 Random Points in California — "
+            "All Wetland Systems"
+        )
+
+    else:
+
+        plot_title = (
+            f"100,000 Random Points in California — "
+            f"{System}: {subsystem_title}"
+        )
+
+    # --------------------------------------------------------
+    # FORMAT FIGURE
+    # --------------------------------------------------------
+
     fig.update_layout(
-        title="10,000 Random Points in California",
+        title=plot_title,
         xaxis_title="Distance to Nearest Wetland (m)",
         yaxis_title="Distance to Nearest Fire (m)",
         width=960,
         height=800,
+        showlegend=(System == "All Wetland Systems"),
         hovermode="closest",
-        legend=dict(
-            title="Cowardin Subsystem",
-            x=0.95,
-            y=0.95,
-            xanchor="right",
-            yanchor="top"
-        )
+        hoverdistance=30
     )
 
+    # Add commas to axis tick labels
     fig.update_xaxes(tickformat=",")
     fig.update_yaxes(tickformat=",")
 
@@ -274,281 +454,22 @@ system_list = sorted(
     n100000["C System"].dropna().unique()
 )
 
+# Add All Wetland Systems option
+system_choices = [
+    "All Wetland Systems"
+] + system_list
 
-# Initial System selection
-initial_system = (
-    "Riverine" if "Riverine" in system_list
-    else system_list[0]
-)
+# Initial system selection
+initial_system = "All Wetland Systems"
 
 
 # ============================================================
 # SANKEY GRAPH TO INPUT TO DASHBOARD
 # ============================================================
 
-# read in the wetlands file
-# wetlands = gpd.read_file(wetlands_path)
-
-# print("wetlands data found and loaded!")
-
-
-# def plot_sankey(wetlands):
-
-#     # 1. Define Cowardin System colors
-#     system_colors = {
-#         "Marine": "#02518a",
-#         "Estuarine": "#0b2ce9",
-#         "Riverine": "#17becf",
-#         "Lacustrine": "#01f694",
-#         "Palustrine": "#4bcb00"
-#     }
-
-#     df = wetlands.copy()
-
-#     df["Hectares"] = pd.to_numeric(df["Hectares"], errors="coerce")
-#     df = df.dropna(subset=["Hectares"])
-
-#     cols = ["C System", "C Subsystem", "C Class"]
-
-#     for col in cols:
-#         df[col] = df[col].fillna("Unknown").astype(str).str.strip()
-
-
-#     # 2. Calculate total hectares for each transition
-
-#     flow1 = (
-#         df.groupby(["C System", "C Subsystem"])["Hectares"]
-#         .sum()
-#         .reset_index()
-#     )
-
-#     flow2 = (
-#         df.groupby(["C Subsystem", "C Class"])["Hectares"]
-#         .sum()
-#         .reset_index()
-#     )
-
-
-#     # 3. Create separate nodes for each classification level
-
-#     systems = df["C System"].unique().tolist()
-#     subsystems = df["C Subsystem"].unique().tolist()
-#     classes = df["C Class"].unique().tolist()
-
-#     labels = (
-#         [f"System: {x}" for x in systems]
-#         + [f"Subsystem: {x}" for x in subsystems]
-#         + [f"Class: {x}" for x in classes]
-#     )
-
-#     system_map = {x: i for i, x in enumerate(systems)}
-
-#     subsystem_map = {
-#         x: i + len(systems)
-#         for i, x in enumerate(subsystems)
-#     }
-
-#     class_map = {
-#         x: i + len(systems) + len(subsystems)
-#         for i, x in enumerate(classes)
-#     }
-
-
-#     # 4. Build links
-
-#     sources = (
-#         flow1["C System"].map(system_map).tolist()
-#         + flow2["C Subsystem"].map(subsystem_map).tolist()
-#     )
-
-#     targets = (
-#         flow1["C Subsystem"].map(subsystem_map).tolist()
-#         + flow2["C Class"].map(class_map).tolist()
-#     )
-
-#     values = (
-#         flow1["Hectares"].tolist()
-#         + flow2["Hectares"].tolist()
-#     )
-
-
-#     # 5. Assign colors to Subsystems and Classes
-
-#     # Subsystem colors
-#     subsystem_colors = {
-
-#         # Riverine
-#         "Intermittent": system_colors["Riverine"],
-#         "Streambed": system_colors["Riverine"],
-#         "Unknown Perennial": system_colors["Riverine"],
-#         "Tidal": system_colors["Riverine"],
-#         "Lower Perennial": system_colors["Riverine"],
-#         "Upper Perennial": system_colors["Riverine"],
-
-#         # Marine
-#         "Subtidal": system_colors["Marine"],
-
-#         # Lacustrine
-#         "Limnetic": system_colors["Lacustrine"],
-#         "Littoral": system_colors["Lacustrine"],
-#         "Unknown": system_colors["Lacustrine"],
-
-#         # Estuarine
-#         "Intertidal": system_colors["Estuarine"],
-
-#         # Palustrine
-#         "N/A": system_colors["Palustrine"]
-#     }
-
-
-#     # Class colors
-#     class_colors = {
-
-#         # Marine
-#         "Unconsolidated Bottom": system_colors["Marine"],
-#         "Aquatic Bed": system_colors["Marine"],
-
-#         # Lacustrine
-#         "Unconsolidated Shore": system_colors["Lacustrine"],
-#         "Rock Bottom": system_colors["Lacustrine"],
-
-#         # Estuarine
-#         "Rocky Shore": system_colors["Estuarine"],
-#         "Reef": system_colors["Estuarine"],
-
-#         # Riverine
-#         "Streambed": system_colors["Riverine"],
-
-#         # Palustrine
-#         "Emergent": system_colors["Palustrine"],
-#         "Scrub-Shrub": system_colors["Palustrine"],
-#         "Forested": system_colors["Palustrine"],
-#         "Unknown": system_colors["Palustrine"]
-#     }
-
-
-#     # 6. Assign colors to all nodes
-
-#     node_colors = (
-
-#         # System nodes
-#         [system_colors.get(x, "#808080") for x in systems]
-
-#         # Subsystem nodes
-#         + [subsystem_colors.get(x, "#808080") for x in subsystems]
-
-#         # Class nodes
-#         + [class_colors.get(x, "#808080") for x in classes]
-#     )
-
-
-#     # 7. Assign colors to System -> Subsystem links
-
-#     # Default: match the destination Subsystem color
-#     link_colors_1 = [
-#         subsystem_colors.get(x, "#808080")
-#         for x in flow1["C Subsystem"]
-#     ]
-
-
-#     # Special cases for System -> Subsystem links
-
-#     for i, row in flow1.iterrows():
-
-#         # Estuarine -> Subtidal is Estuarine blue
-#         if (
-#             row["C System"] == "Estuarine"
-#             and row["C Subsystem"] == "Subtidal"
-#         ):
-#             link_colors_1[i] = system_colors["Estuarine"]
-
-#         # Marine -> Intertidal is Marine blue
-#         elif (
-#             row["C System"] == "Marine"
-#             and row["C Subsystem"] == "Intertidal"
-#         ):
-#             link_colors_1[i] = system_colors["Marine"]
-
-
-#     # 8. Assign colors to Subsystem -> Class links
-
-#     link_colors_2 = []
-
-#     for _, row in flow2.iterrows():
-
-#         subsystem = row["C Subsystem"]
-#         class_name = row["C Class"]
-
-#         # Riverine: all links coming from these Subsystems
-#         if subsystem in [
-#             "Unknown Perennial",
-#             "Tidal",
-#             "Lower Perennial",
-#             "Upper Perennial"
-#         ]:
-#             color = system_colors["Riverine"]
-
-#         # Lacustrine: all links coming from these Subsystems
-#         elif subsystem in ["Limnetic", "Littoral"]:
-#             color = system_colors["Lacustrine"]
-
-#         # Estuarine: all links coming from Intertidal
-#         elif subsystem == "Intertidal":
-#             color = system_colors["Estuarine"]
-
-#         # Marine: Subtidal -> Aquatic Bed
-#         elif (subsystem, class_name) == ("Subtidal", "Aquatic Bed"):
-#             color = system_colors["Marine"]
-
-#         # Palustrine: N/A -> Aquatic Bed
-#         elif (subsystem, class_name) == ("N/A", "Aquatic Bed"):
-#             color = system_colors["Palustrine"]
-
-#         # All other links use their destination Class color
-#         else:
-#             color = class_colors.get(class_name, "#808080")
-
-#         link_colors_2.append(color)
-
-
-#     # Combine link colors
-#     link_colors = link_colors_1 + link_colors_2
-
-
-#     # 9. Generate the Sankey diagram
-
-#     fig_subset = go.Figure(go.Sankey(
-#         node=dict(
-#             label=labels,
-#             color=node_colors,
-#             pad=15,
-#             thickness=20,
-#             line=dict(color="black", width=0.3)
-#         ),
-#         link=dict(
-#             source=sources,
-#             target=targets,
-#             value=values,
-#             color=link_colors,
-#             hovertemplate=(
-#                 "%{source.label} → %{target.label}<br>"
-#                 "Area: %{value:,.2s} hectares"
-#                 "<extra></extra>"
-#             )
-#         )
-#     ))
-
-
-#     # 10. Format and display figure
-
-#     fig_subset.update_layout(
-#         title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
-#         font_size=11,
-#         width=1100,
-#         height=700
-#     )
-
-#     return fig_subset
+# Sankey code remains commented out.
+# Keep the existing commented-out Sankey function here
+# if you want to retain it for future use.
 
 
 # ============================================================
@@ -564,9 +485,9 @@ app_ui = ui.page_fluid(
 
     ui.layout_sidebar(
 
-        # ----------------------------------------
+        # ----------------------------------------------------
         # SIDEBAR: USER INPUTS
-        # ----------------------------------------
+        # ----------------------------------------------------
 
         ui.sidebar(
 
@@ -576,18 +497,18 @@ app_ui = ui.page_fluid(
             ui.input_select(
                 "system",
                 "System:",
-                choices=system_list,
+                choices=system_choices,
                 selected=initial_system
             ),
 
-            # C Subsystem checkboxes
-            ui.output_ui("subsystem_choices"),
+            # C Subsystem
+            ui.output_ui("subsystem_choices")
 
         ),
 
-        # ----------------------------------------
+        # ----------------------------------------------------
         # MAIN PANEL: PLOT
-        # ----------------------------------------
+        # ----------------------------------------------------
 
         ui.card(
 
@@ -595,30 +516,34 @@ app_ui = ui.page_fluid(
                 "Distance to Wetlands vs Fire"
             ),
 
-            ui.output_plot(
-                "distance_plot",
-                height="700px"
-            )
-        ),
+            output_widget("distance_plot")
 
-        # Sankey card (currently commented out)
+        )
+
+        # ----------------------------------------------------
+        # SANKEY CARD (CURRENTLY COMMENTED OUT)
+        # ----------------------------------------------------
+
         # ui.card(
-        #     ui.card_header("Wetland Classification Sankey Diagram"),
-        #     output_widget("sankey_plot"),
+        #     ui.card_header(
+        #         "Wetland Classification Sankey Diagram"
+        #     ),
+        #     output_widget("sankey_plot")
         # )
 
     )
+
 )
 
 
 # ============================================================
-# INIT SERVER
+# INITIALIZE SERVER
 # ============================================================
 
 def server(input, output, session):
 
     # --------------------------------------------------------
-    # DYNAMIC SUBSYSTEM CHECKBOXES
+    # DYNAMICALLY UPDATE SUBSYSTEM OPTIONS
     # --------------------------------------------------------
 
     @render.ui
@@ -626,7 +551,10 @@ def server(input, output, session):
 
         selected_system = input.system()
 
-        # Find available subsystems for selected System
+        # Hide subsystem selection when all systems selected
+        if selected_system == "All Wetland Systems":
+            return ui.div()
+
         available_subsystems = sorted(
             n100000.loc[
                 n100000["C System"] == selected_system,
@@ -634,25 +562,57 @@ def server(input, output, session):
             ].dropna().unique()
         )
 
-        # Display available subsystems as checkboxes
-        return ui.input_checkbox_group(
-            "subsystems",
-            "Subsystems:",
-            choices=available_subsystems,
-            selected=available_subsystems
+        return ui.div(
+
+            ui.input_select(
+                "subsystems",
+                "Subsystem:",
+                choices=["All"] + available_subsystems,
+                selected="All"
+            )
+
         )
 
-
     # --------------------------------------------------------
-    # REACTIVE PLOT
+    # REACTIVE DISTANCE PLOT
     # --------------------------------------------------------
 
-    @render.plot
+    @render_plotly
     def distance_plot():
 
-        # Get current selections
         selected_system = input.system()
-        selected_subsystems = input.subsystems() or []
+
+        # ----------------------------------------------------
+        # ALL WETLAND SYSTEMS
+        # ----------------------------------------------------
+
+        if selected_system == "All Wetland Systems":
+
+            return plot_points(
+                System="All Wetland Systems"
+            )
+
+        # ----------------------------------------------------
+        # INDIVIDUAL WETLAND SYSTEM
+        # ----------------------------------------------------
+
+        selected_subsystem = input.subsystems()
+
+        # If All is selected, include every subsystem
+        # belonging to the selected system.
+
+        if selected_subsystem == "All":
+
+            selected_subsystems = sorted(
+                n100000.loc[
+                    n100000["C System"] == selected_system,
+                    "C Subsystem"
+                ].dropna().unique()
+            )
+
+        else:
+
+            selected_subsystems = [selected_subsystem]
 
         # Generate updated plot
         return plot_points(
