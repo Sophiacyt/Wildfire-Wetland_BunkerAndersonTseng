@@ -958,144 +958,133 @@ def plot_fireint(years, systems):
 # # ----------------------------------------------------------
 # # DISTANCE TO NEAREST FIRE SETUP
 # # ----------------------------------------------------------
-# ## FIRE DISTANCE WIDGET SETUP
-# # load data
-# # Set path to Box folder
-# if platform.system() == 'Windows':
-#     box_path = Path.home() / 'Box'
-# else:
-#     box_path = Path.home() / "Library" / "CloudStorage" / "Box-Box"
 
-# # Path to saved spatial data
-# output_folder = (
-#     box_path / 'ENVIRON 712L-Students' /
-#     'Data' / 'BunkerAndersonTseng' /
-#     'fire_distance_data'
-# )
-
-# # Available years
-# year_list = [2020, 2021, 2022, 2023, 2024, 2025]
-
-# # Load all fire data
-# fire_data = {}
-
-# for year in year_list:
-#     fire_data[year] = gpd.read_file(
-#         output_folder / f'nearest_fires_{year}.gpkg'
-#     )
+output_folder = processed_fldr / 'fire_distance_data'
 
 
-# # Plotting function
-# def plot_firedist(year):
+# Available years
+year_list = [2020, 2021, 2022, 2023, 2024, 2025]
 
-#     g = sns.displot(
-#         data=fire_data[year],
-#         x='Dist_Closest_km',
-#         height=3,
-#         aspect=2,
-#         color="orange"
-#     )
+# Load all fire data
+fire_data = {}
 
-#     g.set(
-#         title="Distance from Wetlands to Nearest Fire (km)",
-#         xlabel="Distance (km)",
-#         ylabel="Count"
-#     )
-
-#     return g.figure
+for year in year_list:
+    fire_data[year] = pd.read_csv(
+        output_folder / f'nearest_fires_{year}.csv'
+    )
 
 
-# # ----------------------------------------------------------
-# # SUMMARY TABLE SETUP
-# # ----------------------------------------------------------
+# Plotting function
+def plot_firedist(year):
 
-# years = [2020, 2021, 2022, 2023, 2024, 2025]
+    g = sns.displot(
+        data=fire_data[year],
+        x='Dist_Closest_km',
+        height=3,
+        aspect=2,
+        color="orange"
+    )
 
-# # we already went through the overlap stats
-# overlap_stats = fire_stats_all
+    g.set(
+        title="Distance from Wetlands to Nearest Fire (km)",
+        xlabel="Distance (km)",
+        ylabel="Count"
+    )
 
-# # Load yearly fire distance statistics
-# dist_list = []
-
-# for year in years:
-#     data = pd.read_csv(
-#         output_folder / f"fire_stats_{year}.csv"
-#     )
-
-#     data["Year"] = year
-#     dist_list.append(data)
-
-# dist_stats = pd.concat(
-#     dist_list,
-#     ignore_index=True
-# )
+    return g.figure
 
 
-# # Combine overlap and distance statistics
-# summary_table = pd.merge(
-#     overlap_stats,
-#     dist_stats,
-#     on=["C System", "Year"],
-#     how="outer"
-# )
+# ----------------------------------------------------------
+# SUMMARY TABLE SETUP
+# ----------------------------------------------------------
 
-# # Sort by year and wetland system
-# summary_table = summary_table.sort_values(
-#     ["Year", "C System"]
-# ).reset_index(drop=True)
+years = [2020, 2021, 2022, 2023, 2024, 2025]
 
-# # Rename columns for dashboard presentation
-# summary_table = summary_table.rename(columns={
-#     "C System": "Wetland System",
-#     "Year": "Year",
-#     "Burned Area (ha)": "Burned Area (ha)",
-#     "Total Wetland Area (ha)": "Total Wetland Area (ha)",
-#     "Percent Wetland Area Burned": "% of Wetland Area Burned",
-#     "Percent of Fire Area in Wetlands": "% of Fire Area in Wetlands",
-#     "Avg_Dist_Fire_km": "Average Distance to Fire (km)",
-#     "Std_Dist_Fire_km": "Standard Deviation of Distance (km)",
-#     "Median_Dist_Fire_km": "Median Distance to Fire (km)"
-# })
-# # re-order columns for presentation
-# summary_table = summary_table[
-#     [
-#         "Year",
-#         "Wetland System",
-#         "Burned Area (ha)",
-#         "Total Wetland Area (ha)",
-#         "% of Wetland Area Burned",
-#         "% of Fire Area in Wetlands",
-#         "Average Distance to Fire (km)",
-#         "Standard Deviation of Distance (km)",
-#         "Median Distance to Fire (km)"
-#     ]
-# ]
+# we already went through the overlap stats
+overlap_stats = fire_stats_all
 
-# # change formatting to shorten decimals, show percents
-# summary_table = summary_table.round(3)
+# Load yearly fire distance statistics
+dist_list = []
 
-# #calculate total wetland area to display
-# total_wetland_ha = summary_table.loc[
-#     summary_table["Year"] == 2025,
-#     "Total Wetland Area (ha)"
-# ].sum()
+for year in years:
+    data = pd.read_csv(
+        output_folder / f"fire_stats_{year}.csv"
+    )
 
-# # calculate total burned area 2020-2026 to display
-# total_burned_wetland = summary_table["Burned Area (ha)"].sum()
+    data["Year"] = year
+    dist_list.append(data)
 
-# # and calculate total percent of the burn
-# total_pct_burned_wetland = (
-#     total_burned_wetland / total_wetland_ha
-# ) * 100
+dist_stats = pd.concat(
+    dist_list,
+    ignore_index=True
+)
 
-# # and calculate overall total average dist from wetland to fire
 
-# total_average_distance = pd.concat(
-#     [fire_data[year]["Dist_Closest_km"] for year in year_list]
-# ).mean()
+# Combine overlap and distance statistics
+summary_table = pd.merge(
+    overlap_stats,
+    dist_stats,
+    on=["C System", "Year"],
+    how="outer"
+)
 
-# # DASHBOARD CONTENT ----------------------------------------------------
-# print("all data and functions loaded in! Setting up dashboard now :)")
+# Sort by year and wetland system
+summary_table = summary_table.sort_values(
+    ["Year", "C System"]
+).reset_index(drop=True)
+
+# Rename columns for dashboard presentation
+summary_table = summary_table.rename(columns={
+    "C System": "Wetland System",
+    "Year": "Year",
+    "Burned Area (ha)": "Burned Area (ha)",
+    "Total Wetland Area (ha)": "Total Wetland Area (ha)",
+    "Percent Wetland Area Burned": "% of Wetland Area Burned",
+    "Percent of Fire Area in Wetlands": "% of Fire Area in Wetlands",
+    "Avg_Dist_Fire_km": "Average Distance to Fire (km)",
+    "Std_Dist_Fire_km": "Standard Deviation of Distance (km)",
+    "Median_Dist_Fire_km": "Median Distance to Fire (km)"
+})
+# re-order columns for presentation
+summary_table = summary_table[
+    [
+        "Year",
+        "Wetland System",
+        "Burned Area (ha)",
+        "Total Wetland Area (ha)",
+        "% of Wetland Area Burned",
+        "% of Fire Area in Wetlands",
+        "Average Distance to Fire (km)",
+        "Standard Deviation of Distance (km)",
+        "Median Distance to Fire (km)"
+    ]
+]
+
+# change formatting to shorten decimals, show percents
+summary_table = summary_table.round(3)
+
+#calculate total wetland area to display
+total_wetland_ha = summary_table.loc[
+    summary_table["Year"] == 2025,
+    "Total Wetland Area (ha)"
+].sum()
+
+# calculate total burned area 2020-2026 to display
+total_burned_wetland = summary_table["Burned Area (ha)"].sum()
+
+# and calculate total percent of the burn
+total_pct_burned_wetland = (
+    total_burned_wetland / total_wetland_ha
+) * 100
+
+# and calculate overall total average dist from wetland to fire
+
+total_average_distance = pd.concat(
+    [fire_data[year]["Dist_Closest_km"] for year in year_list]
+).mean()
+
+# DASHBOARD CONTENT ----------------------------------------------------
+print("all data and functions loaded in! Setting up dashboard now :)")
 
 
 app_ui = ui.page_navbar(
@@ -1155,6 +1144,12 @@ app_ui = ui.page_navbar(
             'Management Objective, and GIS Calculated Acres. Raw data was projected in the '
             'California Albers Projection (EPSG:3310) but has been reprojected to EPSG:26910, UTM Zone 10N.'
         ),
+    )
+        ui.card(
+            ui.card_header('Authors'),
+            ui.p('Fill in Authorship Info')
+        )
+
 
         ui.h4('Wetlands Data'),
         ui.p(
@@ -1335,23 +1330,23 @@ app_ui = ui.page_navbar(
 
     ui.layout_columns(
 
-        # ui.card(
-        #     ui.card_header("Total Wetland Area"),
-        #     ui.h2(f"{total_wetland_ha:,.0f}"),
-        #     ui.p("Hectares across California"),
-        # ),
+        ui.card(
+            ui.card_header("Total Wetland Area"),
+            ui.h2(f"{total_wetland_ha:,.0f}"),
+            ui.p("Hectares across California"),
+        ),
 
-        # ui.card(
-        #     ui.card_header("Total Burned Wetland Area"),
-        #     ui.h2(f"{total_burned_wetland:,.0f}"),
-        #     ui.p("Cumulative hectares, 2020–2025"),
-        # ),
+        ui.card(
+            ui.card_header("Total Burned Wetland Area"),
+            ui.h2(f"{total_burned_wetland:,.0f}"),
+            ui.p("Cumulative hectares, 2020–2025"),
+        ),
 
-        # ui.card(
-        #     ui.card_header("Wetland Burned"),
-        #     ui.h2(f"{total_pct_burned_wetland:.1f}%"),
-        #     ui.p("Cumulative annual burned area relative to total wetland area"),
-        # ),
+        ui.card(
+            ui.card_header("Wetland Burned"),
+            ui.h2(f"{total_pct_burned_wetland:.1f}%"),
+            ui.p("Cumulative annual burned area relative to total wetland area"),
+        ),
 
         col_widths=[4, 4, 4],
     ),
@@ -1370,21 +1365,21 @@ app_ui = ui.page_navbar(
                     "perimeter and its nearest wildfire, for each of the 6 years. "),
                     ui.tags.ul(
                                 ui.tags.li('Distribution heavily skewed to the right.'),
-                                #ui.tags.li(f'Overall average distance to nearest fire: {total_average_distance:.2f} km.')
+                                ui.tags.li(f'Overall average distance to nearest fire: {total_average_distance:.2f} km.')
                                 
                     ),
                     
                 ),
-                #     ui.input_select(
-                #         "year",
-                #         "Select Year:",
-                #         choices=[str(y) for y in year_list],
-                #         selected=str(year_list[0])
-                #     ),
+                    ui.input_select(
+                        "year",
+                        "Select Year:",
+                        choices=[str(y) for y in year_list],
+                        selected=str(year_list[0])
+                    ),
 
-                # ),
+                ),
 
-                # ui.output_plot("fire_plot"),
+                ui.output_plot("fire_plot"),
 
                 col_widths=[4, 8],
             ),
@@ -1507,21 +1502,21 @@ ui.card(
         # 4. SUMMARY STATISTICS
         # ---------------------------------------------------
 
-        # ui.card(
-        #     ui.card_header("5. Summary Statistics"),
+        ui.card(
+            ui.card_header("5. Summary Statistics"),
 
-        #     ui.input_checkbox_group(
-        #         "summary_year",
-        #         "Select Year:",
-        #         choices={
-        #             str(year): str(year)
-        #             for year in range(2020, 2026)
-        #         },
-        #         selected=["2020"]
-        #     ),
+            ui.input_checkbox_group(
+                "summary_year",
+                "Select Year:",
+                choices={
+                    str(year): str(year)
+                    for year in range(2020, 2026)
+                },
+                selected=["2020"]
+            ),
 
-        #     ui.output_table("summary_table_output"),
-        # ),
+            ui.output_table("summary_table_output"),
+        ),
 
     ),
 
@@ -1566,20 +1561,20 @@ def server(input, output, session):
         )
 
 
-    # @render.plot
-    # def fire_plot():
-    #     year = int(input.year())
-    #     return plot_firedist(year)
+    @render.plot
+    def fire_plot():
+        year = int(input.year())
+        return plot_firedist(year)
 
-    # @render.table
-    # def summary_table_output():
-    #     selected_year = [int(year) for year in input.summary_year()]
+    @render.table
+    def summary_table_output():
+        selected_year = [int(year) for year in input.summary_year()]
 
-    #     table = summary_table.loc[
-    #         summary_table["Year"].isin(selected_year)
-    #     ]
+        table = summary_table.loc[
+            summary_table["Year"].isin(selected_year)
+        ]
 
-    #     return table
+        return table
 
 
     # @render_widget
