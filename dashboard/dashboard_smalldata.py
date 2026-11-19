@@ -1163,8 +1163,10 @@ app_ui = ui.page_navbar(
         ),
 
         ui.card(
-            ui.card_header('Authors'),
-            ui.p('Fill in Authorship Info')
+            ui.card_header('Project Information'),
+            ui.p('This dashboard was built as a final project for the Duke Nicholas School of the Environment course ENV712 - Environmental '
+            'Data Exploration II: Applied Analysis and Visualization. Authors: Kat' \
+            ' Anderson, Mason Bunker, Sophia Tseng.')
         ),
 
     ),
@@ -1461,9 +1463,12 @@ ui.card(
                 "and distance to the nearest fire using randomly generated points across California."
             ),
 
-            ui.p(
-                "PLACEHOLDER: Add explanation of the distance analysis and its findings."
-            )
+            ui.tags.ul(
+                ui.tags.li('A negative trendline would indicate that for a random point in the state, ' \
+                'as you get closer to a wildfire you get farther away from a wetland.'),
+                ui.tags.li('Actual trendlines vary by wetland system and subsystem.'),
+
+            ),
         ),
 
         # ----------------------------------------------------
