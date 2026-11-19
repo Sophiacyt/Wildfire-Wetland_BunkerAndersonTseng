@@ -1054,27 +1054,32 @@ app_ui = ui.page_navbar(
                 'This dashboard uses CalFire fire perimeters data and National Wetlands Inventory '
                 'wetland data to explore the relationship between wetlands and wildfires in California. California '
                 'currently has over 3 million hectares of wetland, but has undergone an estimated loss of 90% in the last century. '
-                'Wetlands supply many benefits including flood mitigation, water filtration, carbon sequestration, and wildlife habitat, '
-                'and are important resources to study and protect. '
+                'Wetlands supply many benefits including flood mitigation, water filtration, and carbon sequestration. Wildfire can be an ' \
+                'important part of the wetland ecosystem, but also has the potential to negatively affect the quality of' \
+                ' water, vegetation, and wildlife habitat, and could release stored carbon to the atmosphere, resulting in increased ' \
+                'greenhouse gas emissions. ' 
                 'Use our dashboards to examine wildfire impact on wetlands in the state from 2020 to 2025.'
             ),
 
             ui.h4("How are wetlands impacted by wildfires in the state of California?"),
             ui.tags.ul(
-                ui.tags.li('What types of wetlands are most impacted by wildfires in the state of California?'),
-                ui.tags.li('Are wetlands less likely to burn than other land in California?'),
-                ui.tags.li('Is land near wetlands less likely to burn than land farther away?'),
+                ui.tags.li('How close are wetlands to wildfires?'),
+                ui.tags.li('What types of wetlands are most impacted by wildfires?'),
+                ui.tags.li('What is the spatial relationship between wetlands and wildfires, if any?'),
             ),
 
             ui.h4("Hypotheses"),
             ui.tags.ul(
                 ui.tags.li(
-                    'Woodier wetland systems with less frequent inundation such as palustrine and riverine wetlands will be more '
-                    'vulnerable to wildfires.'
+                    'Wetlands will be less vulnerable to wildfires than non-wetland.'
                 ),
                 ui.tags.li(
-                    'The presence of surface or near-surface water in wetlands will make them less vulnerable to wildfire than non-wetland '
-                    'area.'
+                    'Riverine and palustrine wetlands will be more vulnerable to fire because they generally' \
+                    'have more woody vegetation and less surface water than other wetland systems.'
+                                ),
+                ui.tags.li(
+                    'There will be a stronger spatial relationship between wetland distance to fire ' \
+                    'in the marine, estuarine, and lacustrine systems as compared to the riverine and palustrine systems.'
                 ),
             )
         ),

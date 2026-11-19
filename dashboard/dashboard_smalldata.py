@@ -1,6 +1,6 @@
 # TO RUN:
 # conda activate env700-shiny
-# shiny run --reload dashboard/changes.py
+# shiny run --reload dashboard/dashboard_smalldata.py
 
 # if mason and struggling, run below
 # cd ~/Desktop/Duke/Environmental\ Data\ Exploration/Wildfire-Wetland_BunkerAndersonTseng/dashboard
@@ -1054,27 +1054,32 @@ app_ui = ui.page_navbar(
                 'This dashboard uses CalFire fire perimeters data and National Wetlands Inventory '
                 'wetland data to explore the relationship between wetlands and wildfires in California. California '
                 'currently has over 3 million hectares of wetland, but has undergone an estimated loss of 90% in the last century. '
-                'Wetlands supply many benefits including flood mitigation, water filtration, carbon sequestration, and wildlife habitat, '
-                'and are important resources to study and protect. '
+                'Wetlands supply many benefits including flood mitigation, water filtration, and carbon sequestration. Wildfire can be an ' \
+                'important part of the wetland ecosystem, but also has the potential to negatively affect the quality of' \
+                ' water, vegetation, and wildlife habitat, and could release stored carbon to the atmosphere, resulting in increased ' \
+                'greenhouse gas emissions. ' 
                 'Use our dashboards to examine wildfire impact on wetlands in the state from 2020 to 2025.'
             ),
 
             ui.h4("How are wetlands impacted by wildfires in the state of California?"),
             ui.tags.ul(
-                ui.tags.li('What types of wetlands are most impacted by wildfires in the state of California?'),
-                ui.tags.li('Are wetlands less likely to burn than other land in California?'),
-                ui.tags.li('Is land near wetlands less likely to burn than land farther away?'),
+                ui.tags.li('How close are wetlands to wildfires?'),
+                ui.tags.li('What types of wetlands are most impacted by wildfires?'),
+                ui.tags.li('What is the spatial relationship between wetlands and wildfires, if any?'),
             ),
 
             ui.h4("Hypotheses"),
             ui.tags.ul(
                 ui.tags.li(
-                    'Woodier wetland systems with less frequent inundation such as palustrine and riverine wetlands will be more '
-                    'vulnerable to wildfires.'
+                    'Wetlands will be less vulnerable to wildfires than non-wetland.'
                 ),
                 ui.tags.li(
-                    'The presence of surface or near-surface water in wetlands will make them less vulnerable to wildfire than non-wetland '
-                    'area.'
+                    'Riverine and palustrine wetlands will be more vulnerable to fire because they generally' \
+                    'have more woody vegetation and less surface water than other wetland systems.'
+                                ),
+                ui.tags.li(
+                    'There will be a stronger spatial relationship between wetland distance to fire ' \
+                    'in the marine, estuarine, and lacustrine systems as compared to the riverine and palustrine systems.'
                 ),
             )
         ),
@@ -1274,8 +1279,8 @@ app_ui = ui.page_navbar(
 
     ui.p(
         "To address our central questions about wildfire impacts on wetlands across "
-        "California, we use a spatial analysis approach. Both the NWI wetlands dataset and the "
-        "CalFire fire dataset contain shapefiles that show perimeters, allowing us to examine the "
+        "California, take a spatial analysis approach. Both the NWI wetlands dataset and the "
+        "CalFire fire dataset contain perimeter shapefiles, allowing us to examine the "
         "extent to which wetlands overlap with wildfire boundaries, compare wildfire occurance in wetland and "
         "non-wetland areas, and investigate how proximity to wetlands relates to wildfire occurance."
     ),
@@ -1320,7 +1325,7 @@ app_ui = ui.page_navbar(
                 # LEFT COLUMN: EXPLANATION AND FILTER
                 ui.div(
                     ui.p(
-                        "We begin by performing a nearest-neighbor spatial join to determine the distance between each wetland "
+                        "We perform a nearest-neighbor spatial join to determine the distance between each wetland "
                         "perimeter and its nearest wildfire, for each of the 6 years."
                     ),
 
@@ -1358,7 +1363,7 @@ app_ui = ui.page_navbar(
 
                 ui.div(
                     ui.p(
-                        "Next, we perform an intersection between the wetlands data and the " \
+                        "We perform an intersection between the wetlands data and the " \
                         "fire data to identify wetland area that overlaps with fire perimeters. " \
                         "We use total wetland area for each system to determine the percent of each " \
                         "wetland system that was burned."
@@ -1367,7 +1372,8 @@ app_ui = ui.page_navbar(
                                 ui.tags.li('Overall, percent of wetland area burned remains low, indicating a ' \
                                 'majority of wetland area did not experience wildfire in the last 6 years.'),
                                 ui.tags.li('Palustrine and riverine wetlands, which typically have more woody vegetation, have higher ' \
-                                'percentages of wetland burned compared to the other three systems.')
+                                'percentages of wetland burned compared to the other three systems.'),
+                                ui.tags.li('There are several years where estuarine, marine, or lacustrine systems did not experience wildfire.')
                     ),
 
                     
@@ -1414,8 +1420,8 @@ ui.card(
 
         ui.div(
             ui.p(
-                "This analysis examines the relationship between distance to the nearest wetland "
-                "and distance to the nearest fire using randomly generated points across California."
+                "This analysis uses 100,000 randomly generated points to examine the relationship between distance to the " \
+                "nearest wetland and distance to the nearest fire. " \
             ),
 
             ui.tags.ul(
@@ -1424,7 +1430,7 @@ ui.card(
                     "as you get closer to a wildfire you get farther away from a wetland."
                 ),
                 ui.tags.li(
-                    "Actual trendlines vary by wetland system and subsystem."
+                    "Actual trendlines vary by wetland system and subsystem, with no R^2 values indicating significant trendlines."
                 ),
             ),
 
