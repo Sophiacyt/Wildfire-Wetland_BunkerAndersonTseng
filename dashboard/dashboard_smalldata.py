@@ -1,6 +1,6 @@
 # TO RUN:
 # conda activate env700-shiny
-# shiny run --reload dashboard/dashboard.py
+# shiny run --reload dashboard/changes.py
 
 # if mason and struggling, run below
 # cd ~/Desktop/Duke/Environmental\ Data\ Exploration/Wildfire-Wetland_BunkerAndersonTseng/dashboard
@@ -52,55 +52,7 @@ raw_fldr = project_fldr / 'data' / 'raw'
 processed_fldr = project_fldr / 'data' / 'processed'
 figure_fldr = project_fldr/"figures"
 
-# # set a path to the main box folder based on machine's os
-# # if windows: 
-# if platform.system() == 'Windows':
-#     box_path = Path.home() / 'Box'
-# # if mac:
-# else:
-#     box_path = Path.home() / "Library" / "CloudStorage" / "Box-Box"
 
-# #Confirm that the box path is valid
-# if box_path.exists():
-#     print(f'Box folder found at {box_path}')
-# else:
-#     print(f'Failed to locate the Box folder.\nIs the BoxDrive app running?\nAre you logged in?')
-
-
-# ----------------------------------------------------------
-# DATA PATH SETUP
-# ----------------------------------------------------------
-
-# wetlands_path = (
-#     box_path
-#     / "ENVIRON 712L-Students"
-#     / "Data"
-#     / "BunkerAndersonTseng"
-#     / "wetlands_subset"
-#     / "wetlands_subset.geojson"
-# )
-
-# simpler_path = (
-#     box_path
-#     / "ENVIRON 712L-Students"
-#     / "Data"
-#     / "BunkerAndersonTseng"
-#     / "simpler_wetlands"
-# )
-
-# # Path to saved spatial data and yearly statistics
-# output_folder = (
-#     box_path / 'ENVIRON 712L-Students' /
-#     'Data' / 'BunkerAndersonTseng' /
-#     'fire_distance_data'
-# )
-
-# # Available years
-# year_list = [2020, 2021, 2022, 2023, 2024, 2025]
-
-# # create path object that goes to the specific folder on Box drive
-# # uploading wetlands that are bigger than a hectare
-# html_map_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAndersonTseng' / 'html_maps'
 
 # --------------------------fire-explore-data----------------------------
 # california outline
@@ -686,7 +638,6 @@ def make_legend(colors):
         """
     )
 
-
 # # SANKEY DIAGRAM
 # wetlands_subset_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAndersonTseng' / 'wetlands_subset'
 # wetlands = gpd.read_file(
@@ -695,92 +646,92 @@ def make_legend(colors):
 
 # print("wetlands data secured!")
 
-# def plot_sankey(wetlands):
+def plot_sankey():
 
-#     df = wetlands.copy()
+    df = pd.read_csv(processed_fldr / 'wetlands_dataframe.csv')
 
-#     df["Hectares"] = pd.to_numeric(df["Hectares"], errors="coerce")
-#     df = df.dropna(subset=["Hectares"])
+    df["Hectares"] = pd.to_numeric(df["Hectares"], errors="coerce")
+    df = df.dropna(subset=["Hectares"])
 
-#     cols = ["C System", "C Subsystem", "C Class"]
+    cols = ["C System", "C Subsystem", "C Class"]
 
-#     for col in cols:
-#         df[col] = df[col].fillna("Unknown").astype(str)
+    for col in cols:
+        df[col] = df[col].fillna("Unknown").astype(str)
 
-#     # Calculate total hectares for each transition
-#     flow1 = (
-#         df.groupby(["C System", "C Subsystem"])["Hectares"]
-#         .sum()
-#         .reset_index()
-#     )
+    # Calculate total hectares for each transition
+    flow1 = (
+        df.groupby(["C System", "C Subsystem"])["Hectares"]
+        .sum()
+        .reset_index()
+    )
 
-#     flow2 = (
-#         df.groupby(["C Subsystem", "C Class"])["Hectares"]
-#         .sum()
-#         .reset_index()
-#     )
+    flow2 = (
+        df.groupby(["C Subsystem", "C Class"])["Hectares"]
+        .sum()
+        .reset_index()
+    )
 
-#     # Create separate nodes for each classification level
-#     systems = df["C System"].unique().tolist()
-#     subsystems = df["C Subsystem"].unique().tolist()
-#     classes = df["C Class"].unique().tolist()
+    # Create separate nodes for each classification level
+    systems = df["C System"].unique().tolist()
+    subsystems = df["C Subsystem"].unique().tolist()
+    classes = df["C Class"].unique().tolist()
 
-#     labels = (
-#         [f"System: {x}" for x in systems]
-#         + [f"Subsystem: {x}" for x in subsystems]
-#         + [f"Class: {x}" for x in classes]
-#     )
+    labels = (
+        [f"System: {x}" for x in systems]
+        + [f"Subsystem: {x}" for x in subsystems]
+        + [f"Class: {x}" for x in classes]
+    )
 
-#     system_map = {x: i for i, x in enumerate(systems)}
+    system_map = {x: i for i, x in enumerate(systems)}
 
-#     subsystem_map = {
-#         x: i + len(systems)
-#         for i, x in enumerate(subsystems)
-#     }
+    subsystem_map = {
+        x: i + len(systems)
+        for i, x in enumerate(subsystems)
+    }
 
-#     class_map = {
-#         x: i + len(systems) + len(subsystems)
-#         for i, x in enumerate(classes)
-#     }
+    class_map = {
+        x: i + len(systems) + len(subsystems)
+        for i, x in enumerate(classes)
+    }
 
-#     # Build links
-#     sources = (
-#         flow1["C System"].map(system_map).tolist()
-#         + flow2["C Subsystem"].map(subsystem_map).tolist()
-#     )
+    # Build links
+    sources = (
+        flow1["C System"].map(system_map).tolist()
+        + flow2["C Subsystem"].map(subsystem_map).tolist()
+    )
 
-#     targets = (
-#         flow1["C Subsystem"].map(subsystem_map).tolist()
-#         + flow2["C Class"].map(class_map).tolist()
-#     )
+    targets = (
+        flow1["C Subsystem"].map(subsystem_map).tolist()
+        + flow2["C Class"].map(class_map).tolist()
+    )
 
-#     values = (
-#         flow1["Hectares"].tolist()
-#         + flow2["Hectares"].tolist()
-#     )
+    values = (
+        flow1["Hectares"].tolist()
+        + flow2["Hectares"].tolist()
+    )
 
-#     # Generate Sankey diagram
-#     fig_subset = go.Figure(go.Sankey(
-#         node=dict(label=labels),
-#         link=dict(
-#             source=sources,
-#             target=targets,
-#             value=values,
-#             hovertemplate=(
-#                 "%{source.label} → %{target.label}<br>"
-#                 "Area: %{value:.2f} hectares"
-#                 "<extra></extra>"
-#             )
-#         )
-#     ))
+    # Generate Sankey diagram
+    fig_subset = go.Figure(go.Sankey(
+        node=dict(label=labels),
+        link=dict(
+            source=sources,
+            target=targets,
+            value=values,
+            hovertemplate=(
+                "%{source.label} → %{target.label}<br>"
+                "Area: %{value:.2f} hectares"
+                "<extra></extra>"
+            )
+        )
+    ))
 
-#     fig_subset.update_layout(
-#         title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
-#         font_size=11,
-#         height=700
-#     )
+    fig_subset.update_layout(
+        title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
+        font_size=11,
+        height=700
+    )
 
-#     return fig_subset
+    return fig_subset
 
 
 # FIRE DATA GRAPH 
@@ -1288,12 +1239,12 @@ app_ui = ui.page_navbar(
                 ),
             ),
 
-            # # wetlands sankey diagram on right
-            # ui.card(
-            #     ui.card_header("Wetland Classification Sankey Diagram"),
+            # wetlands sankey diagram on right
+            ui.card(
+                ui.card_header("Wetland Classification Sankey Diagram"),
 
-            #     output_widget("sankey_plot"),
-            # ),
+                output_widget("sankey_plot"),
+            ),
 
             col_widths=[4, 8],
         ),
@@ -1429,7 +1380,7 @@ app_ui = ui.page_navbar(
                     ),
 
                     ui.input_checkbox_group(
-                        "system",
+                        "fireint_system",
                         "Select Wetland System:",
                         choices=system_list,
                         selected=system_list,
@@ -1563,7 +1514,7 @@ def server(input, output, session):
     def fireint_plot():
 
         selected_years = input.fireint_year()
-        selected_systems = input.system()
+        selected_systems = input.fireint_system()
 
         if not selected_years or not selected_systems:
             return None
@@ -1590,9 +1541,9 @@ def server(input, output, session):
         return table
 
 
-    # @render_widget
-    # def sankey_plot():
-    #     return plot_sankey(wetlands)
+    @render_widget
+    def sankey_plot():
+        return plot_sankey()
 
     # dynamically update subsystem options
     @render.ui
