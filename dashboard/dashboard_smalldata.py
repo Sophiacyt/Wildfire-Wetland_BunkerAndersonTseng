@@ -1399,13 +1399,17 @@ app_ui = ui.page_navbar(
         # 3. SPATIAL RELATIONSHIP BETWEEN WETLANDS AND FIRES
         # ---------------------------------------------------
 
+# ---------------------------------------------------
+# 3. SPATIAL RELATIONSHIP BETWEEN WETLANDS AND FIRES
+# ---------------------------------------------------
+
 ui.card(
     ui.card_header("3. Spatial Relationship Between Wetlands and Fires"),
 
     ui.layout_columns(
 
         # ----------------------------------------------------
-        # LEFT COLUMN: EXPLANATION
+        # LEFT COLUMN: EXPLANATION + FILTERS
         # ----------------------------------------------------
 
         ui.div(
@@ -1415,52 +1419,45 @@ ui.card(
             ),
 
             ui.tags.ul(
-                ui.tags.li('A negative trendline would indicate that for a random point in the state, ' \
-                'as you get closer to a wildfire you get farther away from a wetland.'),
-                ui.tags.li('Actual trendlines vary by wetland system and subsystem.'),
-
+                ui.tags.li(
+                    "A negative trendline would indicate that for a random point in the state, "
+                    "as you get closer to a wildfire you get farther away from a wetland."
+                ),
+                ui.tags.li(
+                    "Actual trendlines vary by wetland system and subsystem."
+                ),
             ),
+
+            ui.hr(),
+
+            ui.h4("Filter Wetland Classification"),
+
+            ui.input_select(
+                "system",
+                "System:",
+                choices=system_choices,
+                selected=initial_system
+            ),
+
+            ui.output_ui("subsystem_choices"),
+
+            ui.hr(),
+
+            ui.output_ui("system_legend")
         ),
 
         # ----------------------------------------------------
-        # RIGHT COLUMN: INTERACTIVE DASHBOARD
+        # RIGHT COLUMN: PLOT
         # ----------------------------------------------------
 
-        ui.div(
-            ui.layout_sidebar(
-
-                # SIDEBAR: FILTERS AND LEGEND
-                ui.sidebar(
-                    ui.h4("Filter Wetland Classification"),
-
-                    ui.input_select(
-                        "system",
-                        "System:",
-                        choices=system_choices,
-                        selected=initial_system
-                    ),
-
-                    ui.output_ui("subsystem_choices"),
-
-                    ui.hr(),
-
-                    ui.output_ui("system_legend")
-                ),
-
-                # MAIN PANEL: PLOT
-                ui.card(
-                    ui.card_header(
-                        "Distance to Wetlands vs Fire"
-                    ),
-                    output_widget("distance_plot")
-                )
-            )
+        ui.card(
+            ui.card_header("Distance to Wetlands vs Fire"),
+            output_widget("distance_plot")
         ),
 
         col_widths=[4, 8]
     )
 ),
-
 
         # ---------------------------------------------------
         # 4. SUMMARY STATISTICS
