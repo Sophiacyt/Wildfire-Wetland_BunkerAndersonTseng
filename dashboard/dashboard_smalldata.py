@@ -77,7 +77,6 @@ for fire_df in fire_dfs:
 
 # ------------------------wetland-explore-data---------------------------
 # palustrine and riverine to come later
-ca_outline = gpd.read_file(processed_fldr/'wetland_explore'/"ca_outline.geojson")
 marine = gpd.read_file(processed_fldr/'wetland_explore'/"marine_simpler.geojson")
 estuarine = gpd.read_file(processed_fldr/'wetland_explore'/"estuarine_simpler.geojson")
 lacustrine = gpd.read_file(processed_fldr/'wetland_explore'/"lacustrine_simpler.geojson")
@@ -479,8 +478,11 @@ initial_system = "All Wetland Systems"
 
 # --------------------------fire-explore-map-----------------------------
 fire_map_left = folium.Map(
+    location=[37.32, -119.27], # explicit center of map
     zoom_start=6,
     tiles=None,
+    width="100%",
+    height="650px"
 )
 
 # ESRI satellite basemap
@@ -492,12 +494,6 @@ folium.TileLayer(
     control=False
 ).add_to(fire_map_left)
 
-# this should leave us so that the initial zoom is the outline of california
-fire_map_left.fit_bounds([
-    [miny, minx],  # Southwest corner
-    [maxy, maxx]   # Northeast corner
-])
-
 # add CA outline
 folium.GeoJson(
     ca_outline.to_json(),
@@ -508,6 +504,8 @@ folium.GeoJson(
     },
     control= False # always on
 ).add_to(fire_map_left)
+
+
 
 # for loop to add in the fires
 for fire_df, year in zip(fire_dfs, years):
@@ -525,6 +523,12 @@ for fire_df, year in zip(fire_dfs, years):
 
 folium.LayerControl(collapsed=False).add_to(fire_map_left)
 
+print("\n--- FOLIUM MAP DIAGNOSTICS ---")
+print("Bounds:", fire_map_left.get_bounds())
+print("Location:", fire_map_left.location)
+print("Options:", fire_map_left.options)
+print("------------------------------\n")
+
 fire_map_left # this would display in a notebook
 
 # ------------------------wetland-explore-map----------------------------
@@ -533,8 +537,11 @@ fire_map_left # this would display in a notebook
 
 # create the actual map as a base now
 wetland_map_right = folium.Map(
+    location=[37.32, -119.27], # explicit center of map
     zoom_start=6,
     tiles=None,
+    width="100%",
+    height="650px"
 )
 
 # ESRI satellite basemap
@@ -545,12 +552,6 @@ folium.TileLayer(
     overlay=False,
     control=False
 ).add_to(wetland_map_right)
-
-# this should leave us so that the initial zoom is the outline of california
-wetland_map_right.fit_bounds([
-    [miny, minx],  # Southwest corner
-    [maxy, maxx]   # Northeast corner
-])
 
 # add CA outline
 folium.GeoJson(
