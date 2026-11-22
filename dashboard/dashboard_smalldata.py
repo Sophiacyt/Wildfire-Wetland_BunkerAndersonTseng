@@ -52,55 +52,7 @@ raw_fldr = project_fldr / 'data' / 'raw'
 processed_fldr = project_fldr / 'data' / 'processed'
 figure_fldr = project_fldr/"figures"
 
-# # set a path to the main box folder based on machine's os
-# # if windows: 
-# if platform.system() == 'Windows':
-#     box_path = Path.home() / 'Box'
-# # if mac:
-# else:
-#     box_path = Path.home() / "Library" / "CloudStorage" / "Box-Box"
 
-# #Confirm that the box path is valid
-# if box_path.exists():
-#     print(f'Box folder found at {box_path}')
-# else:
-#     print(f'Failed to locate the Box folder.\nIs the BoxDrive app running?\nAre you logged in?')
-
-
-# ----------------------------------------------------------
-# DATA PATH SETUP
-# ----------------------------------------------------------
-
-# wetlands_path = (
-#     box_path
-#     / "ENVIRON 712L-Students"
-#     / "Data"
-#     / "BunkerAndersonTseng"
-#     / "wetlands_subset"
-#     / "wetlands_subset.geojson"
-# )
-
-# simpler_path = (
-#     box_path
-#     / "ENVIRON 712L-Students"
-#     / "Data"
-#     / "BunkerAndersonTseng"
-#     / "simpler_wetlands"
-# )
-
-# # Path to saved spatial data and yearly statistics
-# output_folder = (
-#     box_path / 'ENVIRON 712L-Students' /
-#     'Data' / 'BunkerAndersonTseng' /
-#     'fire_distance_data'
-# )
-
-# # Available years
-# year_list = [2020, 2021, 2022, 2023, 2024, 2025]
-
-# # create path object that goes to the specific folder on Box drive
-# # uploading wetlands that are bigger than a hectare
-# html_map_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAndersonTseng' / 'html_maps'
 
 # --------------------------fire-explore-data----------------------------
 # california outline
@@ -686,7 +638,6 @@ def make_legend(colors):
         """
     )
 
-
 # # SANKEY DIAGRAM
 # wetlands_subset_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAndersonTseng' / 'wetlands_subset'
 # wetlands = gpd.read_file(
@@ -695,92 +646,92 @@ def make_legend(colors):
 
 # print("wetlands data secured!")
 
-# def plot_sankey(wetlands):
+def plot_sankey():
 
-#     df = wetlands.copy()
+    df = pd.read_csv(processed_fldr / 'wetlands_dataframe.csv')
 
-#     df["Hectares"] = pd.to_numeric(df["Hectares"], errors="coerce")
-#     df = df.dropna(subset=["Hectares"])
+    df["Hectares"] = pd.to_numeric(df["Hectares"], errors="coerce")
+    df = df.dropna(subset=["Hectares"])
 
-#     cols = ["C System", "C Subsystem", "C Class"]
+    cols = ["C System", "C Subsystem", "C Class"]
 
-#     for col in cols:
-#         df[col] = df[col].fillna("Unknown").astype(str)
+    for col in cols:
+        df[col] = df[col].fillna("Unknown").astype(str)
 
-#     # Calculate total hectares for each transition
-#     flow1 = (
-#         df.groupby(["C System", "C Subsystem"])["Hectares"]
-#         .sum()
-#         .reset_index()
-#     )
+    # Calculate total hectares for each transition
+    flow1 = (
+        df.groupby(["C System", "C Subsystem"])["Hectares"]
+        .sum()
+        .reset_index()
+    )
 
-#     flow2 = (
-#         df.groupby(["C Subsystem", "C Class"])["Hectares"]
-#         .sum()
-#         .reset_index()
-#     )
+    flow2 = (
+        df.groupby(["C Subsystem", "C Class"])["Hectares"]
+        .sum()
+        .reset_index()
+    )
 
-#     # Create separate nodes for each classification level
-#     systems = df["C System"].unique().tolist()
-#     subsystems = df["C Subsystem"].unique().tolist()
-#     classes = df["C Class"].unique().tolist()
+    # Create separate nodes for each classification level
+    systems = df["C System"].unique().tolist()
+    subsystems = df["C Subsystem"].unique().tolist()
+    classes = df["C Class"].unique().tolist()
 
-#     labels = (
-#         [f"System: {x}" for x in systems]
-#         + [f"Subsystem: {x}" for x in subsystems]
-#         + [f"Class: {x}" for x in classes]
-#     )
+    labels = (
+        [f"System: {x}" for x in systems]
+        + [f"Subsystem: {x}" for x in subsystems]
+        + [f"Class: {x}" for x in classes]
+    )
 
-#     system_map = {x: i for i, x in enumerate(systems)}
+    system_map = {x: i for i, x in enumerate(systems)}
 
-#     subsystem_map = {
-#         x: i + len(systems)
-#         for i, x in enumerate(subsystems)
-#     }
+    subsystem_map = {
+        x: i + len(systems)
+        for i, x in enumerate(subsystems)
+    }
 
-#     class_map = {
-#         x: i + len(systems) + len(subsystems)
-#         for i, x in enumerate(classes)
-#     }
+    class_map = {
+        x: i + len(systems) + len(subsystems)
+        for i, x in enumerate(classes)
+    }
 
-#     # Build links
-#     sources = (
-#         flow1["C System"].map(system_map).tolist()
-#         + flow2["C Subsystem"].map(subsystem_map).tolist()
-#     )
+    # Build links
+    sources = (
+        flow1["C System"].map(system_map).tolist()
+        + flow2["C Subsystem"].map(subsystem_map).tolist()
+    )
 
-#     targets = (
-#         flow1["C Subsystem"].map(subsystem_map).tolist()
-#         + flow2["C Class"].map(class_map).tolist()
-#     )
+    targets = (
+        flow1["C Subsystem"].map(subsystem_map).tolist()
+        + flow2["C Class"].map(class_map).tolist()
+    )
 
-#     values = (
-#         flow1["Hectares"].tolist()
-#         + flow2["Hectares"].tolist()
-#     )
+    values = (
+        flow1["Hectares"].tolist()
+        + flow2["Hectares"].tolist()
+    )
 
-#     # Generate Sankey diagram
-#     fig_subset = go.Figure(go.Sankey(
-#         node=dict(label=labels),
-#         link=dict(
-#             source=sources,
-#             target=targets,
-#             value=values,
-#             hovertemplate=(
-#                 "%{source.label} → %{target.label}<br>"
-#                 "Area: %{value:.2f} hectares"
-#                 "<extra></extra>"
-#             )
-#         )
-#     ))
+    # Generate Sankey diagram
+    fig_subset = go.Figure(go.Sankey(
+        node=dict(label=labels),
+        link=dict(
+            source=sources,
+            target=targets,
+            value=values,
+            hovertemplate=(
+                "%{source.label} → %{target.label}<br>"
+                "Area: %{value:.2f} hectares"
+                "<extra></extra>"
+            )
+        )
+    ))
 
-#     fig_subset.update_layout(
-#         title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
-#         font_size=11,
-#         height=700
-#     )
+    fig_subset.update_layout(
+        title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
+        font_size=11,
+        height=700
+    )
 
-#     return fig_subset
+    return fig_subset
 
 
 # FIRE DATA GRAPH 
@@ -1103,27 +1054,32 @@ app_ui = ui.page_navbar(
                 'This dashboard uses CalFire fire perimeters data and National Wetlands Inventory '
                 'wetland data to explore the relationship between wetlands and wildfires in California. California '
                 'currently has over 3 million hectares of wetland, but has undergone an estimated loss of 90% in the last century. '
-                'Wetlands supply many benefits including flood mitigation, water filtration, carbon sequestration, and wildlife habitat, '
-                'and are important resources to study and protect. '
+                'Wetlands supply many benefits including flood mitigation, water filtration, and carbon sequestration. Wildfire can be an ' \
+                'important part of the wetland ecosystem, but also has the potential to negatively affect the quality of' \
+                ' water, vegetation, and wildlife habitat, and could release stored carbon to the atmosphere, resulting in increased ' \
+                'greenhouse gas emissions. ' 
                 'Use our dashboards to examine wildfire impact on wetlands in the state from 2020 to 2025.'
             ),
 
             ui.h4("How are wetlands impacted by wildfires in the state of California?"),
             ui.tags.ul(
-                ui.tags.li('What types of wetlands are most impacted by wildfires in the state of California?'),
-                ui.tags.li('Are wetlands less likely to burn than other land in California?'),
-                ui.tags.li('Is land near wetlands less likely to burn than land farther away?'),
+                ui.tags.li('How close are wetlands to wildfires?'),
+                ui.tags.li('What types of wetlands are most impacted by wildfires?'),
+                ui.tags.li('What is the spatial relationship between wetlands and wildfires, if any?'),
             ),
 
             ui.h4("Hypotheses"),
             ui.tags.ul(
                 ui.tags.li(
-                    'Woodier wetland systems with less frequent inundation such as palustrine and riverine wetlands will be more '
-                    'vulnerable to wildfires.'
+                    'Wetlands will be less vulnerable to wildfires than non-wetland.'
                 ),
                 ui.tags.li(
-                    'The presence of surface or near-surface water in wetlands will make them less vulnerable to wildfire than non-wetland '
-                    'area.'
+                    'Riverine and palustrine wetlands will be more vulnerable to fire because they generally' \
+                    'have more woody vegetation and less surface water than other wetland systems.'
+                                ),
+                ui.tags.li(
+                    'There will be a stronger spatial relationship between wetland distance to fire ' \
+                    'in the marine, estuarine, and lacustrine systems as compared to the riverine and palustrine systems.'
                 ),
             )
         ),
@@ -1163,8 +1119,10 @@ app_ui = ui.page_navbar(
         ),
 
         ui.card(
-            ui.card_header('Authors'),
-            ui.p('Fill in Authorship Info')
+            ui.card_header('Project Information'),
+            ui.p('This dashboard was built as a final project for the Duke Nicholas School of the Environment course ENV712 - Environmental '
+            'Data Exploration II: Applied Analysis and Visualization. Authors: Kat' \
+            ' Anderson, Mason Bunker, Sophia Tseng.')
         ),
 
     ),
@@ -1286,12 +1244,12 @@ app_ui = ui.page_navbar(
                 ),
             ),
 
-            # # wetlands sankey diagram on right
-            # ui.card(
-            #     ui.card_header("Wetland Classification Sankey Diagram"),
+            # wetlands sankey diagram on right
+            ui.card(
+                ui.card_header("Wetland Classification Sankey Diagram"),
 
-            #     output_widget("sankey_plot"),
-            # ),
+                output_widget("sankey_plot"),
+            ),
 
             col_widths=[4, 8],
         ),
@@ -1321,8 +1279,8 @@ app_ui = ui.page_navbar(
 
     ui.p(
         "To address our central questions about wildfire impacts on wetlands across "
-        "California, we use a spatial analysis approach. Both the NWI wetlands dataset and the "
-        "CalFire fire dataset contain shapefiles that show perimeters, allowing us to examine the "
+        "California, take a spatial analysis approach. Both the NWI wetlands dataset and the "
+        "CalFire fire dataset contain perimeter shapefiles, allowing us to examine the "
         "extent to which wetlands overlap with wildfire boundaries, compare wildfire occurance in wetland and "
         "non-wetland areas, and investigate how proximity to wetlands relates to wildfire occurance."
     ),
@@ -1367,7 +1325,7 @@ app_ui = ui.page_navbar(
                 # LEFT COLUMN: EXPLANATION AND FILTER
                 ui.div(
                     ui.p(
-                        "We begin by performing a nearest-neighbor spatial join to determine the distance between each wetland "
+                        "We perform a nearest-neighbor spatial join to determine the distance between each wetland "
                         "perimeter and its nearest wildfire, for each of the 6 years."
                     ),
 
@@ -1405,7 +1363,7 @@ app_ui = ui.page_navbar(
 
                 ui.div(
                     ui.p(
-                        "Next, we perform an intersection between the wetlands data and the " \
+                        "We perform an intersection between the wetlands data and the " \
                         "fire data to identify wetland area that overlaps with fire perimeters. " \
                         "We use total wetland area for each system to determine the percent of each " \
                         "wetland system that was burned."
@@ -1414,7 +1372,8 @@ app_ui = ui.page_navbar(
                                 ui.tags.li('Overall, percent of wetland area burned remains low, indicating a ' \
                                 'majority of wetland area did not experience wildfire in the last 6 years.'),
                                 ui.tags.li('Palustrine and riverine wetlands, which typically have more woody vegetation, have higher ' \
-                                'percentages of wetland burned compared to the other three systems.')
+                                'percentages of wetland burned compared to the other three systems.'),
+                                ui.tags.li('There are several years where estuarine, marine, or lacustrine systems did not experience wildfire.')
                     ),
 
                     
@@ -1427,7 +1386,7 @@ app_ui = ui.page_navbar(
                     ),
 
                     ui.input_checkbox_group(
-                        "system",
+                        "fireint_system",
                         "Select Wetland System:",
                         choices=system_list,
                         selected=system_list,
@@ -1446,65 +1405,65 @@ app_ui = ui.page_navbar(
         # 3. SPATIAL RELATIONSHIP BETWEEN WETLANDS AND FIRES
         # ---------------------------------------------------
 
+# ---------------------------------------------------
+# 3. SPATIAL RELATIONSHIP BETWEEN WETLANDS AND FIRES
+# ---------------------------------------------------
+
 ui.card(
     ui.card_header("3. Spatial Relationship Between Wetlands and Fires"),
 
     ui.layout_columns(
 
         # ----------------------------------------------------
-        # LEFT COLUMN: EXPLANATION
+        # LEFT COLUMN: EXPLANATION + FILTERS
         # ----------------------------------------------------
 
         ui.div(
             ui.p(
-                "This analysis examines the relationship between distance to the nearest wetland "
-                "and distance to the nearest fire using randomly generated points across California."
+                "This analysis uses 100,000 randomly generated points to examine the relationship between distance to the " \
+                "nearest wetland and distance to the nearest fire. " \
             ),
 
-            ui.p(
-                "PLACEHOLDER: Add explanation of the distance analysis and its findings."
-            )
+            ui.tags.ul(
+                ui.tags.li(
+                    "A negative trendline would indicate that for a random point in the state, "
+                    "as you get closer to a wildfire you get farther away from a wetland."
+                ),
+                ui.tags.li(
+                    "Actual trendlines vary by wetland system and subsystem, with no R^2 values indicating significant trendlines."
+                ),
+            ),
+
+            ui.hr(),
+
+            ui.h4("Filter Wetland Classification"),
+
+            ui.input_select(
+                "system",
+                "System:",
+                choices=system_choices,
+                selected=initial_system
+            ),
+
+            ui.output_ui("subsystem_choices"),
+
+            ui.hr(),
+
+            ui.output_ui("system_legend")
         ),
 
         # ----------------------------------------------------
-        # RIGHT COLUMN: INTERACTIVE DASHBOARD
+        # RIGHT COLUMN: PLOT
         # ----------------------------------------------------
 
-        ui.div(
-            ui.layout_sidebar(
-
-                # SIDEBAR: FILTERS AND LEGEND
-                ui.sidebar(
-                    ui.h4("Filter Wetland Classification"),
-
-                    ui.input_select(
-                        "system",
-                        "System:",
-                        choices=system_choices,
-                        selected=initial_system
-                    ),
-
-                    ui.output_ui("subsystem_choices"),
-
-                    ui.hr(),
-
-                    ui.output_ui("system_legend")
-                ),
-
-                # MAIN PANEL: PLOT
-                ui.card(
-                    ui.card_header(
-                        "Distance to Wetlands vs Fire"
-                    ),
-                    output_widget("distance_plot")
-                )
-            )
+        ui.card(
+            ui.card_header("Distance to Wetlands vs Fire"),
+            output_widget("distance_plot")
         ),
 
         col_widths=[4, 8]
     )
 ),
-
 
         # ---------------------------------------------------
         # 4. SUMMARY STATISTICS
@@ -1558,7 +1517,7 @@ def server(input, output, session):
     def fireint_plot():
 
         selected_years = input.fireint_year()
-        selected_systems = input.system()
+        selected_systems = input.fireint_system()
 
         if not selected_years or not selected_systems:
             return None
@@ -1585,9 +1544,9 @@ def server(input, output, session):
         return table
 
 
-    # @render_widget
-    # def sankey_plot():
-    #     return plot_sankey(wetlands)
+    @render_widget
+    def sankey_plot():
+        return plot_sankey()
 
     # dynamically update subsystem options
     @render.ui
