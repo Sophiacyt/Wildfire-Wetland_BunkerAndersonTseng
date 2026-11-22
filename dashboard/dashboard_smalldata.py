@@ -523,12 +523,6 @@ for fire_df, year in zip(fire_dfs, years):
 
 folium.LayerControl(collapsed=False).add_to(fire_map_left)
 
-print("\n--- FOLIUM MAP DIAGNOSTICS ---")
-print("Bounds:", fire_map_left.get_bounds())
-print("Location:", fire_map_left.location)
-print("Options:", fire_map_left.options)
-print("------------------------------\n")
-
 fire_map_left # this would display in a notebook
 
 # ------------------------wetland-explore-map----------------------------
@@ -546,7 +540,7 @@ wetland_map_right = folium.Map(
 
 # ESRI satellite basemap
 folium.TileLayer(
-    tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{x}/{y}",
+    tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     attr="Esri, Maxar, Earthstar Geographics, and the GIS User Community",
     name="Satellite Imagery",
     overlay=False,
@@ -647,8 +641,13 @@ def make_legend(colors):
 
 # print("wetlands data secured!")
 
+
+
+
+
 def plot_sankey():
 
+    # 1. Load and clean data
     df = pd.read_csv(processed_fldr / 'wetlands_dataframe.csv')
 
     df["Hectares"] = pd.to_numeric(df["Hectares"], errors="coerce")
@@ -657,22 +656,30 @@ def plot_sankey():
     cols = ["C System", "C Subsystem", "C Class"]
 
     for col in cols:
-        df[col] = df[col].fillna("Unknown").astype(str)
+        df[col] = df[col].fillna("Unknown").astype(str).str.strip()
 
-    # Calculate total hectares for each transition
-    flow1 = (
-        df.groupby(["C System", "C Subsystem"])["Hectares"]
-        .sum()
-        .reset_index()
-    )
 
-    flow2 = (
-        df.groupby(["C Subsystem", "C Class"])["Hectares"]
-        .sum()
-        .reset_index()
-    )
+    # 2. Define system colors
+    system_colors = {
+        "Marine": "#02518a",
+        "Estuarine": "#0b2ce9",
+        "Riverine": "#17becf",
+        "Lacustrine": "#01f694",
+        "Palustrine": "#4bcb00"
+    }
 
-    # Create separate nodes for each classification level
+
+    # 3. Calculate total hectares for each transition
+    flow1 = df.groupby(
+        ["C System", "C Subsystem"]
+    )["Hectares"].sum().reset_index()
+
+    flow2 = df.groupby(
+        ["C Subsystem", "C Class"]
+    )["Hectares"].sum().reset_index()
+
+
+    # 4. Create nodes and labels
     systems = df["C System"].unique().tolist()
     subsystems = df["C Subsystem"].unique().tolist()
     classes = df["C Class"].unique().tolist()
@@ -683,7 +690,9 @@ def plot_sankey():
         + [f"Class: {x}" for x in classes]
     )
 
-    system_map = {x: i for i, x in enumerate(systems)}
+    system_map = {
+        x: i for i, x in enumerate(systems)
+    }
 
     subsystem_map = {
         x: i + len(systems)
@@ -695,7 +704,8 @@ def plot_sankey():
         for i, x in enumerate(classes)
     }
 
-    # Build links
+
+    # 5. Build links
     sources = (
         flow1["C System"].map(system_map).tolist()
         + flow2["C Subsystem"].map(subsystem_map).tolist()
@@ -711,13 +721,143 @@ def plot_sankey():
         + flow2["Hectares"].tolist()
     )
 
-    # Generate Sankey diagram
+
+    # 6. Define subsystem colors
+    subsystem_colors = {
+
+        # Riverine
+        "Intermittent": system_colors["Riverine"],
+        "Streambed": system_colors["Riverine"],
+        "Unknown Perennial": system_colors["Riverine"],
+        "Tidal": system_colors["Riverine"],
+        "Lower Perennial": system_colors["Riverine"],
+        "Upper Perennial": system_colors["Riverine"],
+
+        # Marine
+        "Subtidal": system_colors["Marine"],
+
+        # Lacustrine
+        "Limnetic": system_colors["Lacustrine"],
+        "Littoral": system_colors["Lacustrine"],
+
+        # Estuarine
+        "Intertidal": system_colors["Estuarine"],
+
+        # Palustrine
+        "N/A": system_colors["Palustrine"],
+        "Unknown": system_colors["Palustrine"]
+    }
+
+
+    # 7. Define class colors
+    class_colors = {
+
+        # Marine
+        "Unconsolidated Bottom": system_colors["Marine"],
+        "Aquatic Bed": system_colors["Marine"],
+
+        # Lacustrine
+        "Unconsolidated Shore": system_colors["Lacustrine"],
+        "Rock Bottom": system_colors["Lacustrine"],
+
+        # Estuarine
+        "Rocky Shore": system_colors["Estuarine"],
+        "Reef": system_colors["Estuarine"],
+
+        # Riverine
+        "Streambed": system_colors["Riverine"],
+
+        # Palustrine
+        "Emergent": system_colors["Palustrine"],
+        "Scrub-Shrub": system_colors["Palustrine"],
+        "Forested": system_colors["Palustrine"],
+        "Unknown": system_colors["Palustrine"]
+    }
+
+
+    # 8. Assign colors to all nodes
+
+    # System nodes
+    system_node_colors = [
+        system_colors.get(x, "#808080")
+        for x in systems
+    ]
+
+    # Subsystem nodes
+    subsystem_node_colors = [
+        subsystem_colors.get(x, "#808080")
+        for x in subsystems
+    ]
+
+    # Class nodes
+    class_node_colors = [
+        class_colors.get(x, "#808080")
+        for x in classes
+    ]
+
+    node_colors = (
+        system_node_colors
+        + subsystem_node_colors
+        + class_node_colors
+    )
+
+
+    # 9. Assign System -> Subsystem link colors
+    # All flows inherit their originating system color
+
+    link_colors_1 = [
+        system_colors.get(system, "#808080")
+        for system in flow1["C System"]
+    ]
+
+
+    # 10. Assign Subsystem -> Class link colors
+
+    riverine_subsystems = [
+        "Intermittent",
+        "Streambed",
+        "Unknown Perennial",
+        "Tidal",
+        "Lower Perennial",
+        "Upper Perennial"
+    ]
+
+    lacustrine_subsystems = [
+        "Limnetic",
+        "Littoral"
+    ]
+
+    link_colors_2 = [
+        system_colors["Palustrine"] if subsystem == "Unknown"
+        else system_colors["Riverine"] if subsystem in riverine_subsystems
+        else system_colors["Lacustrine"] if subsystem in lacustrine_subsystems
+        else system_colors["Estuarine"] if subsystem == "Intertidal"
+        else system_colors["Marine"] if (subsystem, class_name) == ("Subtidal", "Aquatic Bed")
+        else system_colors["Palustrine"] if (subsystem, class_name) == ("N/A", "Aquatic Bed")
+        else class_colors.get(class_name, "#808080")
+
+        for subsystem, class_name in zip(
+            flow2["C Subsystem"], flow2["C Class"]
+        )
+    ]
+
+    link_colors = link_colors_1 + link_colors_2
+
+
+    # 11. Generate Sankey diagram
     fig_subset = go.Figure(go.Sankey(
-        node=dict(label=labels),
+        node=dict(
+            label=labels,
+            color=node_colors,
+            pad=15,
+            thickness=20,
+            line=dict(color="black", width=0.3)
+        ),
         link=dict(
             source=sources,
             target=targets,
             value=values,
+            color=link_colors,
             hovertemplate=(
                 "%{source.label} → %{target.label}<br>"
                 "Area: %{value:.2f} hectares"
@@ -726,9 +866,12 @@ def plot_sankey():
         )
     ))
 
+
+    # 12. Format figure
     fig_subset.update_layout(
         title="Wetland Area in Hectares for California Wetlands larger than 1ha by Cowardin System, Subsystem, and Class",
         font_size=11,
+        width=900,
         height=700
     )
 
