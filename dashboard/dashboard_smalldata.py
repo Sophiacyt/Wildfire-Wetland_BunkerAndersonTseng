@@ -561,7 +561,6 @@ fire_map_left
 
 
 # ------------------------wetland-explore-map----------------------------
-
 # MAKE THE EXPLORE
 
 # Create the actual map as a base
@@ -599,15 +598,6 @@ folium.GeoJson(
 # DEFINE WETLAND TOOLTIP
 # ------------------------------------------------------------
 
-# hashed out because we do not have all of the columns somehow?
-
-wetland_tooltip = folium.GeoJsonTooltip(
-    fields=["C System", "C Subsystem", "C Class"],
-    aliases=["System:", "Subsystem:", "Class:"],
-    localize=True,
-    sticky=True
-)
-
 
 # ------------------------------------------------------------
 # MARINE LAYER
@@ -622,7 +612,11 @@ folium.GeoJson(
         "fillOpacity": 0.9,
         "weight": 0.5
     },
-    tooltip=wetland_tooltip,
+    tooltip=folium.GeoJsonTooltip(
+        fields=["C System", "C Subsystem", "C Class"],
+        aliases=["System:", "Subsystem:", "Class:"],
+        sticky=True
+    ),
     control=True
 ).add_to(wetland_map_right)
 
@@ -640,7 +634,11 @@ folium.GeoJson(
         "fillOpacity": 0.9,
         "weight": 0.5
     },
-    tooltip=wetland_tooltip,
+    tooltip=folium.GeoJsonTooltip(
+        fields=["C System", "C Subsystem", "C Class"],
+        aliases=["System:", "Subsystem:", "Class:"],
+        sticky=True
+    ),
     control=True
 ).add_to(wetland_map_right)
 
@@ -658,7 +656,11 @@ folium.GeoJson(
         "fillOpacity": 0.9,
         "weight": 0.5
     },
-    tooltip=wetland_tooltip,
+    tooltip=folium.GeoJsonTooltip(
+        fields=["C System", "C Subsystem", "C Class"],
+        aliases=["System:", "Subsystem:", "Class:"],
+        sticky=True
+    ),
     control=True
 ).add_to(wetland_map_right)
 
