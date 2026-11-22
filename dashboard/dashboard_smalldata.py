@@ -1,10 +1,10 @@
 # TO RUN:
 # conda activate env700-shiny
-# shiny run --reload dashboard/dashboard.py
+# shiny run --reload dashboard/dashboard_smalldata.py
 
 # if mason and struggling, run below
 # cd ~/Desktop/Duke/Environmental\ Data\ Exploration/Wildfire-Wetland_BunkerAndersonTseng/dashboard
-# shiny run --reload dashboard.py
+# shiny run --reload dashboard_smalldata.py
 
 # be a little patient with it starting, need to see this line in terminal output
 #       INFO:     Application startup complete.
