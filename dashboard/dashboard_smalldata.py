@@ -476,9 +476,11 @@ system_choices = [
 # Initial system selection
 initial_system = "All Wetland Systems"
 
+
 # --------------------------fire-explore-map-----------------------------
+
 fire_map_left = folium.Map(
-    location=[37.32, -119.27], # explicit center of map
+    location=[37.32, -119.27],
     zoom_start=6,
     tiles=None,
     width="100%",
@@ -494,7 +496,7 @@ folium.TileLayer(
     control=False
 ).add_to(fire_map_left)
 
-# add CA outline
+# Add CA outline
 folium.GeoJson(
     ca_outline.to_json(),
     style_function=lambda x: {
@@ -502,36 +504,69 @@ folium.GeoJson(
         "fillOpacity": 0,
         "weight": 2
     },
-    control= False # always on
+    control=False
 ).add_to(fire_map_left)
 
+# code to cause for the tool tip to display on hover
+code_to_cause = {
+    1: "Lightning",
+    2: "Equipment Use",
+    3: "Smoking",
+    4: "Campfire",
+    5: "Debris",
+    6: "Railroad",
+    7: "Arson",
+    8: "Playing with fire",
+    9: "Miscellaneous",
+    10: "Vehicle",
+    11: "Powerline",
+    12: "Firefighter Training",
+    13: "Non-Firefighter Training",
+    14: "Unknown/Unidentified",
+}
 
+for fire_df in fire_dfs:
+    fire_df["CAUSE_NAME"] = fire_df["CAUSE"].map(code_to_cause).fillna("Unknown")
 
-# for loop to add in the fires
+# For loop to add in the fires
 for fire_df, year in zip(fire_dfs, years):
+
     folium.GeoJson(
         fire_df.to_json(),
         name=f"{year} Fires",
+
         style_function=lambda x, year=year: {
             "color": fire_colors[str(year)],
             "fillColor": fire_colors[str(year)],
             "fillOpacity": 0.9,
             "weight": 1.5
         },
+
+        # Hover information
+        tooltip = folium.GeoJsonTooltip(
+            fields=["FIRE_NAME", "Alarm Month", "CAUSE_NAME"],
+            aliases=["Fire Name:", "Alarm Month:", "Cause:"],
+            localize=True,
+            sticky=True
+        ),
+
         control=True
     ).add_to(fire_map_left)
 
+
+# Add layer control
 folium.LayerControl(collapsed=False).add_to(fire_map_left)
 
-fire_map_left # this would display in a notebook
+fire_map_left
+
 
 # ------------------------wetland-explore-map----------------------------
 
 # MAKE THE EXPLORE
 
-# create the actual map as a base now
+# Create the actual map as a base
 wetland_map_right = folium.Map(
-    location=[37.32, -119.27], # explicit center of map
+    location=[37.32, -119.27],
     zoom_start=6,
     tiles=None,
     width="100%",
@@ -547,7 +582,8 @@ folium.TileLayer(
     control=False
 ).add_to(wetland_map_right)
 
-# add CA outline
+
+# Add CA outline
 folium.GeoJson(
     ca_outline.to_json(),
     style_function=lambda x: {
@@ -555,10 +591,28 @@ folium.GeoJson(
         "fillOpacity": 0,
         "weight": 2
     },
-    control= False # always on
+    control=False
 ).add_to(wetland_map_right)
 
-# Marine layer
+
+# ------------------------------------------------------------
+# DEFINE WETLAND TOOLTIP
+# ------------------------------------------------------------
+
+# hashed out because we do not have all of the columns somehow?
+
+wetland_tooltip = folium.GeoJsonTooltip(
+    fields=["C System", "C Subsystem", "C Class"],
+    aliases=["System:", "Subsystem:", "Class:"],
+    localize=True,
+    sticky=True
+)
+
+
+# ------------------------------------------------------------
+# MARINE LAYER
+# ------------------------------------------------------------
+
 folium.GeoJson(
     marine.to_json(),
     name="Marine System Wetlands",
@@ -568,10 +622,15 @@ folium.GeoJson(
         "fillOpacity": 0.9,
         "weight": 0.5
     },
-    control=True #can be toggled
+    tooltip=wetland_tooltip,
+    control=True
 ).add_to(wetland_map_right)
 
-# Estuarine layer
+
+# ------------------------------------------------------------
+# ESTUARINE LAYER
+# ------------------------------------------------------------
+
 folium.GeoJson(
     estuarine.to_json(),
     name="Estuarine System Wetlands",
@@ -581,10 +640,15 @@ folium.GeoJson(
         "fillOpacity": 0.9,
         "weight": 0.5
     },
-    control=True #can be toggled
+    tooltip=wetland_tooltip,
+    control=True
 ).add_to(wetland_map_right)
 
-# Lacustrine layer
+
+# ------------------------------------------------------------
+# LACUSTRINE LAYER
+# ------------------------------------------------------------
+
 folium.GeoJson(
     lacustrine.to_json(),
     name="Lacustrine System Wetlands",
@@ -594,14 +658,21 @@ folium.GeoJson(
         "fillOpacity": 0.9,
         "weight": 0.5
     },
-    control=True #can be toggled
+    tooltip=wetland_tooltip,
+    control=True
 ).add_to(wetland_map_right)
 
+
 # Add layer control
-folium.LayerControl(collapsed=False).add_to(wetland_map_right)
+folium.LayerControl(
+    collapsed=False
+).add_to(wetland_map_right)
 
 
-# define legend maker
+# ------------------------------------------------------------
+# DEFINE LEGEND MAKER
+# ------------------------------------------------------------
+
 def make_legend(colors):
 
     items = []
@@ -611,11 +682,11 @@ def make_legend(colors):
             ui.div(
                 ui.span(
                     style=f"""
-                    display: inline-block;
-                    width: 12px;
-                    height: 12px;
-                    background-color: {color};
-                    margin-right: 5px;
+                        display: inline-block;
+                        width: 12px;
+                        height: 12px;
+                        background-color: {color};
+                        margin-right: 5px;
                     """,
                 ),
                 ui.span(label),
@@ -626,12 +697,16 @@ def make_legend(colors):
     return ui.div(
         *items,
         style="""
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 10px;
         """
     )
+
+
+# Display map
+wetland_map_right
 
 # # SANKEY DIAGRAM
 # wetlands_subset_path = box_path / 'ENVIRON 712L-Students' / 'Data' / 'BunkerAndersonTseng' / 'wetlands_subset'
@@ -640,9 +715,6 @@ def make_legend(colors):
 # )
 
 # print("wetlands data secured!")
-
-
-
 
 
 def plot_sankey():
